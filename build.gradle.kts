@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.gradle.api.tasks.bundling.Jar
 
 group = "com.apurebase"
-version = "1.0.0"
+version = "1.0.1"
 
 plugins {
     kotlin("jvm") version "1.2.50"
