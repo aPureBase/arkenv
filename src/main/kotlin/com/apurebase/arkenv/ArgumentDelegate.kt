@@ -1,8 +1,8 @@
 package com.apurebase.arkenv
 
 import kotlin.reflect.KProperty
-import kotlin.reflect.KType
 import kotlin.reflect.full.starProjectedType
+import kotlin.reflect.full.withNullability
 
 @Suppress("UNCHECKED_CAST")
 class ArgumentDelegate<T : Any?>(
@@ -38,7 +38,7 @@ class ArgumentDelegate<T : Any?>(
             else -> {
                 println("$envVal $cliValue")
                 val rawValue = envVal ?: cliValue!!
-                mapType(type, rawValue, property)
+                mapType(rawValue, property)
             }
         }
     }
@@ -62,9 +62,9 @@ class ArgumentDelegate<T : Any?>(
         }
     }
 
-    fun mapType(type: KType, value: String, property: KProperty<*>): T {
+    fun mapType(value: String, property: KProperty<*>): T {
         argument.mapping?.let { return it(value) }
-        return when (type) {
+        return when (property.returnType.withNullability(false)) {
             Int::class.starProjectedType -> value.toIntOrNull() as T
             Long::class.starProjectedType -> value.toLongOrNull() as T
             String::class.starProjectedType -> value as T

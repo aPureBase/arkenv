@@ -22,3 +22,11 @@ class TestArgs(args: Array<String>) : Arkenv(args) {
 class MainArg(value: String) : Arkenv(arrayOf(value)) {
     val mainArg by mainArgument<String>()
 }
+
+class Nullable(args: Array<String>): Arkenv(args) {
+
+    val int: Int? by argument("-i")
+
+    val str: String? by argument("-s")
+
+}

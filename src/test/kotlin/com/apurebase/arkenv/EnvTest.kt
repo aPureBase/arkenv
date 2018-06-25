@@ -2,9 +2,10 @@ package com.apurebase.arkenv
 
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldEqual
 import org.junit.jupiter.api.Test
 
-class EnvTest {
+class EnvTest : ArkenvTest() {
 
     @Test fun `parse from env`() {
         val expectedMainString = "important com.apurebase.arkenv.main value"
@@ -23,6 +24,7 @@ class EnvTest {
             it.bool shouldBe true
             it.country shouldBeEqualTo "dk"
             it.mainString shouldBeEqualTo expectedMainString
+            it.nullInt shouldBe null
         }
     }
 
@@ -30,6 +32,18 @@ class EnvTest {
         val expected = "test"
         MockSystem(mapOf(MainArg::mainArg.name to expected))
         MainArg("").mainArg shouldBeEqualTo expected
+    }
+
+
+    override fun testNullable(): Nullable {
+        MockSystem(mapOf(
+            "-i" to expectedInt.toString(),
+            "-s" to expectedStr
+        ))
+        return Nullable(arrayOf()).apply {
+            int shouldEqual expectedInt
+            str shouldEqual expectedStr
+        }
     }
 
 }
