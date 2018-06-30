@@ -2,7 +2,6 @@ package com.apurebase.arkenv
 
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldEqual
 import org.junit.jupiter.api.Test
 
 class EnvTest : ArkenvTest() {
@@ -36,14 +35,25 @@ class EnvTest : ArkenvTest() {
 
 
     override fun testNullable(): Nullable {
-        MockSystem(mapOf(
-            "-i" to expectedInt.toString(),
-            "-s" to expectedStr
-        ))
-        return Nullable(arrayOf()).apply {
-            int shouldEqual expectedInt
-            str shouldEqual expectedStr
-        }
+        MockSystem(
+            mapOf(
+                "-i" to expectedInt.toString(),
+                "-s" to expectedStr
+            )
+        )
+        return Nullable(arrayOf())
+    }
+
+    override fun testArkuments(): Arkuments {
+        MockSystem(
+            mapOf(
+                "-c" to expectedConfigPath,
+                "-ma" to "",
+                "-r" to "",
+                "-h" to ""
+            )
+        )
+        return Arkuments(arrayOf())
     }
 
 }

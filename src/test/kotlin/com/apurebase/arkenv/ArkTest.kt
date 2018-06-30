@@ -35,4 +35,6 @@ class ArkTest : ArkenvTest() {
 
     override fun testNullable(): Nullable = Nullable(arrayOf("-i", expectedInt.toString(), "-s", expectedStr))
 
+    override fun testArkuments() = Arkuments(arrayOf("-c", expectedConfigPath, "-ma", "-r", "-h"))
+
 }

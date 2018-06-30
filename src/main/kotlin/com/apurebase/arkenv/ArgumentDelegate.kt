@@ -17,9 +17,7 @@ class ArgumentDelegate<T : Any?>(
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         if (!isSet) {
-            if (!isHelp) {
-                value = setValue(property)
-            }
+            value = setValue(property)
             checkNullable(property)
             isSet = true
         }

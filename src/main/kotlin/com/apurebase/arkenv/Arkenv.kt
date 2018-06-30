@@ -5,12 +5,14 @@ import kotlin.reflect.jvm.isAccessible
 import kotlin.reflect.jvm.javaField
 
 abstract class Arkenv(
-    val args: Array<String>,
+    args: Array<String>,
     val programName: String = "Arkenv",
     val withEnv: Boolean = true,
     val envPrefix: String = "",
     val argumentPrefix: String = "-"
 ) {
+
+    val argList = args.toList()
 
     open val help: Boolean by argument("-h", "--help") {
         isHelp = true
@@ -29,7 +31,7 @@ abstract class Arkenv(
                 it.isMainArg = isMainArg
             }.apply(block)
             val isHelp = if (argumentConfig.isHelp) false else help
-            ArgumentDelegate(isHelp, args.toList(), argumentConfig, argumentPrefix)
+            ArgumentDelegate(isHelp, argList, argumentConfig, argumentPrefix)
         }
     }
 
