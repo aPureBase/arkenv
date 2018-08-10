@@ -12,13 +12,21 @@ abstract class Arkenv(
     val argumentPrefix: String = "-"
 ) {
 
-    val argList = args.toList()
+    /**
+     * Manually parse the arguments, clearing all previously set ones
+     */
+    fun parse(args: Array<String>) {
+        argList.clear()
+        argList.addAll(args)
+    }
+
+    private val argList = args.toMutableList()
 
     open val help: Boolean by argument("-h", "--help") {
         isHelp = true
     }
 
-    inline fun <T : Any> argument(
+    fun <T : Any> argument(
         names: List<String>,
         isMainArg: Boolean = false,
         block: Argument<T>.() -> Unit = {}
@@ -66,17 +74,17 @@ abstract class Arkenv(
         return sb.toString()
     }
 
-    inline fun <T : Any> argument(name: String, block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
+    fun <T : Any> argument(name: String, block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
         argument(listOf(name), false, block)
 
-    inline fun <T : Any> argument(
+    fun <T : Any> argument(
         nameOne: String,
         nameTwo: String,
         block: Argument<T>.() -> Unit = {}
     ): ArgumentDelegate<T> =
         argument(listOf(nameOne, nameTwo), false, block)
 
-    inline fun <T : Any> mainArgument(block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
+    fun <T : Any> mainArgument(block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
         argument(listOf(), true, block)
 
     private fun StringBuilder.append(value: String, times: Int): StringBuilder = apply {

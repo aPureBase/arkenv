@@ -97,10 +97,6 @@ class GeneralTest {
             val defString: String by mainArgument {
                 defaultValue = "hey"
             }
-
-            val defArg: String by argument("-d") {
-
-            }
         }
 
         DefArgs().run {
@@ -108,4 +104,11 @@ class GeneralTest {
             defString shouldBeEqualTo "hey"
         }
     }
+
+    @Test fun `objects should be usable`() {
+        ObjectArgs.parse(arrayOf("-i", "10"))
+        ObjectArgs.int shouldEqualTo 10
+        ObjectArgs.optional shouldBe null
+    }
+
 }

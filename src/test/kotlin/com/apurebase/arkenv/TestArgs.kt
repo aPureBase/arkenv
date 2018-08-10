@@ -23,7 +23,7 @@ class MainArg(value: String) : Arkenv(arrayOf(value)) {
     val mainArg by mainArgument<String>()
 }
 
-class Nullable(args: Array<String>): Arkenv(args) {
+class Nullable(args: Array<String>) : Arkenv(args) {
 
     val int: Int? by argument("-i")
 
@@ -37,12 +37,18 @@ class Arkuments(args: Array<String>) : Arkenv(args) {
         description = "The path to your config.yml"
     }
 
-    val manualAuth: Boolean by argument("-ma", "--manual-auth") {
-        description = "Manually authorize the app to Spotify"
-    }
+    val manualAuth: Boolean by argument("-ma", "--manual-auth")
 
     val doRefresh: Boolean by argument("-r", "--refresh") {
         description = "Refresh the Spotify access token"
     }
+
+}
+
+object ObjectArgs : Arkenv(arrayOf()) {
+
+    val int by argument<Int>("-i")
+
+    val optional: String? by argument(listOf("-o"))
 
 }
