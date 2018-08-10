@@ -34,7 +34,6 @@ class ArgumentDelegate<T : Any?>(
             }
             envVal == null && cliValue == null -> argument.defaultValue
             else -> {
-                println("$envVal $cliValue")
                 val rawValue = envVal ?: cliValue!!
                 mapType(rawValue, property)
             }
