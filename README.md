@@ -1,3 +1,35 @@
 # Arkenv
 Kotlin Cli & Env argument parser. 
 
+### Usage
+```kotlin
+class Arguments(args: Array<String>) : Arkenv(args) {
+
+    val country: String by argument("-c") {
+        description = "A simple String (required)"
+    }
+
+    val bool: Boolean by argument("-b") {
+        description = "A bool, which will be false by default"
+    }
+
+    val port: Int by argument("-p") {
+        description = "An Int with a default value"
+        defaultValue = 5000
+    }
+
+    val nullInt: Int? by argument("-ni") {
+        description = "A nullable Int, which doesn't have to be declared"
+    }
+
+    val mapped: List<String> by argument("-m") {
+        description = "Complex types can be achieved with a mapping"
+        mapping = { it.split("|") }
+    }
+
+    val mainString: String by mainArgument {
+        description = "This is a main arg, so no names"
+    }
+
+}
+```

@@ -97,10 +97,6 @@ class GeneralTest {
             val defString: String by mainArgument {
                 defaultValue = "hey"
             }
-
-            val defArg: String by argument("-d") {
-
-            }
         }
 
         DefArgs().run {
