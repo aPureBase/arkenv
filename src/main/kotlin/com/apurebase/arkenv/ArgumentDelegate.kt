@@ -4,7 +4,6 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.full.withNullability
 
-@Suppress("UNCHECKED_CAST")
 class ArgumentDelegate<T : Any?>(
     private val isHelp: Boolean,
     private val args: List<String>,
@@ -12,6 +11,7 @@ class ArgumentDelegate<T : Any?>(
     private val argumentPrefix: String
 ) {
 
+    @Suppress("UNCHECKED_CAST")
     var value: T = null as T
     private var isSet: Boolean = false
 
@@ -24,11 +24,12 @@ class ArgumentDelegate<T : Any?>(
         return value
     }
 
-    fun setValue(property: KProperty<*>): T {
+    private fun setValue(property: KProperty<*>): T {
         val type = property.returnType
         val envVal = if (argument.withEnv) getEnvValue(property) else null
         return when {
             type == Boolean::class.starProjectedType -> {
+                @Suppress("UNCHECKED_CAST")
                 if (index != null || envVal != null) true as T
                 else false as T
             }
@@ -61,6 +62,7 @@ class ArgumentDelegate<T : Any?>(
 
     private fun mapType(value: String, property: KProperty<*>): T {
         argument.mapping?.let { return it(value) }
+        @Suppress("UNCHECKED_CAST")
         return when (property.returnType.withNullability(false)) {
             Int::class.starProjectedType -> value.toIntOrNull() as T
             Long::class.starProjectedType -> value.toLongOrNull() as T

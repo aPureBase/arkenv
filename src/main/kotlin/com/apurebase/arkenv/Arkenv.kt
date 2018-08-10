@@ -20,7 +20,7 @@ abstract class Arkenv(
         argList.addAll(args)
     }
 
-    val argList = args.toMutableList()
+    private val argList = args.toMutableList()
 
     open val help: Boolean by argument("-h", "--help") {
         isHelp = true
