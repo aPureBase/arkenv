@@ -46,3 +46,11 @@ class Arkuments(args: Array<String>) : Arkenv(args) {
     }
 
 }
+
+object ObjectArgs : Arkenv(arrayOf()) {
+
+    val int by argument<Int>("-i")
+
+    val optional: String? by argument("-o")
+
+}

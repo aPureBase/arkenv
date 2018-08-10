@@ -12,7 +12,15 @@ abstract class Arkenv(
     val argumentPrefix: String = "-"
 ) {
 
-    val argList = args.toList()
+    /**
+     * Manually parse the arguments, clearing all previously set ones
+     */
+    fun parse(args: Array<String>) {
+        argList.clear()
+        argList.addAll(args)
+    }
+
+    val argList = args.toMutableList()
 
     open val help: Boolean by argument("-h", "--help") {
         isHelp = true

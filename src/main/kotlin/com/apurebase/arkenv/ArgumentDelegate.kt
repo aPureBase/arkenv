@@ -45,10 +45,10 @@ class ArgumentDelegate<T : Any?>(
         argument.names.mapNotNull { System.getenv(argument.envPrefix + it) }.firstOrNull()
                 ?: if (argument.isMainArg) System.getenv(argument.envPrefix + property.name) else null
 
-    val index = if (argument.isMainArg) -1 else argument.names.map { args.indexOf(it) }.find { it >= 0 }
-    val cliValue: String?
+    private val index get() = if (argument.isMainArg) -1 else argument.names.map(args::indexOf).find { it >= 0 }
+    private val cliValue: String?
         get() = index?.let {
-            val list = args.subList(index + 1, args.size)
+            val list = args.subList(index!! + 1, args.size)
             if (list.isEmpty()) null
             else list.takeWhile { !it.startsWith(argumentPrefix) }.joinToString(" ")
         }
