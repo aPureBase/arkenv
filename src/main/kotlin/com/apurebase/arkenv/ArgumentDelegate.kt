@@ -6,10 +6,10 @@ import kotlin.reflect.full.withNullability
 
 @Suppress("UNCHECKED_CAST")
 class ArgumentDelegate<T : Any?>(
-    val isHelp: Boolean,
-    val args: List<String>,
+    private val isHelp: Boolean,
+    private val args: List<String>,
     val argument: Argument<T>,
-    val argumentPrefix: String
+    private val argumentPrefix: String
 ) {
 
     var value: T = null as T
@@ -41,26 +41,26 @@ class ArgumentDelegate<T : Any?>(
         }
     }
 
-    fun getEnvValue(property: KProperty<*>) =
+    private fun getEnvValue(property: KProperty<*>) =
         argument.names.mapNotNull { System.getenv(argument.envPrefix + it) }.firstOrNull()
                 ?: if (argument.isMainArg) System.getenv(argument.envPrefix + property.name) else null
 
     private val index get() = if (argument.isMainArg) -1 else argument.names.map(args::indexOf).find { it >= 0 }
     private val cliValue: String?
-        get() = index?.let {
-            val list = args.subList(index!! + 1, args.size)
+        get() = index?.let { i ->
+            val list = args.subList(i + 1, args.size)
             if (list.isEmpty()) null
             else list.takeWhile { !it.startsWith(argumentPrefix) }.joinToString(" ")
         }
 
-    fun checkNullable(property: KProperty<*>) {
+    private fun checkNullable(property: KProperty<*>) {
         if (!isHelp && value == null && !property.returnType.isMarkedNullable && argument.defaultValue == null) {
             val nameInfo = if (argument.isMainArg) "Main argument" else argument.names.joinToString()
             throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
         }
     }
 
-    fun mapType(value: String, property: KProperty<*>): T {
+    private fun mapType(value: String, property: KProperty<*>): T {
         argument.mapping?.let { return it(value) }
         return when (property.returnType.withNullability(false)) {
             Int::class.starProjectedType -> value.toIntOrNull() as T

@@ -26,7 +26,7 @@ abstract class Arkenv(
         isHelp = true
     }
 
-    inline fun <T : Any> argument(
+    fun <T : Any> argument(
         names: List<String>,
         isMainArg: Boolean = false,
         block: Argument<T>.() -> Unit = {}
@@ -74,17 +74,17 @@ abstract class Arkenv(
         return sb.toString()
     }
 
-    inline fun <T : Any> argument(name: String, block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
+    fun <T : Any> argument(name: String, block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
         argument(listOf(name), false, block)
 
-    inline fun <T : Any> argument(
+    fun <T : Any> argument(
         nameOne: String,
         nameTwo: String,
         block: Argument<T>.() -> Unit = {}
     ): ArgumentDelegate<T> =
         argument(listOf(nameOne, nameTwo), false, block)
 
-    inline fun <T : Any> mainArgument(block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
+    fun <T : Any> mainArgument(block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
         argument(listOf(), true, block)
 
     private fun StringBuilder.append(value: String, times: Int): StringBuilder = apply {

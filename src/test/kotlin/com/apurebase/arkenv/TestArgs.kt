@@ -23,7 +23,7 @@ class MainArg(value: String) : Arkenv(arrayOf(value)) {
     val mainArg by mainArgument<String>()
 }
 
-class Nullable(args: Array<String>): Arkenv(args) {
+class Nullable(args: Array<String>) : Arkenv(args) {
 
     val int: Int? by argument("-i")
 
