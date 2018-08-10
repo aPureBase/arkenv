@@ -1,17 +1,13 @@
-buildscript {
-    ext {
-        kotlin_version = '1.2.60'
-        junit_version = '5.3.0-M1'
-    }
+buildscript { repositories { jcenter() } }
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.2.60"
+    id "com.github.ben-manes.versions" version "0.20.0"
+    id "com.jfrog.bintray" version "1.8.4"
+    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC8"
+}
 
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.20.0"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
-    }
+ext {
+    junit_version = '5.3.0-M1'
 }
 
 group 'me.avo'
@@ -29,8 +25,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-reflect"
 
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
     testCompile group: 'org.amshove.kluent', name: 'kluent', version: '1.40'
@@ -52,7 +48,14 @@ test {
     failFast = false
 }
 
-
+tasks.test.finalizedBy detektCheck
+detekt {
+    defaultProfile {
+        input = file("src/main/kotlin")
+        filters = ".*/resources/.*,.*/build/.*"
+        config = file("detekt.yml")
+    }
+}
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'

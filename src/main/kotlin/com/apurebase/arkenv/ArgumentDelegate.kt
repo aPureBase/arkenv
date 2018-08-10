@@ -54,11 +54,13 @@ class ArgumentDelegate<T : Any?>(
         }
 
     private fun checkNullable(property: KProperty<*>) {
-        if (!isHelp && value == null && !property.returnType.isMarkedNullable && argument.defaultValue == null) {
+        if (!isHelp && !property.returnType.isMarkedNullable && valuesAreNull()) {
             val nameInfo = if (argument.isMainArg) "Main argument" else argument.names.joinToString()
             throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
         }
     }
+
+    private fun valuesAreNull(): Boolean = value == null && argument.defaultValue == null
 
     private fun mapType(value: String, property: KProperty<*>): T {
         argument.mapping?.let { return it(value) }
