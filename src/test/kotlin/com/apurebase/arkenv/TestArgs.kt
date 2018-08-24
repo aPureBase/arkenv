@@ -17,6 +17,10 @@ class TestArgs(args: Array<String>) : Arkenv(args) {
         description = "This is a com.apurebase.arkenv.main arg, so no names"
     }
 
+    val description: String? by argument("-d", "--description") {
+        description = "Description"
+        envVariable = "DESC"
+    }
 }
 
 class MainArg(value: String) : Arkenv(arrayOf(value)) {

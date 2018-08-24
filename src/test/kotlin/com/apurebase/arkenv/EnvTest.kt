@@ -46,7 +46,6 @@ class EnvTest : ArkenvTest() {
         }
     }
 
-
     override fun testNullable(): Nullable {
         MockSystem(
             mapOf(
@@ -67,6 +66,23 @@ class EnvTest : ArkenvTest() {
             )
         )
         return Arkuments(arrayOf())
+    }
+
+    // Value picking tests
+    @Test fun `not defined`() {
+        TestArgs(arrayOf()).description shouldEqual null
+    }
+    @Test fun `last argument`() {
+        MockSystem(mapOf("DESCRIPTION" to "text"))
+        TestArgs(arrayOf()).description shouldEqual "text"
+    }
+    @Test fun `envVariable usage`() {
+        MockSystem(mapOf("DESCRIPTION" to "text", "DESC" to "SOME MORE DESC"))
+        TestArgs(arrayOf()).description shouldEqual "SOME MORE DESC"
+    }
+    @Test fun `everything and cli argument`() {
+        MockSystem(mapOf("DESCRIPTION" to "text", "DESC" to "SOME MORE DESC"))
+        TestArgs(arrayOf("-d", "main desc")).description shouldEqual "main desc"
     }
 
 }

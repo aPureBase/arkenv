@@ -35,22 +35,25 @@ class ArgumentDelegate<T : Any?>(
             }
             envVal == null && cliValue == null -> argument.defaultValue
             else -> {
-                val rawValue = envVal ?: cliValue!!
+                val rawValue = cliValue ?: envVal!!
                 mapType(rawValue, property)
             }
         }
     }
 
     private fun getEnvValue(property: KProperty<*>): String? {
+        // If an envVariable is defined we'll pick this as highest order value
+        if (argument.envVariable != null) {
+            val definedEnvValue = System.getenv(argument.envVariable)
+            if (!definedEnvValue.isNullOrEmpty()) return definedEnvValue
+        }
+
+        // Loop over all argument names and pick the first one that matches
         val envValue = argument.names.mapNotNull {
             if (it.startsWith("--")) System.getenv(argument.envPrefix + it.toSnakeCase())
             else null
         }.firstOrNull()
         if (envValue != null) return envValue
-        // MARK: Remove this, I removed support for adding mainArg as a env variable
-//        if (argument.isMainArg) {
-//            return System.getenv(argument.envPrefix + property.name.toSnakeCase())
-//        }
         return null
     }
 
