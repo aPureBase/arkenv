@@ -1,4 +1,9 @@
-buildscript { repositories { jcenter() } }
+buildscript {
+    repositories {
+        jcenter()
+    }
+}
+
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.60"
     id "com.github.ben-manes.versions" version "0.20.0"

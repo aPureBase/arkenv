@@ -12,7 +12,7 @@ class ArgumentDelegate<T : Any?>(
 ) {
 
     @Suppress("UNCHECKED_CAST")
-    var value: T = null as T
+    private var value: T = null as T
     private var isSet: Boolean = false
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
@@ -41,10 +41,20 @@ class ArgumentDelegate<T : Any?>(
         }
     }
 
-    private fun getEnvValue(property: KProperty<*>) =
-        argument.names.mapNotNull { System.getenv(argument.envPrefix + it) }.firstOrNull()
-                ?: if (argument.isMainArg) System.getenv(argument.envPrefix + property.name) else null
+    private fun getEnvValue(property: KProperty<*>): String? {
+        val envValue = argument.names.mapNotNull {
+            if (it.startsWith("--")) System.getenv(argument.envPrefix + it.toSnakeCase())
+            else null
+        }.firstOrNull()
+        if (envValue != null) return envValue
+        // MARK: Remove this, I removed support for adding mainArg as a env variable
+//        if (argument.isMainArg) {
+//            return System.getenv(argument.envPrefix + property.name.toSnakeCase())
+//        }
+        return null
+    }
 
+    /** TODO: Comment what this index means and is used for. Maybe examples also */
     private val index get() = if (argument.isMainArg) -1 else argument.names.map(args::indexOf).find { it >= 0 }
     private val cliValue: String?
         get() = index?.let { i ->

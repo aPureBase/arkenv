@@ -22,10 +22,10 @@ class ArkTest : ArkenvTest() {
         val expectedMainString = "cli&env"
         MockSystem(
             mapOf(
-                TestArgs::mainString.name to expectedMainString
+                "COUNTRY" to expectedCountry
             )
         )
-        TestArgs(arrayOf("-c", expectedCountry)).let {
+        TestArgs(arrayOf(expectedMainString)).let {
             it.country shouldBeEqualTo expectedCountry
             it.mainString shouldBeEqualTo expectedMainString
             it.nullInt shouldBe null

@@ -2,14 +2,14 @@ package com.apurebase.arkenv
 
 class TestArgs(args: Array<String>) : Arkenv(args) {
 
-    val country: String by argument("-c") {
+    val country: String by argument("-c", "--country") {
         description = "Country to extract"
     }
-    val bool: Boolean by argument("-b") {
+    val bool: Boolean by argument("-b", "--execute") {
         description = "Whether to execute"
     }
 
-    val nullInt: Int? by argument("-ni") {
+    val nullInt: Int? by argument("-ni", "--null-int") {
         description = "A nullable Int, which doesn't have to be declared"
     }
 
@@ -25,9 +25,9 @@ class MainArg(value: String) : Arkenv(arrayOf(value)) {
 
 class Nullable(args: Array<String>) : Arkenv(args) {
 
-    val int: Int? by argument("-i")
+    val int: Int? by argument("-i", "--int")
 
-    val str: String? by argument("-s")
+    val str: String? by argument("-s", "--str")
 
 }
 
