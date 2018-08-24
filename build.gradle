@@ -15,8 +15,8 @@ ext {
     junit_version = '5.3.0-M1'
 }
 
-group 'me.avo'
-version '1.0.3'
+group 'com.apurebase'
+version '1.0.4'
 
 apply plugin: "com.github.ben-manes.versions"
 apply plugin: 'kotlin'
