@@ -1,14 +1,15 @@
 image: registry.gitlab.com/apurebase/connect/jdk:latest
 
 stages:
-  - test
   - build
+  - test
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
+  - chmod +x ./gradlew
 
 cache:
   paths:
@@ -20,14 +21,17 @@ cache:
 # Jobs #
 ########
 
+build:
+  stage: build
+  script: ./gradlew --build-cache assemble --no-daemon
+  artifacts:
+    expire_in: '5 day'
+    paths:
+      - build/libs
+
 test:
   stage: test
   script:
     - ./gradlew check --no-daemon
     - chmod +x ./scripts/coverage.sh
     - ./scripts/coverage.sh
-
-build:
-  stage: build
-  script: ./gradlew --build-cache assemble --no-daemon
-
