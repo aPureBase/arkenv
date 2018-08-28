@@ -33,3 +33,10 @@ class Arguments(args: Array<String>) : Arkenv(args) {
 
 }
 ```
+
+For environment variables to work you should have double `--` infront of your argument like this:
+```kotlin
+val port: Int by argument("-p", "--port") { ... }
+```
+Then the env variable will be called `PORT` and if giving a name like `--host-url` it will be `HOST_URL`
+

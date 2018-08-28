@@ -3,7 +3,9 @@ package com.apurebase.arkenv
 import mockit.Mock
 import mockit.MockUp
 
-class MockSystem(val envs: Map<String, String>) : MockUp<System>() {
+class MockSystem(private val envs: Map<String, String>) : MockUp<System>() {
+
+    constructor(vararg envs: Pair<String, String>) : this(mapOf(*envs))
 
     @Mock fun getenv(name: String) = envs[name]
 

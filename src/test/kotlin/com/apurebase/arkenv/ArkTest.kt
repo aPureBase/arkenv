@@ -20,18 +20,13 @@ class ArkTest : ArkenvTest() {
     @Test fun `parse mixed cli & env`() {
         val expectedCountry = "no"
         val expectedMainString = "cli&env"
-        MockSystem(
-            mapOf(
-                TestArgs::mainString.name to expectedMainString
-            )
-        )
-        TestArgs(arrayOf("-c", expectedCountry)).let {
+        MockSystem("COUNTRY" to expectedCountry)
+        TestArgs(arrayOf(expectedMainString)).let {
             it.country shouldBeEqualTo expectedCountry
             it.mainString shouldBeEqualTo expectedMainString
             it.nullInt shouldBe null
         }
     }
-
 
     override fun testNullable(): Nullable = Nullable(arrayOf("-i", expectedInt.toString(), "-s", expectedStr))
 

@@ -12,7 +12,7 @@ class ArgumentDelegate<T : Any?>(
 ) {
 
     @Suppress("UNCHECKED_CAST")
-    var value: T = null as T
+    private var value: T = null as T
     private var isSet: Boolean = false
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
@@ -24,27 +24,35 @@ class ArgumentDelegate<T : Any?>(
         return value
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
         val type = property.returnType
-        val envVal = if (argument.withEnv) getEnvValue(property) else null
+        val envVal = if (argument.withEnv) getEnvValue() else null
         return when {
-            type == Boolean::class.starProjectedType -> {
-                @Suppress("UNCHECKED_CAST")
-                if (index != null || envVal != null) true as T
-                else false as T
-            }
+            type == Boolean::class.starProjectedType -> (index != null || envVal != null) as T
             envVal == null && cliValue == null -> argument.defaultValue
             else -> {
-                val rawValue = envVal ?: cliValue!!
+                val rawValue = cliValue ?: envVal!!
                 mapType(rawValue, property)
             }
         }
     }
 
-    private fun getEnvValue(property: KProperty<*>) =
-        argument.names.mapNotNull { System.getenv(argument.envPrefix + it) }.firstOrNull()
-                ?: if (argument.isMainArg) System.getenv(argument.envPrefix + property.name) else null
+    private fun getEnvValue(): String? {
+        // If an envVariable is defined we'll pick this as highest order value
+        if (argument.envVariable != null) {
+            val definedEnvValue = System.getenv(argument.envVariable)
+            if (!definedEnvValue.isNullOrEmpty()) return definedEnvValue
+        }
 
+        // Loop over all argument names and pick the first one that matches
+        return argument.names.mapNotNull {
+            if (it.startsWith("--")) System.getenv(argument.envPrefix + it.toSnakeCase())
+            else null
+        }.firstOrNull()
+    }
+
+    /** TODO: Comment what this index means and is used for. Maybe examples also */
     private val index get() = if (argument.isMainArg) -1 else argument.names.map(args::indexOf).find { it >= 0 }
     private val cliValue: String?
         get() = index?.let { i ->
