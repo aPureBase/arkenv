@@ -99,4 +99,13 @@ class EnvTest : ArkenvTest() {
         CustomEnv(arrayOf()).arg shouldBeEqualTo expected // via env
     }
 
+    @Test fun `should also accept -- double dash envs`() {
+        MockSystem("ARG" to "x")
+        CustomEnv().arg shouldBeEqualTo "x"
+    }
+
+    @Test fun `should accept custom env`() {
+        MockSystem("TEST" to "y")
+        CustomEnv().arg shouldBeEqualTo "y"
+    }
 }
