@@ -24,15 +24,12 @@ class ArgumentDelegate<T : Any?>(
         return value
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
         val type = property.returnType
-        val envVal = if (argument.withEnv) getEnvValue(property) else null
+        val envVal = if (argument.withEnv) getEnvValue() else null
         return when {
-            type == Boolean::class.starProjectedType -> {
-                @Suppress("UNCHECKED_CAST")
-                if (index != null || envVal != null) true as T
-                else false as T
-            }
+            type == Boolean::class.starProjectedType -> (index != null || envVal != null) as T
             envVal == null && cliValue == null -> argument.defaultValue
             else -> {
                 val rawValue = cliValue ?: envVal!!
@@ -41,7 +38,7 @@ class ArgumentDelegate<T : Any?>(
         }
     }
 
-    private fun getEnvValue(property: KProperty<*>): String? {
+    private fun getEnvValue(): String? {
         // If an envVariable is defined we'll pick this as highest order value
         if (argument.envVariable != null) {
             val definedEnvValue = System.getenv(argument.envVariable)
@@ -49,12 +46,10 @@ class ArgumentDelegate<T : Any?>(
         }
 
         // Loop over all argument names and pick the first one that matches
-        val envValue = argument.names.mapNotNull {
+        return argument.names.mapNotNull {
             if (it.startsWith("--")) System.getenv(argument.envPrefix + it.toSnakeCase())
             else null
         }.firstOrNull()
-        if (envValue != null) return envValue
-        return null
     }
 
     /** TODO: Comment what this index means and is used for. Maybe examples also */
