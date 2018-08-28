@@ -18,11 +18,10 @@ ext {
 group 'com.apurebase'
 version '1.0.5'
 
-apply plugin: "com.github.ben-manes.versions"
-apply plugin: 'kotlin'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 apply plugin: 'java'
+apply plugin: 'jacoco'
 //apply plugin: 'com.jfrog.bintray'
 
 repositories {
@@ -40,9 +39,9 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile "org.jetbrains.kotlin:kotlin-reflect"
 
+    testCompile "org.jmockit:jmockit:1.41"
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
     testCompile group: 'org.amshove.kluent', name: 'kluent', version: '1.40'
-    testCompile "org.jmockit:jmockit:1.41"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junit_version"
 }
 
@@ -58,6 +57,13 @@ test {
     }
 
     failFast = false
+
+    doFirst {
+        def jMockit = configurations.testCompile.find {
+            it.name.startsWith("jmockit-")
+        }
+        jvmArgs "-javaagent:${jMockit}"
+    }
 }
 
 tasks.test.finalizedBy detektCheck
@@ -95,6 +101,62 @@ publishing {
                 artifact sourcesJar {
                     classifier "sources"
                 }
+            }
+        }
+    }
+}
+
+check.dependsOn jacocoTestReport
+check.dependsOn jacocoTestCoverageVerification
+tasks.test.finalizedBy jacocoTestReport
+
+jacoco {
+    toolVersion = "0.8.1"
+    reportsDir = file("$buildDir/reports")
+}
+
+jacocoTestReport {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports for Debug build"
+
+    reports {
+        html.enabled = true
+        csv.enabled = true
+    }
+
+    // what to exclude from coverage report
+    // UI, "noise", generated classes, platform classes, etc.
+    def excludes = [
+            '**/R.class',
+            '**/R$*.class',
+            '**/Manifest*.*',
+            '**/*Test*.*'
+    ]
+    // generated classes
+    afterEvaluate {
+        classDirectories = project.files(classDirectories.files.collect {
+            fileTree(dir: it, excludes: excludes)
+        })
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.5
+            }
+        }
+
+        rule {
+            enabled = false
+            element = 'CLASS'
+            includes = ['org.gradle.*']
+
+            limit {
+                counter = 'LINE'
+                value = 'TOTALCOUNT'
+                maximum = 0.3
             }
         }
     }

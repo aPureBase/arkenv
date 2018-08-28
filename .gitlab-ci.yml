@@ -22,7 +22,9 @@ cache:
 
 test:
   stage: test
-  script: gradle check
+  script:
+    - gradle check
+    - bash scripts/coverage.sh
 
 build:
   stage: build
