@@ -69,3 +69,9 @@ class Mixed(args: Array<String>) : Arkenv(args) {
     val getter get() = 1
 
 }
+
+class CustomEnv : Arkenv(arrayOf()) {
+    val arg: String by argument("-a", "--arg") {
+        envVariable = "TEST"
+    }
+}
