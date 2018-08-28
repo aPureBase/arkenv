@@ -24,6 +24,7 @@ test:
   stage: test
   script:
     - gradle check
+    - chmod +x ./scripts/coverage.sh
     - ./scripts/coverage.sh
 
 build:
