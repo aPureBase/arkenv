@@ -56,3 +56,16 @@ object ObjectArgs : Arkenv(arrayOf()) {
     val optional: String? by argument(listOf("-o"))
 
 }
+
+class Mixed(args: Array<String>) : Arkenv(args) {
+    val someArg: Int by argument("-sa", "--some-arg")
+
+    val other = "val"
+
+    fun someFun() {
+
+    }
+
+    val getter get() = 1
+
+}

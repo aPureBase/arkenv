@@ -119,4 +119,11 @@ class GeneralTest {
         } shouldThrow IllegalArgumentException::class
     }
 
+    @Test fun `mixed should work`() {
+        Mixed(arrayOf("-sa", "5")).run {
+            someArg shouldEqualTo 5
+            other shouldBeEqualTo "val"
+        }
+    }
+
 }

@@ -1,4 +1,4 @@
-image: gradle:alpine
+image: registry.gitlab.com/apurebase/connect/jdk:latest
 
 stages:
   - test
@@ -23,11 +23,11 @@ cache:
 test:
   stage: test
   script:
-    - gradle check
+    - ./gradlew check --no-daemon
     - chmod +x ./scripts/coverage.sh
     - ./scripts/coverage.sh
 
 build:
   stage: build
-  script: gradle --build-cache assemble
+  script: ./gradlew --build-cache assemble --no-daemon
 
