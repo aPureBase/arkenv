@@ -126,7 +126,6 @@ class GeneralTest {
         }
     }
 
-<<<<<<< src/test/kotlin/com/apurebase/arkenv/GeneralTest.kt
     @Test fun `when env is off should not use env vars`() {
         class EnvArgs(withEnv: Boolean) : Arkenv(arrayOf(), withEnv = withEnv) {
             val arg: String by argument("-a", "--arg")
@@ -148,6 +147,4 @@ class GeneralTest {
         { arkenv.main } shouldThrow IllegalArgumentException::class
     }
 
-=======
->>>>>>> src/test/kotlin/com/apurebase/arkenv/GeneralTest.kt
 }
