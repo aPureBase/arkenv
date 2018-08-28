@@ -9,8 +9,4 @@ class MockSystem(private val envs: Map<String, String>) : MockUp<System>() {
 
     @Mock fun getenv(name: String) = envs[name]
 
-    fun tearDown() {
-        onTearDown()
-    }
-
 }
