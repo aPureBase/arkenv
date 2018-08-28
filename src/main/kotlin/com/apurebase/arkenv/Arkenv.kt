@@ -74,9 +74,15 @@ abstract class Arkenv(
         return sb.toString()
     }
 
+    /**
+     *
+     */
     fun <T : Any> argument(name: String, block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
         argument(listOf(name), false, block)
 
+    /**
+     *
+     */
     fun <T : Any> argument(
         nameOne: String,
         nameTwo: String,
@@ -84,6 +90,11 @@ abstract class Arkenv(
     ): ArgumentDelegate<T> =
         argument(listOf(nameOne, nameTwo), false, block)
 
+    /**
+     * Main argument is used for
+     *
+     * Main argument can't be passed through environment variables
+     */
     fun <T : Any> mainArgument(block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
         argument(listOf(), true, block)
 

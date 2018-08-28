@@ -1,37 +1,37 @@
-# This file is a template, and might need editing before it works on your project.
-# This is the Gradle build system for JVM applications
-# https://gradle.org/
-# https://github.com/gradle/gradle
-image: gradle:alpine
+image: registry.gitlab.com/apurebase/connect/jdk:latest
 
-# Disable the Gradle daemon for Continuous Integration servers as correctness
-# is usually a priority over speed in CI environments. Using a fresh
-# runtime for each build is more reliable since the runtime is completely
-# isolated from any previous builds.
+stages:
+  - build
+  - test
+
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
+  - chmod +x ./gradlew
+
+cache:
+  paths:
+    - build
+    - .gradle
+
+
+########
+# Jobs #
+########
 
 build:
   stage: build
-  script: gradle --build-cache assemble
-  cache:
-    key: "$CI_COMMIT_REF_NAME"
-    policy: push
+  script: ./gradlew --build-cache assemble --no-daemon
+  artifacts:
+    expire_in: '5 day'
     paths:
-      - build
-      - .gradle
-
+      - build/libs
 
 test:
   stage: test
-  script: gradle check
-  cache:
-    key: "$CI_COMMIT_REF_NAME"
-    policy: pull
-    paths:
-      - build
-      - .gradle
-
+  script:
+    - ./gradlew check --no-daemon
+    - chmod +x ./scripts/coverage.sh
+    - ./scripts/coverage.sh

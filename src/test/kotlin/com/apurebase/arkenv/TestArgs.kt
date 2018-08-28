@@ -2,14 +2,14 @@ package com.apurebase.arkenv
 
 class TestArgs(args: Array<String>) : Arkenv(args) {
 
-    val country: String by argument("-c") {
+    val country: String by argument("-c", "--country") {
         description = "Country to extract"
     }
-    val bool: Boolean by argument("-b") {
+    val bool: Boolean by argument("-b", "--execute") {
         description = "Whether to execute"
     }
 
-    val nullInt: Int? by argument("-ni") {
+    val nullInt: Int? by argument("-ni", "--null-int") {
         description = "A nullable Int, which doesn't have to be declared"
     }
 
@@ -17,6 +17,10 @@ class TestArgs(args: Array<String>) : Arkenv(args) {
         description = "This is a com.apurebase.arkenv.main arg, so no names"
     }
 
+    val description: String? by argument("-d", "--description") {
+        description = "Description"
+        envVariable = "DESC"
+    }
 }
 
 class MainArg(value: String) : Arkenv(arrayOf(value)) {
@@ -25,9 +29,9 @@ class MainArg(value: String) : Arkenv(arrayOf(value)) {
 
 class Nullable(args: Array<String>) : Arkenv(args) {
 
-    val int: Int? by argument("-i")
+    val int: Int? by argument("-i", "--int")
 
-    val str: String? by argument("-s")
+    val str: String? by argument("-s", "--str")
 
 }
 
@@ -50,5 +54,18 @@ object ObjectArgs : Arkenv(arrayOf()) {
     val int by argument<Int>("-i")
 
     val optional: String? by argument(listOf("-o"))
+
+}
+
+class Mixed(args: Array<String>) : Arkenv(args) {
+    val someArg: Int by argument("-sa", "--some-arg")
+
+    val other = "val"
+
+    fun someFun() {
+
+    }
+
+    val getter get() = 1
 
 }
