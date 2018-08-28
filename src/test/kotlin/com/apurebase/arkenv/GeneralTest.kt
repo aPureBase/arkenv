@@ -111,4 +111,12 @@ class GeneralTest {
         ObjectArgs.optional shouldBe null
     }
 
+    @Test fun `passing an empty arg list should throw`() {
+        {
+            object : Arkenv(arrayOf()) {
+                val illegal: String by argument(listOf())
+            }
+        } shouldThrow IllegalArgumentException::class
+    }
+
 }
