@@ -126,4 +126,25 @@ class GeneralTest {
         }
     }
 
+    @Test fun `when env is off should not use env vars`() {
+        class EnvArgs(withEnv: Boolean) : Arkenv(arrayOf(), withEnv = withEnv) {
+            val arg: String by argument("-a", "--arg")
+        }
+
+        MockSystem("ARG" to "test")
+
+        EnvArgs(false).run {
+            { arg } shouldThrow IllegalArgumentException::class
+        }
+        EnvArgs(true).arg shouldBeEqualTo "test"
+    }
+
+    @Test fun `null mainArg should throw`() {
+        val arkenv = object : Arkenv(arrayOf()) {
+            val main: String by mainArgument { }
+        }
+
+        { arkenv.main } shouldThrow IllegalArgumentException::class
+    }
+
 }

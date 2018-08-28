@@ -3,6 +3,7 @@ package com.apurebase.arkenv
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
 class EnvTest : ArkenvTest() {
@@ -79,6 +80,23 @@ class EnvTest : ArkenvTest() {
     @Test fun `everything and cli argument`() {
         MockSystem("DESCRIPTION" to "text", "DESC" to "SOME MORE DESC")
         TestArgs(arrayOf("-d", "main desc")).description shouldEqual "main desc"
+    }
+
+    @Test fun `custom env name should parse`() {
+        val envName = "ENV_NAME"
+        val expected = "result"
+
+        class CustomEnv(args: Array<String>) : Arkenv(args) {
+            val arg: String by argument("-a") {
+                envVariable = envName
+            }
+        }
+
+        { CustomEnv(arrayOf()).arg } shouldThrow IllegalArgumentException::class // nothing passed
+        CustomEnv(arrayOf("-a", expected)).arg shouldBeEqualTo expected // via arg
+
+        MockSystem(envName to expected)
+        CustomEnv(arrayOf()).arg shouldBeEqualTo expected // via env
     }
 
 }
