@@ -4,16 +4,50 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.full.withNullability
 
+
 class ArgumentDelegate<T : Any?>(
     private val isHelp: Boolean,
     private val args: List<String>,
-    val argument: Argument<T>,
-    private val argumentPrefix: String
+    val argument: Argument<T>
 ) {
 
     @Suppress("UNCHECKED_CAST")
     private var value: T = null as T
     private var isSet: Boolean = false
+
+
+    /**
+     * Points to the index in [parsedArgs] where [Argument.names] is placed.
+     */
+    private val index: Int? by lazy {
+        if (argument.isMainArg) parsedArgs.size - 2
+        else argument
+            .names
+            .asSequence()
+            .map(parsedArgs::indexOf)
+            .find { it >= 0 }
+    }
+
+    private val parsedArgs: List<String> by lazy {
+        val list = mutableListOf<String>()
+        var isReading = false
+        args.forEach {
+
+            if (isReading) {
+                list[list.lastIndex] = "${list.last()} $it"
+            } else {
+                list.add(it)
+            }
+
+            if (isReading && it.endsWith(allowedSurroundings)) {
+                list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
+                isReading = false
+            } else if (!isReading && it.startsWith(allowedSurroundings)) {
+                isReading = true
+            }
+        }
+        list
+    }
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         if (!isSet) {
@@ -52,14 +86,9 @@ class ArgumentDelegate<T : Any?>(
         }.firstOrNull()
     }
 
-    /** TODO: Comment what this index means and is used for. Maybe examples also */
-    private val index get() = if (argument.isMainArg) -1 else argument.names.map(args::indexOf).find { it >= 0 }
-    private val cliValue: String?
-        get() = index?.let { i ->
-            val list = args.subList(i + 1, args.size)
-            if (list.isEmpty()) null
-            else list.takeWhile { !it.startsWith(argumentPrefix) }.joinToString(" ")
-        }
+    private val cliValue: String? get() = index?.let {
+        parsedArgs.getOrNull(it+1)
+    }
 
     private fun checkNullable(property: KProperty<*>) {
         if (!isHelp && !property.returnType.isMarkedNullable && valuesAreNull()) {
@@ -80,5 +109,7 @@ class ArgumentDelegate<T : Any?>(
             else -> throw IllegalArgumentException("${property.name} (${property.returnType}) is not supported")
         }
     }
+
+    private val allowedSurroundings = listOf("'", "\"")
 
 }

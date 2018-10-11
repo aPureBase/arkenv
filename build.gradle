@@ -16,7 +16,7 @@ ext {
 }
 
 group 'com.apurebase'
-version '1.0.5'
+version '1.1.0'
 
 apply plugin: 'maven'
 apply plugin: 'maven-publish'

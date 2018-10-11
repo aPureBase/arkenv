@@ -8,8 +8,7 @@ abstract class Arkenv(
     args: Array<String>,
     val programName: String = "Arkenv",
     val withEnv: Boolean = true,
-    val envPrefix: String = "",
-    val argumentPrefix: String = "-"
+    val envPrefix: String = ""
 ) {
 
     /**
@@ -39,7 +38,7 @@ abstract class Arkenv(
                 it.isMainArg = isMainArg
             }.apply(block)
             val isHelp = if (argumentConfig.isHelp) false else help
-            ArgumentDelegate(isHelp, argList, argumentConfig, argumentPrefix)
+            ArgumentDelegate(isHelp, argList, argumentConfig)
         }
     }
 
@@ -74,24 +73,14 @@ abstract class Arkenv(
         return sb.toString()
     }
 
-    /**
-     *
-     */
-    fun <T : Any> argument(name: String, block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
-        argument(listOf(name), false, block)
-
-    /**
-     *
-     */
     fun <T : Any> argument(
-        nameOne: String,
-        nameTwo: String,
+        vararg names: String,
         block: Argument<T>.() -> Unit = {}
-    ): ArgumentDelegate<T> =
-        argument(listOf(nameOne, nameTwo), false, block)
+    ): ArgumentDelegate<T> = argument(names.toList(), false, block)
 
     /**
-     * Main argument is used for
+     * Main argument is used for the last argument,
+     * which doesn't have a named property to it
      *
      * Main argument can't be passed through environment variables
      */

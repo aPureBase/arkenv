@@ -64,7 +64,7 @@ class GeneralTest {
         val second = "second"
         val expected = "$first $second"
 
-        class A : Arkenv(arrayOf("-s", first, second, "-o")) {
+        class A : Arkenv(arrayOf("-s", "\"$first", "$second\"", "-o")) {
             val spaceArg by argument<String>("-s")
             val other by argument<Boolean>("-o")
         }
