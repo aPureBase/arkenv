@@ -1,38 +1,37 @@
 buildscript {
+    ext {
+        junit_version = '5.3.0-M1'
+    }
+
     repositories {
         jcenter()
+    }
+
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
+        classpath 'com.github.dcendents:android-maven-plugin:1.2'
     }
 }
 
 plugins {
     id "org.jetbrains.kotlin.jvm" version "1.2.60"
     id "com.github.ben-manes.versions" version "0.20.0"
-//    id "com.jfrog.bintray" version "1.8.4"
+    id "com.jfrog.bintray" version "1.8.4"
     id "io.gitlab.arturbosch.detekt" version "1.0.0.RC8"
 }
 
-ext {
-    junit_version = '5.3.0-M1'
-}
 
+version '1.1.1'
 group 'com.apurebase'
-version '1.1.0'
 
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
 apply plugin: 'java'
 apply plugin: 'jacoco'
-//apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
 
 repositories {
     jcenter()
-    maven {
-        url privateMavenReadUrl
-        credentials {
-            username 'myMavenRepo'
-            password privateMavenPassword
-        }
-    }
 }
 
 dependencies {
@@ -84,26 +83,38 @@ artifacts {
     archives sourcesJar
 }
 
-publishing {
-    repositories {
-        maven {
-            url privateMavenWriteUrl
-            credentials {
-                username 'myMavenRepo'
-                password privateMavenPassword
-            }
-        }
-        publications {
-            maven(MavenPublication) {
-                artifactId project.getName()
-                from components.java
 
-                artifact sourcesJar {
-                    classifier "sources"
-                }
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    publish = true
+    publications = ['MyPublication']
+    configurations = ['archives']
+    pkg {
+        repo = 'apurebase'
+        name = 'arkenv'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'git@gitlab.com:apurebase/arkenv.git'
+        websiteUrl = 'https://gitlab.com/apurebase/arkenv'
+        issueTrackerUrl = 'https://gitlab.com/apurebase/arkenv/issues'
+        version {
+            name = project.version
+            released = new Date()
+        }
+    }
+
+    publishing {
+        publications {
+            MyPublication(MavenPublication) {
+                from components.java
+                groupId 'com.apurebase'
+                artifactId 'arkenv'
+                artifact sourcesJar
+                version version
             }
         }
     }
+
 }
 
 check.dependsOn jacocoTestReport
@@ -161,34 +172,3 @@ jacocoTestCoverageVerification {
         }
     }
 }
-
-//bintray {
-//    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-//    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-//    publish = true
-//    publications = ['MyPublication']
-//    configurations = ['archives']
-//    pkg {
-//        repo = 'arkenv'
-//        name = 'arkenv'
-//        userOrg = user
-//        licenses = ['Apache-2.0']
-//        vcsUrl = "https://gitlab.com/apurebase/arkenv.git"
-//        version {
-//            name = project.version
-//            released = new Date()
-//        }
-//    }
-//
-//    publishing {
-//        publications {
-//            MyPublication(MavenPublication) {
-//                from components.java
-//                groupId 'com.apurebase'
-//                artifactId 'arkenv'
-//                artifact sourcesJar
-//                version version
-//            }
-//        }
-//    }
-//}
