@@ -7,11 +7,9 @@ import org.junit.jupiter.api.Test
 class ArkTest : ArkenvTest() {
 
     @Test fun `parse from cli`() {
-        val expectedCountry = "se"
-        val expectedMainString = "important arg"
-        TestArgs(arrayOf(expectedMainString, "-c", expectedCountry, "-b")).run {
-            mainString shouldBeEqualTo expectedMainString
-            country shouldBeEqualTo expectedCountry
+        TestArgs(arrayOf("-c", "se", "-b", "\"important", "arg\"")).run {
+            mainString shouldBeEqualTo "important arg"
+            country shouldBeEqualTo "se"
             bool shouldBe true
             nullInt shouldBe null
         }
