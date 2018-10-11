@@ -1,6 +1,10 @@
 # Arkenv
 Kotlin Cli & Env argument parser. 
 
+## Installation
+
+It's in the process of getting into [jcenter](https://bintray.com/bintray/jcenter). While waiting it's available here: https://bintray.com/apurebase/apurebase/arkenv/
+
 ### Usage
 ```kotlin
 class Arguments(args: Array<String>) : Arkenv(args) {
