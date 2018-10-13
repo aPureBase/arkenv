@@ -8,7 +8,7 @@ Kotlin Cli & Env argument parser.
 
 - [Usage](#usage)
 - [Installation](#installation)
-  - [Gradle](#gralde)
+  - [Gradle](#gradle)
 
 ### Usage
 ```kotlin
