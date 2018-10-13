@@ -6,9 +6,9 @@
 # Arkenv
 Kotlin Cli & Env argument parser. 
 
-## Installation
-
-It's in the process of getting into [jcenter](https://bintray.com/bintray/jcenter). While waiting it's available here: https://bintray.com/apurebase/apurebase/arkenv/
+- [Usage](#usage)
+- [Installation](#installation)
+  - [Gradle](#gralde)
 
 ### Usage
 ```kotlin
@@ -59,3 +59,19 @@ val description: String by argument("--description") {
 ```
 You can now use either `DESCRIPTION` or `DESC` to set the argument via environment variables.
 
+
+## Installation
+
+#### Gradle
+
+```gradle
+repositories {
+    jcenter()
+    ...
+}
+
+dependencies {
+    compile "com.apurebase:arkenv:$arkenv_version"
+    ...
+}
+```
