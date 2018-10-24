@@ -13,7 +13,7 @@ class ArgumentDelegate<T : Any?>(
 ) : ReadOnlyProperty<Any?, T> {
 
     @Suppress("UNCHECKED_CAST")
-    var value: T = null as T
+    private var value: T = null as T
     private var isSet: Boolean = false
 
     /**
