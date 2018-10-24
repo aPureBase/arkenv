@@ -1,9 +1,5 @@
 package com.apurebase.arkenv
 
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaField
-
 abstract class Arkenv(
     args: Array<String>,
     val programName: String = "Arkenv",
@@ -20,6 +16,7 @@ abstract class Arkenv(
     }
 
     private val argList = args.toMutableList()
+    private val delegates = mutableListOf<ArgumentDelegate<*>>()
 
     open val help: Boolean by argument("-h", "--help") {
         isHelp = true
@@ -29,54 +26,36 @@ abstract class Arkenv(
         names: List<String>,
         isMainArg: Boolean = false,
         block: Argument<T>.() -> Unit = {}
-    ): ArgumentDelegate<T> = when {
-        names.isEmpty() && !isMainArg -> throw IllegalArgumentException("No argument names provided")
-        else -> {
-            val argumentConfig = Argument<T>(names).also {
-                it.withEnv = withEnv
-                it.envPrefix = envPrefix
-                it.isMainArg = isMainArg
-            }.apply(block)
-            val isHelp = if (argumentConfig.isHelp) false else help
-            ArgumentDelegate(isHelp, argList, argumentConfig)
-        }
-    }
+    ) = ArkenvLoader(
+        names, isMainArg, block, withEnv, envPrefix, argList,
+        false, // TODO cannot pass [help] currently
+        delegates
+    )
 
     override fun toString(): String {
         val sb = StringBuilder()
         val indent = "    "
         sb.append("$programName: \n")
-        this::class.declaredMemberProperties
-            .filter { it.javaField != null }
-            .filter { ArgumentDelegate::class.java.isAssignableFrom(it.javaField!!.type) }
-            .map { prop ->
-                val javaField = prop.javaField!!
-                prop.isAccessible = true
-                @Suppress("UNCHECKED_CAST")
-                val delegateInstance = javaField.get(this) as ArgumentDelegate<*>
-                prop to delegateInstance
-            }
-            .forEach { (prop, delegate) ->
-                sb
-                    .append(indent)
-                    .append(delegate.argument.names)
-                    .append(indent, 2)
-                    .append(delegate.argument.description)
-                    .appendln()
-                    .append(indent, 2)
-                    .append(prop.name)
-                    .append(indent, 2)
-                    .append(delegate.getValue(this, prop))
-                    .appendln()
-            }
-
+        delegates.forEach { delegate ->
+            sb
+                .append(indent)
+                .append(delegate.argument.names)
+                .append(indent, 2)
+                .append(delegate.argument.description)
+                .appendln()
+                .append(indent, 2)
+                .append(delegate.property.name)
+                .append(indent, 2)
+                .append(delegate.getValue(this, delegate.property))
+                .appendln()
+        }
         return sb.toString()
     }
 
     fun <T : Any> argument(
         vararg names: String,
         block: Argument<T>.() -> Unit = {}
-    ): ArgumentDelegate<T> = argument(names.toList(), false, block)
+    ): ArkenvLoader<T> = argument(names.toList(), false, block)
 
     /**
      * Main argument is used for the last argument,
@@ -84,7 +63,7 @@ abstract class Arkenv(
      *
      * Main argument can't be passed through environment variables
      */
-    fun <T : Any> mainArgument(block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
+    fun <T : Any> mainArgument(block: Argument<T>.() -> Unit = {}): ArkenvLoader<T> =
         argument(listOf(), true, block)
 
     private fun StringBuilder.append(value: String, times: Int): StringBuilder = apply {

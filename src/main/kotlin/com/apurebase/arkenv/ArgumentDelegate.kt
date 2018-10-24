@@ -1,20 +1,20 @@
 package com.apurebase.arkenv
 
+import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.full.withNullability
 
-
 class ArgumentDelegate<T : Any?>(
     private val isHelp: Boolean,
-    private val args: List<String>,
-    val argument: Argument<T>
-) {
+    private val args: MutableList<String>,
+    val argument: Argument<T>,
+    val property: KProperty<*>
+) : ReadOnlyProperty<Any?, T> {
 
     @Suppress("UNCHECKED_CAST")
-    private var value: T = null as T
+    var value: T = null as T
     private var isSet: Boolean = false
-
 
     /**
      * Points to the index in [parsedArgs] where [Argument.names] is placed.
@@ -49,7 +49,7 @@ class ArgumentDelegate<T : Any?>(
         list
     }
 
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
+    override operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         if (!isSet) {
             value = setValue(property)
             checkNullable(property)
@@ -86,9 +86,10 @@ class ArgumentDelegate<T : Any?>(
         }.firstOrNull()
     }
 
-    private val cliValue: String? get() = index?.let {
-        parsedArgs.getOrNull(it+1)
-    }
+    private val cliValue: String?
+        get() = index?.let {
+            parsedArgs.getOrNull(it + 1)
+        }
 
     private fun checkNullable(property: KProperty<*>) {
         if (!isHelp && !property.returnType.isMarkedNullable && valuesAreNull()) {

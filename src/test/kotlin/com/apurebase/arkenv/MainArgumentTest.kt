@@ -1,6 +1,7 @@
 package com.apurebase.arkenv
 
 import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
 internal class MainArgumentTest {
@@ -15,5 +16,11 @@ internal class MainArgumentTest {
         val args = Arkuments(arrayOf("-e", "import", "abc"))
         args.main shouldEqual "abc"
         args.extra shouldEqual "import"
+    }
+
+    @Test
+    fun `no main argument passed`() {
+        { Arkuments(arrayOf()).main } shouldThrow Exception::class
+        { Arkuments(arrayOf("-e", "import")).main } shouldThrow Exception::class
     }
 }
