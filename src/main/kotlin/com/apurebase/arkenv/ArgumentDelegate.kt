@@ -5,7 +5,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.starProjectedType
 import kotlin.reflect.full.withNullability
 
-class ArgumentDelegate<T : Any?>(
+internal class ArgumentDelegate<T : Any?>(
     private val isHelp: Boolean,
     private val args: MutableList<String>,
     val argument: Argument<T>,

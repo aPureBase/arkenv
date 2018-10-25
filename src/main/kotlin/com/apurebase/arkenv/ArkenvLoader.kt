@@ -3,7 +3,7 @@ package com.apurebase.arkenv
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class ArkenvLoader<T : Any>(
+class ArkenvLoader<T : Any> internal constructor(
     private val names: List<String>,
     private val isMainArg: Boolean = false,
     private val block: Argument<T>.() -> Unit = {},
