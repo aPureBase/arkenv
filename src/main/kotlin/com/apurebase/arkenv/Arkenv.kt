@@ -18,19 +18,16 @@ abstract class Arkenv(
     private val argList = args.toMutableList()
     private val delegates = mutableListOf<ArgumentDelegate<*>>()
 
-    open val help: Boolean by argument("-h", "--help") {
-        isHelp = true
-    }
+    open val help: Boolean by ArkenvLoader(
+        listOf("-h", "--help"), false, { isHelp = true },
+        withEnv, envPrefix, argList, false, delegates
+    )
 
     fun <T : Any> argument(
         names: List<String>,
         isMainArg: Boolean = false,
         block: Argument<T>.() -> Unit = {}
-    ) = ArkenvLoader(
-        names, isMainArg, block, withEnv, envPrefix, argList,
-        false, // TODO cannot pass [help] currently
-        delegates
-    )
+    ) = ArkenvLoader(names, isMainArg, block, withEnv, envPrefix, argList, help, delegates)
 
     override fun toString(): String {
         val sb = StringBuilder()
