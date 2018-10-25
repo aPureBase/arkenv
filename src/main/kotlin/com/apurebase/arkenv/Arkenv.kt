@@ -15,22 +15,21 @@ abstract class Arkenv(
         argList.addAll(args)
     }
 
-    private val argList = args.toMutableList()
-    private val delegates = mutableListOf<ArgumentDelegate<*>>()
+    val argList = args.toMutableList()
+    val delegates = mutableListOf<ArgumentDelegate<*>>()
 
     open val help: Boolean by ArkenvLoader(
         listOf("-h", "--help"), false, { isHelp = true },
-        withEnv, envPrefix, argList, false, delegates
+        withEnv, envPrefix, argList, false, delegates, Boolean::class
     )
 
-    fun <T : Any> argument(
+    inline fun <reified T : Any> argument(
         names: List<String>,
         isMainArg: Boolean = false,
-        block: Argument<T>.() -> Unit = {}
-    ) = ArkenvLoader(names, isMainArg, block, withEnv, envPrefix, argList, help, delegates)
+        noinline block: Argument<T>.() -> Unit = {}
+    ) = ArkenvLoader(names, isMainArg, block, withEnv, envPrefix, argList, help, delegates, T::class)
 
-    override fun toString(): String {
-        val sb = StringBuilder()
+    override fun toString(): String = StringBuilder().let { sb ->
         val indent = "    "
         sb.append("$programName: \n")
         delegates.forEach { delegate ->
@@ -46,13 +45,7 @@ abstract class Arkenv(
                 .append(delegate.getValue(this, delegate.property))
                 .appendln()
         }
-        return sb.toString()
-    }
-
-    fun <T : Any> argument(
-        vararg names: String,
-        block: Argument<T>.() -> Unit = {}
-    ): ArkenvLoader<T> = argument(names.toList(), false, block)
+    }.toString()
 
     /**
      * Main argument is used for the last argument,
@@ -60,11 +53,15 @@ abstract class Arkenv(
      *
      * Main argument can't be passed through environment variables
      */
-    fun <T : Any> mainArgument(block: Argument<T>.() -> Unit = {}): ArkenvLoader<T> =
+    inline fun <reified T : Any> mainArgument(noinline block: Argument<T>.() -> Unit = {}): ArkenvLoader<T> =
         argument(listOf(), true, block)
+
+    inline fun <reified T : Any> argument(
+        vararg names: String,
+        noinline block: Argument<T>.() -> Unit = {}
+    ): ArkenvLoader<T> = argument(names.toList(), false, block)
 
     private fun StringBuilder.append(value: String, times: Int): StringBuilder = apply {
         repeat(times) { append(value) }
     }
-
 }

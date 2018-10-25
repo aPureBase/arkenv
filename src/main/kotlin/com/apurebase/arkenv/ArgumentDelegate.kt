@@ -2,14 +2,14 @@ package com.apurebase.arkenv
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.starProjectedType
-import kotlin.reflect.full.withNullability
 
-internal class ArgumentDelegate<T : Any?>(
+class ArgumentDelegate<T : Any?>(
     private val isHelp: Boolean,
     private val args: MutableList<String>,
     val argument: Argument<T>,
-    val property: KProperty<*>
+    val property: KProperty<*>,
+    private val isBoolean: Boolean,
+    private val mapping: (String) -> T
 ) : ReadOnlyProperty<Any?, T> {
 
     @Suppress("UNCHECKED_CAST")
@@ -60,14 +60,13 @@ internal class ArgumentDelegate<T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
-        val type = property.returnType
         val envVal = if (argument.withEnv) getEnvValue() else null
         return when {
-            type == Boolean::class.starProjectedType -> (index != null || envVal != null) as T
+            isBoolean -> (index != null || envVal != null) as T
             envVal == null && cliValue == null -> argument.defaultValue
             else -> {
                 val rawValue = cliValue ?: envVal!!
-                mapType(rawValue, property)
+                mapping(rawValue)
             }
         }
     }
@@ -91,6 +90,7 @@ internal class ArgumentDelegate<T : Any?>(
             parsedArgs.getOrNull(it + 1)
         }
 
+    @Suppress("NO_REFLECTION_IN_CLASS_PATH")
     private fun checkNullable(property: KProperty<*>) {
         if (!isHelp && !property.returnType.isMarkedNullable && valuesAreNull()) {
             val nameInfo = if (argument.isMainArg) "Main argument" else argument.names.joinToString()
@@ -99,17 +99,6 @@ internal class ArgumentDelegate<T : Any?>(
     }
 
     private fun valuesAreNull(): Boolean = value == null && argument.defaultValue == null
-
-    private fun mapType(value: String, property: KProperty<*>): T {
-        argument.mapping?.let { return it(value) }
-        @Suppress("UNCHECKED_CAST")
-        return when (property.returnType.withNullability(false)) {
-            Int::class.starProjectedType -> value.toIntOrNull() as T
-            Long::class.starProjectedType -> value.toLongOrNull() as T
-            String::class.starProjectedType -> value as T
-            else -> throw IllegalArgumentException("${property.name} (${property.returnType}) is not supported")
-        }
-    }
 
     private val allowedSurroundings = listOf("'", "\"")
 

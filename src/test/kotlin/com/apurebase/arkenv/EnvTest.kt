@@ -9,14 +9,13 @@ import org.junit.jupiter.api.Test
 class EnvTest : ArkenvTest() {
 
     @Test fun `parse from env`() {
-        val expectedMainString = "important com.apurebase.arkenv.main value"
+        val expectedMainString = "important main value"
         MockSystem(
             "COUNTRY" to "dk",
             "EXECUTE" to ""
         )
 
         TestArgs(arrayOf(expectedMainString)).let {
-            println(it)
             it.help shouldBe false
             it.bool shouldBe true
             it.country shouldBeEqualTo "dk"
