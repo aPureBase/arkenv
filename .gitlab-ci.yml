@@ -1,4 +1,4 @@
-image: registry.gitlab.com/apurebase/connect/jdk:latest
+image: adoptopenjdk/openjdk8-openj9
 
 stages:
   - build
