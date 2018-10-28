@@ -5,7 +5,7 @@ import kotlin.reflect.KProperty
 
 class ArgumentDelegate<T : Any?>(
     private val isHelp: Boolean,
-    private val args: MutableList<String>,
+    private val args: Collection<String>,
     val argument: Argument<T>,
     val property: KProperty<*>,
     private val isBoolean: Boolean,
@@ -19,7 +19,7 @@ class ArgumentDelegate<T : Any?>(
     /**
      * Points to the index in [parsedArgs] where [Argument.names] is placed.
      */
-    private val index: Int? by lazy {
+    val index: Int? by lazy {
         if (argument.isMainArg) parsedArgs.size - 2
         else argument
             .names
@@ -28,7 +28,7 @@ class ArgumentDelegate<T : Any?>(
             .find { it >= 0 }
     }
 
-    private val parsedArgs: List<String> by lazy {
+    val parsedArgs: List<String> by lazy {
         val list = mutableListOf<String>()
         var isReading = false
         args.forEach {

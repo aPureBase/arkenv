@@ -1,5 +1,6 @@
 package com.apurebase.arkenv
 
+import java.util.*
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -12,7 +13,7 @@ class ArkenvLoader<T : Any> constructor(
     private val envPrefix: String,
     private val argList: MutableList<String>,
     private val help: Boolean,
-    private val delegates: MutableList<ArgumentDelegate<*>>,
+    private val delegates: MutableCollection<ArgumentDelegate<*>>,
     private val kClass: KClass<T>
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, T> = when {

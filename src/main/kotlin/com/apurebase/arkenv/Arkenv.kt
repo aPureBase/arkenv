@@ -1,21 +1,23 @@
 package com.apurebase.arkenv
 
 abstract class Arkenv(
-    args: Array<String>,
     val programName: String = "Arkenv",
     val withEnv: Boolean = true,
     val envPrefix: String = ""
 ) {
 
-    /**
-     * Manually parse the arguments, clearing all previously set ones
-     */
-    fun parse(args: Array<String>) {
+    fun parseArguments(args: Array<String>) {
         argList.clear()
         argList.addAll(args)
+        delegates
+            .sortedBy { it.argument.isMainArg }
+            .forEach {
+                println(it.property.name)
+                it.getValue()
+            }
     }
 
-    val argList = args.toMutableList()
+    val argList = mutableListOf<String>()
     val delegates = mutableListOf<ArgumentDelegate<*>>()
 
     open val help: Boolean by ArkenvLoader(
@@ -42,7 +44,7 @@ abstract class Arkenv(
                 .append(indent, 2)
                 .append(delegate.property.name)
                 .append(indent, 2)
-                .append(delegate.getValue(this, delegate.property))
+                .append(delegate.getValue())
                 .appendln()
         }
     }.toString()
@@ -60,6 +62,12 @@ abstract class Arkenv(
         vararg names: String,
         noinline block: Argument<T>.() -> Unit = {}
     ): ArkenvLoader<T> = argument(names.toList(), false, block)
+
+    private fun ArgumentDelegate<*>.getValue(): Any? = getValue(this, property).also { value ->
+        index?.let {
+            parsedArgs.forEach { argList.remove(it) }
+        }
+    }
 
     private fun StringBuilder.append(value: String, times: Int): StringBuilder = apply {
         repeat(times) { append(value) }

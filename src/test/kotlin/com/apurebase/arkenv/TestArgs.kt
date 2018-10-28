@@ -1,6 +1,6 @@
 package com.apurebase.arkenv
 
-class TestArgs(args: Array<String>) : Arkenv(args) {
+class TestArgs : Arkenv() {
 
     val country: String by argument("-c", "--country") {
         description = "Country to extract"
@@ -23,11 +23,11 @@ class TestArgs(args: Array<String>) : Arkenv(args) {
     }
 }
 
-class MainArg(value: String) : Arkenv(arrayOf(value)) {
+class MainArg : Arkenv() {
     val mainArg by mainArgument<String>()
 }
 
-class Nullable(args: Array<String>) : Arkenv(args) {
+class Nullable : Arkenv() {
 
     val int: Int? by argument("-i", "--int")
 
@@ -35,7 +35,7 @@ class Nullable(args: Array<String>) : Arkenv(args) {
 
 }
 
-class Arkuments(args: Array<String>) : Arkenv(args) {
+class Arkuments : Arkenv() {
 
     val configPath: String by argument("-c", "--config") {
         description = "The path to your config.yml"
@@ -49,7 +49,7 @@ class Arkuments(args: Array<String>) : Arkenv(args) {
 
 }
 
-object ObjectArgs : Arkenv(arrayOf()) {
+object ObjectArgs : Arkenv() {
 
     val int by argument<Int>("-i")
 
@@ -57,7 +57,7 @@ object ObjectArgs : Arkenv(arrayOf()) {
 
 }
 
-class Mixed(args: Array<String>) : Arkenv(args) {
+class Mixed : Arkenv() {
     val someArg: Int by argument("-sa", "--some-arg")
 
     val other = "val"
@@ -70,7 +70,7 @@ class Mixed(args: Array<String>) : Arkenv(args) {
 
 }
 
-class CustomEnv : Arkenv(arrayOf()) {
+class CustomEnv : Arkenv() {
     val arg: String by argument("-a", "--arg") {
         envVariable = "TEST"
     }
