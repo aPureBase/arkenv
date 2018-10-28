@@ -8,7 +8,7 @@ class ArgumentDelegate<T : Any?>(
     private val args: Collection<String>,
     val argument: Argument<T>,
     val property: KProperty<*>,
-    private val isBoolean: Boolean,
+    val isBoolean: Boolean,
     private val mapping: (String) -> T
 ) : ReadOnlyProperty<Any?, T> {
 

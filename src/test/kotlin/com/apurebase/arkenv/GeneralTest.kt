@@ -12,15 +12,12 @@ class GeneralTest {
             }
         }
 
-        HelpArgs().parse(arrayOf("-h")).let {
-            println(it)
-        }
+        HelpArgs().parse(arrayOf("-h")).let(::println)
 
         HelpArgs().let {
-            { it.required } shouldThrow IllegalArgumentException::class
+            it::required shouldThrow IllegalArgumentException::class
         }
     }
-
 
     @Test fun `main arg should be the first value`() {
         val expected = "this_is_the_value"
@@ -54,8 +51,7 @@ class GeneralTest {
             val custom by mainArgument<CustomArg>()
         }
 
-        val func = { CustomArg().custom }
-        func shouldThrow IllegalArgumentException::class
+        CustomArg()::custom shouldThrow IllegalArgumentException::class
     }
 
     @Test fun `value should accept spaces until next delimiter`() {
@@ -132,8 +128,8 @@ class GeneralTest {
 
         MockSystem("ARG" to "test")
 
-        EnvArgs(false).run {
-            { arg } shouldThrow IllegalArgumentException::class
+        EnvArgs(false).let {
+            it::arg shouldThrow IllegalArgumentException::class
         }
         EnvArgs(true).arg shouldBeEqualTo "test"
     }
@@ -143,7 +139,6 @@ class GeneralTest {
             val main: String by mainArgument { }
         }
 
-        { arkenv.main } shouldThrow IllegalArgumentException::class
+        arkenv::main shouldThrow IllegalArgumentException::class
     }
-
 }

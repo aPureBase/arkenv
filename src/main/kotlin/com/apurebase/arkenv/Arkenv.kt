@@ -12,7 +12,7 @@ abstract class Arkenv(
         delegates
             .sortedBy { it.argument.isMainArg }
             .forEach {
-                println(it.property.name)
+                println("${it.property.name} - $argList")
                 it.getValue()
             }
     }
@@ -65,7 +65,9 @@ abstract class Arkenv(
 
     private fun ArgumentDelegate<*>.getValue(): Any? = getValue(this, property).also { value ->
         index?.let {
-            parsedArgs.forEach { argList.remove(it) }
+            println("${property.name} $parsedArgs")
+            if (it > -1) argList.removeAt(it)
+            if (!isBoolean && value != null) argList.remove(value)
         }
     }
 

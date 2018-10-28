@@ -77,8 +77,9 @@ class EnvTest : ArkenvTest() {
     }
 
     @Test fun `everything and cli argument`() {
+        val expected = "main desc"
         MockSystem("DESCRIPTION" to "text", "DESC" to "SOME MORE DESC")
-        TestArgs().parse(arrayOf("-d", "main desc")).description shouldEqual "main desc"
+        TestArgs().parse(arrayOf("-d", expected, "-c", "dk", "main")).description shouldEqual expected
     }
 
     @Test fun `custom env name should parse`() {
