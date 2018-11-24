@@ -1,6 +1,7 @@
 package com.apurebase.arkenv
 
 import org.amshove.kluent.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class GeneralTest {
@@ -17,6 +18,18 @@ class GeneralTest {
         HelpArgs().let {
             it::required shouldThrow IllegalArgumentException::class
         }
+    }
+
+    @Disabled("TODO") @Test fun `custom help should parse`() {
+        class CustomHelp: Arkenv() {
+            //override val help: Boolean by argument("-ca")
+            val nullProp: Int by argument("-np")
+        }
+        CustomHelp().parse(arrayOf("-ca")).also(::println)
+    }
+
+    @Test fun `repeatedly accessing a prop should not throw`() {
+        Arkuments().parse(arrayOf("-c", "some")).also(::println).configPath.substring(1)
     }
 
     @Test fun `main arg should be the first value`() {
@@ -39,7 +52,7 @@ class GeneralTest {
 
         class CustomArg : Arkenv() {
             val list by mainArgument<List<Int>> {
-                mapping = { it.split(",").map { it.toInt() } }
+                mapping = { it.split(",").map(String::toInt) }
             }
         }
 

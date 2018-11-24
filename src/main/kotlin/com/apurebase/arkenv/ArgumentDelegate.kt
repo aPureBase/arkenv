@@ -4,8 +4,7 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
 class ArgumentDelegate<T : Any?>(
-    private val isHelp: Boolean,
-    private val args: Collection<String>,
+    private val arkenv: Arkenv,
     val argument: Argument<T>,
     val property: KProperty<*>,
     val isBoolean: Boolean,
@@ -14,7 +13,8 @@ class ArgumentDelegate<T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     private var value: T = null as T
-    private var isSet: Boolean = false
+    var isSet: Boolean = false
+        private set
 
     /**
      * Points to the index in [parsedArgs] where [Argument.names] is placed.
@@ -31,7 +31,7 @@ class ArgumentDelegate<T : Any?>(
     val parsedArgs: List<String> by lazy {
         val list = mutableListOf<String>()
         var isReading = false
-        args.forEach {
+        arkenv.argList.forEach {
 
             if (isReading) {
                 list[list.lastIndex] = "${list.last()} $it"
@@ -72,6 +72,7 @@ class ArgumentDelegate<T : Any?>(
     }
 
     private fun getEnvValue(): String? {
+        println("a")
         // If an envVariable is defined we'll pick this as highest order value
         if (argument.envVariable != null) {
             val definedEnvValue = System.getenv(argument.envVariable)
@@ -80,8 +81,9 @@ class ArgumentDelegate<T : Any?>(
 
         // Loop over all argument names and pick the first one that matches
         return argument.names.mapNotNull {
-            if (it.startsWith("--")) System.getenv(argument.envPrefix + it.toSnakeCase())
-            else null
+            if (it.startsWith("--")) {
+                System.getenv(argument.envPrefix + it.toSnakeCase())
+            } else null
         }.firstOrNull()
     }
 
@@ -92,14 +94,14 @@ class ArgumentDelegate<T : Any?>(
 
     @Suppress("NO_REFLECTION_IN_CLASS_PATH")
     private fun checkNullable(property: KProperty<*>) {
-        if (!isHelp && !property.returnType.isMarkedNullable && valuesAreNull()) {
+        if (argument.isHelp) return
+        if (!arkenv.isHelp() && !property.returnType.isMarkedNullable && valuesAreNull()) {
             val nameInfo = if (argument.isMainArg) "Main argument" else argument.names.joinToString()
             throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
         }
     }
 
-    private fun valuesAreNull(): Boolean = value == null && argument.defaultValue == null
-
     private val allowedSurroundings = listOf("'", "\"")
 
+    private fun valuesAreNull(): Boolean = value == null && argument.defaultValue == null
 }

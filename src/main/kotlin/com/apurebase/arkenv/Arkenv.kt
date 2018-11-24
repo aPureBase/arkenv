@@ -13,23 +13,22 @@ abstract class Arkenv(
             .sortedBy { it.argument.isMainArg }
             .forEach {
                 println("${it.property.name} - $argList")
-                it.getValue()
+                it.getValue(isParse = true)
             }
     }
 
     val argList = mutableListOf<String>()
     val delegates = mutableListOf<ArgumentDelegate<*>>()
 
-    open val help: Boolean by ArkenvLoader(
-        listOf("-h", "--help"), false, { isHelp = true },
-        withEnv, envPrefix, argList, false, delegates, Boolean::class
-    )
+    val help: Boolean by ArkenvLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
 
     inline fun <reified T : Any> argument(
         names: List<String>,
         isMainArg: Boolean = false,
         noinline block: Argument<T>.() -> Unit = {}
-    ) = ArkenvLoader(names, isMainArg, block, withEnv, envPrefix, argList, help, delegates, T::class)
+    ) = ArkenvLoader(names, isMainArg, block, T::class, this)
+
+    fun isHelp(): Boolean = if (argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet) false else help
 
     override fun toString(): String = StringBuilder().let { sb ->
         val indent = "    "
@@ -44,7 +43,7 @@ abstract class Arkenv(
                 .append(indent, 2)
                 .append(delegate.property.name)
                 .append(indent, 2)
-                .append(delegate.getValue())
+                .append(delegate.getValue(isParse = false))
                 .appendln()
         }
     }.toString()
@@ -63,12 +62,14 @@ abstract class Arkenv(
         noinline block: Argument<T>.() -> Unit = {}
     ): ArkenvLoader<T> = argument(names.toList(), false, block)
 
-    private fun ArgumentDelegate<*>.getValue(): Any? = getValue(this, property).also { value ->
-        index?.let {
+    private fun ArgumentDelegate<*>.getValue(isParse: Boolean): Any? {
+        val value = getValue(this, property)
+        if (isParse) index?.let {
             println("${property.name} $parsedArgs")
             if (it > -1) argList.removeAt(it)
             if (!isBoolean && value != null) argList.remove(value)
         }
+        return value
     }
 
     private fun StringBuilder.append(value: String, times: Int): StringBuilder = apply {
