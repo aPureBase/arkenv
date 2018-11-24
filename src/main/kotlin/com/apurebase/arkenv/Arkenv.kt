@@ -1,82 +1,50 @@
 package com.apurebase.arkenv
 
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.isAccessible
-import kotlin.reflect.jvm.javaField
-
 abstract class Arkenv(
-    args: Array<String>,
     val programName: String = "Arkenv",
     val withEnv: Boolean = true,
     val envPrefix: String = ""
 ) {
 
-    /**
-     * Manually parse the arguments, clearing all previously set ones
-     */
-    fun parse(args: Array<String>) {
+    fun parseArguments(args: Array<String>) {
         argList.clear()
         argList.addAll(args)
+        delegates
+            .sortedBy { it.argument.isMainArg }
+            .forEach { it.getValue(isParse = true) }
     }
 
-    private val argList = args.toMutableList()
+    val argList = mutableListOf<String>()
+    val delegates = mutableListOf<ArgumentDelegate<*>>()
 
-    open val help: Boolean by argument("-h", "--help") {
-        isHelp = true
-    }
+    val help: Boolean by ArkenvLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
 
-    fun <T : Any> argument(
+    inline fun <reified T : Any> argument(
         names: List<String>,
         isMainArg: Boolean = false,
-        block: Argument<T>.() -> Unit = {}
-    ): ArgumentDelegate<T> = when {
-        names.isEmpty() && !isMainArg -> throw IllegalArgumentException("No argument names provided")
-        else -> {
-            val argumentConfig = Argument<T>(names).also {
-                it.withEnv = withEnv
-                it.envPrefix = envPrefix
-                it.isMainArg = isMainArg
-            }.apply(block)
-            val isHelp = if (argumentConfig.isHelp) false else help
-            ArgumentDelegate(isHelp, argList, argumentConfig)
-        }
-    }
+        noinline block: Argument<T>.() -> Unit = {}
+    ) = ArkenvLoader(names, isMainArg, block, T::class, this)
 
-    override fun toString(): String {
-        val sb = StringBuilder()
+    fun isHelp(): Boolean = if (argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet) false else help
+
+    override fun toString(): String = StringBuilder().let { sb ->
         val indent = "    "
+        val doubleIndent = indent + indent
         sb.append("$programName: \n")
-        this::class.declaredMemberProperties
-            .filter { it.javaField != null }
-            .filter { ArgumentDelegate::class.java.isAssignableFrom(it.javaField!!.type) }
-            .map { prop ->
-                val javaField = prop.javaField!!
-                prop.isAccessible = true
-                @Suppress("UNCHECKED_CAST")
-                val delegateInstance = javaField.get(this) as ArgumentDelegate<*>
-                prop to delegateInstance
-            }
-            .forEach { (prop, delegate) ->
-                sb
-                    .append(indent)
-                    .append(delegate.argument.names)
-                    .append(indent, 2)
-                    .append(delegate.argument.description)
-                    .appendln()
-                    .append(indent, 2)
-                    .append(prop.name)
-                    .append(indent, 2)
-                    .append(delegate.getValue(this, prop))
-                    .appendln()
-            }
-
-        return sb.toString()
-    }
-
-    fun <T : Any> argument(
-        vararg names: String,
-        block: Argument<T>.() -> Unit = {}
-    ): ArgumentDelegate<T> = argument(names.toList(), false, block)
+        delegates.forEach { delegate ->
+            sb
+                .append(indent)
+                .append(delegate.argument.names)
+                .append(doubleIndent)
+                .append(delegate.argument.description)
+                .appendln()
+                .append(doubleIndent)
+                .append(delegate.property.name)
+                .append(doubleIndent)
+                .append(delegate.getValue(isParse = false))
+                .appendln()
+        }
+    }.toString()
 
     /**
      * Main argument is used for the last argument,
@@ -84,11 +52,21 @@ abstract class Arkenv(
      *
      * Main argument can't be passed through environment variables
      */
-    fun <T : Any> mainArgument(block: Argument<T>.() -> Unit = {}): ArgumentDelegate<T> =
+    inline fun <reified T : Any> mainArgument(noinline block: Argument<T>.() -> Unit = {}): ArkenvLoader<T> =
         argument(listOf(), true, block)
 
-    private fun StringBuilder.append(value: String, times: Int): StringBuilder = apply {
-        repeat(times) { append(value) }
-    }
+    inline fun <reified T : Any> argument(
+        vararg names: String,
+        noinline block: Argument<T>.() -> Unit = {}
+    ): ArkenvLoader<T> = argument(names.toList(), false, block)
 
+    private fun ArgumentDelegate<*>.getValue(isParse: Boolean): Any? =
+        getValue(this, property).also { value ->
+            if (isParse && index != null) removeArgumentFromList(index!!, value)
+        }
+
+    private fun ArgumentDelegate<*>.removeArgumentFromList(index: Int, value: Any?) {
+        if (index > -1) argList.removeAt(index)
+        if (!isBoolean && value != null) argList.remove(value)
+    }
 }

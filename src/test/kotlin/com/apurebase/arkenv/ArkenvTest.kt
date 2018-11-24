@@ -15,7 +15,7 @@ abstract class ArkenvTest {
     }
 
     @Test fun `nullable should be null`() {
-        Nullable(arrayOf()).apply {
+        Nullable().apply {
             int shouldBe null
             str shouldBe null
         }
@@ -23,7 +23,6 @@ abstract class ArkenvTest {
 
     @Test fun `args should parse`() {
         testArkuments().apply {
-            println(this)
             configPath shouldBeEqualTo expectedConfigPath
             manualAuth shouldBe true
             doRefresh shouldBe true

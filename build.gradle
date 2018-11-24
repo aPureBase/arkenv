@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        junit_version = '5.3.0-M1'
+        junit_version = '5.3.1'
     }
 
     repositories {
@@ -8,13 +8,13 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'com.github.dcendents:android-maven-plugin:1.2'
     }
 }
 
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.2.60"
+    id "org.jetbrains.kotlin.jvm" version "1.2.71"
     id "com.github.ben-manes.versions" version "0.20.0"
     id "com.jfrog.bintray" version "1.8.4"
     id "io.gitlab.arturbosch.detekt" version "1.0.0.RC8"
@@ -36,11 +36,11 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile "org.jetbrains.kotlin:kotlin-reflect"
+    compile 'org.jetbrains.kotlinx:kotlinx.reflect.lite:1.0.0'
 
-    testCompile "org.jmockit:jmockit:1.41"
+    testCompile "org.jmockit:jmockit:1.43"
+    testCompile group: 'org.amshove.kluent', name: 'kluent', version: '1.43'
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
-    testCompile group: 'org.amshove.kluent', name: 'kluent', version: '1.40'
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junit_version"
 }
 

@@ -1,62 +1,70 @@
 package com.apurebase.arkenv
 
 import org.amshove.kluent.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class GeneralTest {
 
     @Test fun help() {
-        class HelpArgs(help: Boolean) : Arkenv(arrayOf(if (help) "-h" else "")) {
+        class HelpArgs : Arkenv() {
             val required: String by argument("-r") {
                 description = "This arg is required but can be null if help is true"
             }
         }
 
-        HelpArgs(true).let {
-            println(it)
-        }
+        HelpArgs().parse(arrayOf("-h")).let(::println)
 
-        HelpArgs(false).let {
-            val func = { it.required }
-            func shouldThrow IllegalArgumentException::class
+        HelpArgs().let {
+            it::required shouldThrow IllegalArgumentException::class
         }
     }
 
+    @Disabled("TODO") @Test fun `custom help should parse`() {
+        class CustomHelp: Arkenv() {
+            //override val help: Boolean by argument("-ca")
+            val nullProp: Int by argument("-np")
+        }
+        CustomHelp().parse(arrayOf("-ca")).also(::println)
+    }
+
+    @Test fun `repeatedly accessing a prop should not throw`() {
+        Arkuments().parse(arrayOf("-c", "some")).also(::println).configPath.substring(1)
+    }
 
     @Test fun `main arg should be the first value`() {
         val expected = "this_is_the_value"
-        MainArg(expected).mainArg shouldBeEqualTo expected
+        MainArg().parse(arrayOf(expected)).mainArg shouldBeEqualTo expected
     }
 
     @Test fun `long should map correctly`() {
         val expected = 5000L
 
-        class LongArg : Arkenv(arrayOf("-l", "5000")) {
+        class LongArg : Arkenv() {
             val long: Long by argument("-l")
         }
 
-        LongArg().long shouldEqualTo expected
+        LongArg().parse(arrayOf("-l", "5000")).long shouldEqualTo expected
     }
 
     @Test fun `custom mapping`() {
         val expected = listOf(1, 2, 3)
 
-        class CustomArg : Arkenv(arrayOf("1,2,3")) {
+        class CustomArg : Arkenv() {
             val list by mainArgument<List<Int>> {
-                mapping = { it.split(",").map { it.toInt() } }
+                mapping = { it.split(",").map(String::toInt) }
             }
         }
 
-        CustomArg().list shouldEqual expected
+        CustomArg().parse(arrayOf("1,2,3")).list shouldEqual expected
     }
 
     @Test fun `custom mapping not available should throw`() {
-        class CustomArg : Arkenv(arrayOf("test")) {
+        class CustomArg : Arkenv() {
             val custom by mainArgument<CustomArg>()
         }
 
-        val func = { CustomArg().custom }
-        func shouldThrow IllegalArgumentException::class
+        CustomArg()::custom shouldThrow IllegalArgumentException::class
     }
 
     @Test fun `value should accept spaces until next delimiter`() {
@@ -64,32 +72,32 @@ class GeneralTest {
         val second = "second"
         val expected = "$first $second"
 
-        class A : Arkenv(arrayOf("-s", "\"$first", "$second\"", "-o")) {
+        class A : Arkenv() {
             val spaceArg by argument<String>("-s")
             val other by argument<Boolean>("-o")
         }
 
-        A().run {
+        A().parse(arrayOf("-s", "\"$first", "$second\"", "-o")).run {
             spaceArg shouldBeEqualTo expected
             other shouldBe true
         }
     }
 
     @Test fun `when mapping is defined, value should be fixed`() {
-        class FixedArgs : Arkenv(arrayOf("-f", "")) {
+        class FixedArgs : Arkenv() {
             val value = 5
             val fixed: Int by argument("-f") {
                 mapping = { value }
             }
         }
 
-        FixedArgs().run {
+        FixedArgs().parse(arrayOf("-f", "")).run {
             fixed shouldEqualTo value
         }
     }
 
     @Test fun `defaultValue should be used when no other value can be found`() {
-        class DefArgs : Arkenv(arrayOf()) {
+        class DefArgs : Arkenv() {
             val def: Int by mainArgument {
                 defaultValue = 5
             }
@@ -113,38 +121,37 @@ class GeneralTest {
 
     @Test fun `passing an empty arg list should throw`() {
         {
-            object : Arkenv(arrayOf()) {
+            object : Arkenv() {
                 val illegal: String by argument(listOf())
             }
         } shouldThrow IllegalArgumentException::class
     }
 
     @Test fun `mixed should work`() {
-        Mixed(arrayOf("-sa", "5")).run {
+        Mixed().parse(arrayOf("-sa", "5")).run {
             someArg shouldEqualTo 5
             other shouldBeEqualTo "val"
         }
     }
 
     @Test fun `when env is off should not use env vars`() {
-        class EnvArgs(withEnv: Boolean) : Arkenv(arrayOf(), withEnv = withEnv) {
+        class EnvArgs(withEnv: Boolean) : Arkenv(withEnv = withEnv) {
             val arg: String by argument("-a", "--arg")
         }
 
         MockSystem("ARG" to "test")
 
-        EnvArgs(false).run {
-            { arg } shouldThrow IllegalArgumentException::class
+        EnvArgs(false).let {
+            it::arg shouldThrow IllegalArgumentException::class
         }
         EnvArgs(true).arg shouldBeEqualTo "test"
     }
 
     @Test fun `null mainArg should throw`() {
-        val arkenv = object : Arkenv(arrayOf()) {
+        val arkenv = object : Arkenv() {
             val main: String by mainArgument { }
         }
 
-        { arkenv.main } shouldThrow IllegalArgumentException::class
+        arkenv::main shouldThrow IllegalArgumentException::class
     }
-
 }

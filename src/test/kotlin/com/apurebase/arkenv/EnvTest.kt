@@ -9,14 +9,13 @@ import org.junit.jupiter.api.Test
 class EnvTest : ArkenvTest() {
 
     @Test fun `parse from env`() {
-        val expectedMainString = "important com.apurebase.arkenv.main value"
+        val expectedMainString = "important main value"
         MockSystem(
             "COUNTRY" to "dk",
             "EXECUTE" to ""
         )
 
-        TestArgs(arrayOf(expectedMainString)).let {
-            println(it)
+        TestArgs().parse(arrayOf(expectedMainString)).let {
             it.help shouldBe false
             it.bool shouldBe true
             it.country shouldBeEqualTo "dk"
@@ -28,7 +27,7 @@ class EnvTest : ArkenvTest() {
     @Test fun `main arg by env should not work`() {
         val expected = "test"
         MockSystem(MainArg::mainArg.name to expected)
-        MainArg("").mainArg shouldBeEqualTo ""
+        MainArg().parse(arrayOf("")).mainArg shouldBeEqualTo ""
     }
 
     @Test fun `only parse -- arguments`() {
@@ -37,7 +36,7 @@ class EnvTest : ArkenvTest() {
             "NI" to "5",
             "-ni" to "5"
         )
-        TestArgs(arrayOf("Hello World")).let {
+        TestArgs().parse(arrayOf("Hello World")).let {
             it.mainString shouldEqual "Hello World"
             it.country shouldEqual "DK"
             it.nullInt shouldEqual null
@@ -49,7 +48,7 @@ class EnvTest : ArkenvTest() {
             "INT" to expectedInt.toString(),
             "STR" to expectedStr
         )
-        return Nullable(arrayOf())
+        return Nullable()
     }
 
     override fun testArkuments(): Arkuments {
@@ -59,44 +58,45 @@ class EnvTest : ArkenvTest() {
             "REFRESH" to "",
             "HELP" to ""
         )
-        return Arkuments(arrayOf())
+        return Arkuments()
     }
 
     // Value picking tests
     @Test fun `not defined`() {
-        TestArgs(arrayOf()).description shouldEqual null
+        TestArgs().description shouldEqual null
     }
 
     @Test fun `last argument`() {
         MockSystem("DESCRIPTION" to "text")
-        TestArgs(arrayOf()).description shouldEqual "text"
+        TestArgs().description shouldEqual "text"
     }
 
     @Test fun `envVariable usage`() {
         MockSystem("DESCRIPTION" to "text", "DESC" to "SOME MORE DESC")
-        TestArgs(arrayOf()).description shouldEqual "SOME MORE DESC"
+        TestArgs().description shouldEqual "SOME MORE DESC"
     }
 
     @Test fun `everything and cli argument`() {
+        val expected = "main desc"
         MockSystem("DESCRIPTION" to "text", "DESC" to "SOME MORE DESC")
-        TestArgs(arrayOf("-d", "main desc")).description shouldEqual "main desc"
+        TestArgs().parse(arrayOf("-d", expected, "-c", "dk", "main")).description shouldEqual expected
     }
 
     @Test fun `custom env name should parse`() {
         val envName = "ENV_NAME"
         val expected = "result"
 
-        class CustomEnv(args: Array<String>) : Arkenv(args) {
+        class CustomEnv : Arkenv() {
             val arg: String by argument("-a") {
                 envVariable = envName
             }
         }
 
-        { CustomEnv(arrayOf()).arg } shouldThrow IllegalArgumentException::class // nothing passed
-        CustomEnv(arrayOf("-a", expected)).arg shouldBeEqualTo expected // via arg
+        { CustomEnv().arg } shouldThrow IllegalArgumentException::class // nothing passed
+        CustomEnv().parse(arrayOf("-a", expected)).arg shouldBeEqualTo expected // via arg
 
         MockSystem(envName to expected)
-        CustomEnv(arrayOf()).arg shouldBeEqualTo expected // via env
+        CustomEnv().arg shouldBeEqualTo expected // via env
     }
 
     @Test fun `should also accept -- double dash envs`() {
