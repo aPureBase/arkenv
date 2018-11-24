@@ -1,4 +1,4 @@
-image: adoptopenjdk/openjdk8-openj9
+image: adoptopenjdk/openjdk8-openj9:alpine
 
 stages:
   - build

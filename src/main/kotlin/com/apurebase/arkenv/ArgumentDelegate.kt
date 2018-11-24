@@ -72,7 +72,6 @@ class ArgumentDelegate<T : Any?>(
     }
 
     private fun getEnvValue(): String? {
-        println("a")
         // If an envVariable is defined we'll pick this as highest order value
         if (argument.envVariable != null) {
             val definedEnvValue = System.getenv(argument.envVariable)

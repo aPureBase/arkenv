@@ -1,7 +1,6 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
-argument=$1
-path="${argument:-build/reports/test/jacocoTestReport.csv}"
+path="${1:-build/reports/test/jacocoTestReport.csv}"
 
 awk -F "," '
     { instructions += $4 + $5; covered += $5 }

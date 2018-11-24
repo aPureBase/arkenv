@@ -11,10 +11,7 @@ abstract class Arkenv(
         argList.addAll(args)
         delegates
             .sortedBy { it.argument.isMainArg }
-            .forEach {
-                println("${it.property.name} - $argList")
-                it.getValue(isParse = true)
-            }
+            .forEach { it.getValue(isParse = true) }
     }
 
     val argList = mutableListOf<String>()
@@ -32,17 +29,18 @@ abstract class Arkenv(
 
     override fun toString(): String = StringBuilder().let { sb ->
         val indent = "    "
+        val doubleIndent = indent + indent
         sb.append("$programName: \n")
         delegates.forEach { delegate ->
             sb
                 .append(indent)
                 .append(delegate.argument.names)
-                .append(indent, 2)
+                .append(doubleIndent)
                 .append(delegate.argument.description)
                 .appendln()
-                .append(indent, 2)
+                .append(doubleIndent)
                 .append(delegate.property.name)
-                .append(indent, 2)
+                .append(doubleIndent)
                 .append(delegate.getValue(isParse = false))
                 .appendln()
         }
@@ -62,17 +60,13 @@ abstract class Arkenv(
         noinline block: Argument<T>.() -> Unit = {}
     ): ArkenvLoader<T> = argument(names.toList(), false, block)
 
-    private fun ArgumentDelegate<*>.getValue(isParse: Boolean): Any? {
-        val value = getValue(this, property)
-        if (isParse) index?.let {
-            println("${property.name} $parsedArgs")
-            if (it > -1) argList.removeAt(it)
-            if (!isBoolean && value != null) argList.remove(value)
+    private fun ArgumentDelegate<*>.getValue(isParse: Boolean): Any? =
+        getValue(this, property).also { value ->
+            if (isParse && index != null) removeArgumentFromList(index!!, value)
         }
-        return value
-    }
 
-    private fun StringBuilder.append(value: String, times: Int): StringBuilder = apply {
-        repeat(times) { append(value) }
+    private fun ArgumentDelegate<*>.removeArgumentFromList(index: Int, value: Any?) {
+        if (index > -1) argList.removeAt(index)
+        if (!isBoolean && value != null) argList.remove(value)
     }
 }
