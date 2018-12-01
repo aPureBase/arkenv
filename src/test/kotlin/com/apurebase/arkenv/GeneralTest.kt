@@ -3,6 +3,10 @@ package com.apurebase.arkenv
 import org.amshove.kluent.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import strikt.api.Assertion
+import strikt.api.expectThat
+import strikt.assertions.isEqualTo
+import strikt.assertions.isTrue
 
 class GeneralTest {
 
@@ -21,7 +25,7 @@ class GeneralTest {
     }
 
     @Disabled("TODO") @Test fun `custom help should parse`() {
-        class CustomHelp: Arkenv() {
+        class CustomHelp : Arkenv() {
             //override val help: Boolean by argument("-ca")
             val nullProp: Int by argument("-np")
         }
@@ -154,4 +158,19 @@ class GeneralTest {
 
         arkenv::main shouldThrow IllegalArgumentException::class
     }
+
+    @Test fun `reparsing should update the values`() {
+        val expected = "expected"
+        val expectedMain = "remember"
+        TestArgs()
+            .parse(arrayOf("-c", "random", "main"))
+            .parse(arrayOf("-c", expected, "-b", expectedMain))
+            .expectThat {
+                get { country }.isEqualTo(expected)
+                get { mainString }.isEqualTo(expectedMain)
+                get { bool }.isTrue()
+            }
+    }
+
+    private fun <T> T.expectThat(block: Assertion.Builder<T>.() -> Unit) = expectThat(this, block)
 }

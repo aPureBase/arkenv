@@ -11,7 +11,10 @@ abstract class Arkenv(
         argList.addAll(args)
         delegates
             .sortedBy { it.argument.isMainArg }
-            .forEach { it.getValue(isParse = true) }
+            .forEach {
+                it.reset()
+                it.getValue(isParse = true)
+            }
     }
 
     val argList = mutableListOf<String>()
