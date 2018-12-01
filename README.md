@@ -94,7 +94,7 @@ dependencies {
 ```
 
 #### Maven
-```$xslt
+```xml
 <dependency>
     <groupId>com.apurebase</groupId>
     <artifactId>arkenv</artifactId>
