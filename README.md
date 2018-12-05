@@ -6,17 +6,21 @@
 
 
 # Arkenv
-Kotlin Cli & Env argument parser. 
+Kotlin Cli & Env argument parser using delegates. 
 
-This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). Please report issues and open pull requests there.
+This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). 
+
+Please report issues and open pull requests there.
 
 - [Usage](#usage)
 - [Installation](#installation)
   - [Gradle](#gradle)
+  - [Maven](#maven)
 
 ### Usage
+Define your arguments by extending `Arkenv` and declaring props with the `argument` delegate.
 ```kotlin
-class Arguments(args: Array<String>) : Arkenv(args) {
+class Arguments : Arkenv() {
 
     val country: String by argument("-c") {
         description = "A simple String (required)"
@@ -47,13 +51,22 @@ class Arguments(args: Array<String>) : Arkenv(args) {
 }
 ```
 
+Then you can pass your args to the `parse` function.
+```kotlin
+fun main(args: Array<String>) {
+    Arguments().parse(args)
+}
+```
+
 #### Environment Variables
 
-For environment variables to work you should have double `--` infront of your argument like this:
+For environment variables to work you should have double `--` in front of your argument like this:
 ```kotlin
 val port: Int by argument("-p", "--port") { ... }
 ```
-Then the env variable will be called `PORT` and if giving a name like `--host-url` it will be `HOST_URL`
+Then the env variable will be called `PORT`. 
+
+When passing a hyphen-separated name like `--host-url` it will be parsed as `HOST_URL`.
 
 Another option is to explicitly set the name of the environment variable. 
 ```kotlin
@@ -78,4 +91,20 @@ dependencies {
     compile "com.apurebase:arkenv:$arkenv_version"
     ...
 }
+```
+
+#### Maven
+```xml
+<dependency>
+    <groupId>com.apurebase</groupId>
+    <artifactId>arkenv</artifactId>
+    <version>${arkenv_version}</version>
+</dependency>
+
+<repositories>
+    <repository>
+        <id>jcenter</id>
+        <url>https://jcenter.bintray.com/</url>
+    </repository>
+</repositories>
 ```
