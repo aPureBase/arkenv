@@ -41,6 +41,7 @@ dependencies {
     testCompile "org.jmockit:jmockit:1.43"
     testCompile group: 'org.amshove.kluent', name: 'kluent', version: '1.43'
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
+    testCompile "io.strikt:strikt-core:0.17.1"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junit_version"
 }
 
