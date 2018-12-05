@@ -14,7 +14,7 @@ class TestArgs : Arkenv() {
     }
 
     val mainString: String by mainArgument {
-        description = "This is a com.apurebase.arkenv.main arg, so no names"
+        description = "This is a main arg, so no names"
     }
 
     val description: String? by argument("-d", "--description") {

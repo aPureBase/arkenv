@@ -16,23 +16,22 @@ class ArgumentDelegate<T : Any?>(
     var isSet: Boolean = false
         private set
 
+    fun reset() {
+        isSet = false
+    }
+
     /**
      * Points to the index in [parsedArgs] where [Argument.names] is placed.
      */
-    val index: Int? by lazy {
-        if (argument.isMainArg) parsedArgs.size - 2
-        else argument
-            .names
-            .asSequence()
-            .map(parsedArgs::indexOf)
-            .find { it >= 0 }
-    }
+    var index: Int? = null
+        private set
 
-    val parsedArgs: List<String> by lazy {
+    private var parsedArgs: List<String> = listOf()
+
+    private fun parseArguments() {
         val list = mutableListOf<String>()
         var isReading = false
         arkenv.argList.forEach {
-
             if (isReading) {
                 list[list.lastIndex] = "${list.last()} $it"
             } else {
@@ -46,11 +45,22 @@ class ArgumentDelegate<T : Any?>(
                 isReading = true
             }
         }
-        list
+        parsedArgs = list
+    }
+
+    private fun findIndex() {
+        index = if (argument.isMainArg) parsedArgs.size - 2
+        else argument
+            .names
+            .asSequence()
+            .map(parsedArgs::indexOf)
+            .find { it >= 0 }
     }
 
     override operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         if (!isSet) {
+            parseArguments()
+            findIndex()
             value = setValue(property)
             checkNullable(property)
             isSet = true
