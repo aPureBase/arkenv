@@ -24,12 +24,14 @@ class GeneralTest {
         }
     }
 
-    @Disabled("TODO") @Test fun `custom help should parse`() {
-        class CustomHelp : Arkenv() {
-            //override val help: Boolean by argument("-ca")
-            val nullProp: Int by argument("-np")
-        }
-        CustomHelp().parse(arrayOf("-ca")).also(::println)
+    @Disabled("It is possible but dangerous to allow overriding help") @Test fun `custom help should parse`() {
+//        class CustomHelp : Arkenv() {
+//            override val help: Boolean by argument("-ca") {
+//                isHelp = true // current limitation
+//            }
+//            val nullProp: Int by argument("-np")
+//        }
+//        CustomHelp().parse(arrayOf("-ca")).also(::println)
     }
 
     @Test fun `repeatedly accessing a prop should not throw`() {
