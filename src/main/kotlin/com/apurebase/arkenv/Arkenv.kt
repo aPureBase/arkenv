@@ -15,6 +15,7 @@ abstract class Arkenv(
                 it.reset()
                 it.getValue(isParse = true)
             }
+        onParse(args)
     }
 
     val argList = mutableListOf<String>()
@@ -62,6 +63,10 @@ abstract class Arkenv(
         vararg names: String,
         noinline block: Argument<T>.() -> Unit = {}
     ): ArkenvLoader<T> = argument(names.toList(), false, block)
+
+    open fun onParse(args: Array<String>) {
+
+    }
 
     private fun ArgumentDelegate<*>.getValue(isParse: Boolean): Any? =
         getValue(this, property).also { value ->

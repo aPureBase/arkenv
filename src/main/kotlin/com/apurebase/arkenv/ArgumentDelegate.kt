@@ -32,17 +32,16 @@ class ArgumentDelegate<T : Any?>(
         val list = mutableListOf<String>()
         var isReading = false
         arkenv.argList.forEach {
-            if (isReading) {
-                list[list.lastIndex] = "${list.last()} $it"
-            } else {
-                list.add(it)
+            when {
+                isReading -> list[list.lastIndex] = "${list.last()} $it"
+                else -> list.add(it)
             }
-
-            if (isReading && it.endsWith(allowedSurroundings)) {
-                list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
-                isReading = false
-            } else if (!isReading && it.startsWith(allowedSurroundings)) {
-                isReading = true
+            when {
+                isReading && it.endsWith(allowedSurroundings) -> {
+                    list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
+                    isReading = false
+                }
+                !isReading && it.startsWith(allowedSurroundings) -> isReading = true
             }
         }
         parsedArgs = list
