@@ -10,13 +10,18 @@ class ValidationTests {
     @Test fun `parsing should throw when validation returns false`() {
         val ark = object : Arkenv() {
             val failingProp: Int by argument("-f") {
-                validation = { it > 0 }
+                validate("number should be positive") { it > 0 }
+                validate("this should also fail") { it != 0 }
             }
         }
 
         ark.parse(arrayOf("-f", "5"))
-        assertThrows<Exception> { ark.parse(arrayOf("-f", "0")) }
-            .message.shouldNotBeNull() shouldContain "did not pass validation"
+        val message = assertThrows<Exception> { ark.parse(arrayOf("-f", "0")) }.message.shouldNotBeNull()
+        println(message)
+        message shouldContain "did not pass validation"
+        message shouldContain "failingProp"
+        message shouldContain "number should be positive"
+        message shouldContain "this should also fail"
     }
 
 }
