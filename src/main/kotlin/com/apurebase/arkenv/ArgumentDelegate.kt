@@ -63,10 +63,21 @@ class ArgumentDelegate<T : Any?>(
             findIndex()
             value = setValue(property)
             checkNullable(property)
+            checkValidation()
             isSet = true
         }
         return value
     }
+
+    private fun checkValidation() = argument
+        .validation
+        .filterNot { it.assertion(value) }
+        .map { it.message }
+        .let {
+            if (it.isNotEmpty()) it
+                .reduce { acc, s -> "$acc. $s" }
+                .run { throw IllegalArgumentException("Argument ${property.name} did not pass validation: $this") }
+        }
 
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {

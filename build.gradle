@@ -34,6 +34,12 @@ repositories {
     jcenter()
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile 'org.jetbrains.kotlinx:kotlinx.reflect.lite:1.0.0'
