@@ -10,4 +10,5 @@ class Argument<T : Any?>(val names: List<String>) {
     var isMainArg: Boolean = false
     @Suppress("UNCHECKED_CAST")
     var defaultValue: T = null as T
+    var validation: (T) -> Boolean = { true }
 }

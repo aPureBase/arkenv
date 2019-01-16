@@ -63,6 +63,9 @@ class ArgumentDelegate<T : Any?>(
             findIndex()
             value = setValue(property)
             checkNullable(property)
+            if (!argument.validation(value)) {
+                throw IllegalArgumentException("Argument ${property.name} did not pass validation")
+            }
             isSet = true
         }
         return value
