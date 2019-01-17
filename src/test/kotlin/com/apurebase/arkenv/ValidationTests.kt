@@ -4,6 +4,7 @@ import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.logging.Logger
 
 class ValidationTests {
 
@@ -12,6 +13,13 @@ class ValidationTests {
             val failingProp: Int by argument("-f") {
                 validate("number should be positive") { it > 0 }
                 validate("this should also fail") { it != 0 }
+            }
+            override fun onParseArgument(delegate: ArgumentDelegate<*>, value: Any?) {
+                Logger.getGlobal().info("Custom: ${delegate.property.name} - $value")
+            }
+
+            override fun onParse(args: Array<String>) {
+                Logger.getGlobal().info("Parsing ${args.size} arguments")
             }
         }
 

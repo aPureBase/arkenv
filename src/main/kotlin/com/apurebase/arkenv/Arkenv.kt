@@ -9,13 +9,19 @@ abstract class Arkenv(
     fun parseArguments(args: Array<String>) {
         argList.clear()
         argList.addAll(args)
+        onParse(args)
         delegates
             .sortedBy { it.argument.isMainArg }
             .forEach {
                 it.reset()
-                it.getValue(isParse = true)
+                val value = it.getValue(isParse = true)
+                onParseArgument(it, value)
             }
     }
+
+    open fun onParse(args: Array<String>) {}
+
+    open fun onParseArgument(delegate: ArgumentDelegate<*>, value: Any?) {}
 
     val argList = mutableListOf<String>()
     val delegates = mutableListOf<ArgumentDelegate<*>>()
