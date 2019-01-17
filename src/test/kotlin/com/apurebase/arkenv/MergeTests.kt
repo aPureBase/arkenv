@@ -19,7 +19,7 @@ class MergeTests {
 
     @Test fun `should parse multiple grouped boolean arguments`() {
         val args = arrayOf("-ds", "DoSomething")
-        expectThat(Arguments().parse(args)) {
+        Arguments().parse(args).expectThat {
             get { doRun }.isTrue()
             get { production }.isFalse()
             get { something }.isTrue()
