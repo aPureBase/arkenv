@@ -7,6 +7,7 @@ import strikt.api.Assertion
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
+import java.util.logging.Logger
 
 class GeneralTest {
 
@@ -172,6 +173,27 @@ class GeneralTest {
                 get { mainString }.isEqualTo(expectedMain)
                 get { bool }.isTrue()
             }
+    }
+
+    @Test fun `onParse callbacks should be called`() {
+        var globalCalled = false
+        var lastCalledArg = ""
+        val ark = object : Arkenv() {
+            val some: Int by argument("-s")
+            val last: String by argument("-l")
+
+            override fun onParseArgument(delegate: ArgumentDelegate<*>, value: Any?) {
+                lastCalledArg = delegate.property.name
+            }
+
+            override fun onParse(args: Array<String>) {
+                globalCalled = true
+            }
+        }
+
+        ark.parse(arrayOf("-s", "5", "-l", "test"))
+        globalCalled.expectThat { isTrue() }
+        lastCalledArg.expectThat { isEqualTo("last") }
     }
 
     private fun <T> T.expectThat(block: Assertion.Builder<T>.() -> Unit) = expectThat(this, block)
