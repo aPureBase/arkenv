@@ -10,4 +10,9 @@ class Argument<T : Any?>(val names: List<String>) {
     var isMainArg: Boolean = false
     @Suppress("UNCHECKED_CAST")
     var defaultValue: T = null as T
+    internal val validation = mutableListOf<Validation<T>>()
+
+    fun validate(message: String, assertion: (T) -> Boolean) = validation.add(Validation(message, assertion))
+
+    internal class Validation<T>(val message: String, val assertion: (T) -> Boolean)
 }
