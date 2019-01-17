@@ -20,6 +20,12 @@ class ArgumentDelegate<T : Any?>(
         isSet = false
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun setTrue() = when {
+        isBoolean -> value = true as T
+        else -> throw IllegalStateException("Attempted to set value to true but ${property.name} is not boolean")
+    }
+
     /**
      * Points to the index in [parsedArgs] where [Argument.names] is placed.
      */

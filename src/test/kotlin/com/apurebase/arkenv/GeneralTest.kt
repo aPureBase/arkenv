@@ -3,8 +3,6 @@ package com.apurebase.arkenv
 import org.amshove.kluent.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import strikt.api.Assertion
-import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
 
@@ -83,9 +81,9 @@ class GeneralTest {
             val other by argument<Boolean>("-o")
         }
 
-        A().parse(arrayOf("-s", "\"$first", "$second\"", "-o")).run {
-            spaceArg shouldBeEqualTo expected
-            other shouldBe true
+        A().parse(arrayOf("-s", "\"$first", "$second\"", "-o")).expectThat {
+            get { spaceArg }.isEqualTo(expected)
+            get { other }.isTrue()
         }
     }
 
@@ -173,6 +171,4 @@ class GeneralTest {
                 get { bool }.isTrue()
             }
     }
-
-    private fun <T> T.expectThat(block: Assertion.Builder<T>.() -> Unit) = expectThat(this, block)
 }

@@ -23,3 +23,5 @@ internal fun String.removeSurrounding(list: Iterable<String>): String =
     list.fold(this) { acc, s -> acc.removeSurrounding(s) }
 
 fun <T: Arkenv> T.parse(args: Array<String>) = apply { parseArguments(args) }
+
+internal typealias Candidates = List<Pair<ArgumentDelegate<*>, List<String>>>
