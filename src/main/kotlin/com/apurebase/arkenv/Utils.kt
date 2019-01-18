@@ -24,8 +24,6 @@ internal fun String.removeSurrounding(list: Iterable<String>): String =
 
 fun <T : Arkenv> T.parse(args: Array<String>) = apply { parseArguments(args) }
 
-internal typealias Candidates = List<Pair<ArgumentDelegate<*>, List<String>>>
-
 /**
  * Main argument is used for the last argument,
  * which doesn't have a named property to it
