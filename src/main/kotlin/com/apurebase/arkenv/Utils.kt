@@ -39,3 +39,11 @@ inline fun <reified T : Any> Arkenv.argument(
     vararg names: String,
     noinline block: Argument<T>.() -> Unit = {}
 ): ArkenvLoader<T> = argument(names.toList(), false, block)
+
+internal fun <T> ArgumentDelegate<T>.readInput(mapping: (String) -> T): T? =
+    if (argument.acceptsManualInput) {
+        println("Accepting input for ${property.name}: ")
+        val input = readLine()
+        if (input == null) null
+        else mapping(input)
+    } else null

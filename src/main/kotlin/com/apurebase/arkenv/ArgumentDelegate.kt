@@ -89,7 +89,10 @@ class ArgumentDelegate<T : Any?>(
         val envVal = if (argument.withEnv) getEnvValue() else null
         return when {
             isBoolean -> (index != null || envVal != null) as T
-            envVal == null && cliValue == null -> argument.defaultValue
+            envVal == null && cliValue == null -> {
+                if (argument.acceptsManualInput) readInput(mapping) ?: argument.defaultValue
+                else argument.defaultValue
+            }
             else -> {
                 val rawValue = cliValue ?: envVal!!
                 mapping(rawValue)
