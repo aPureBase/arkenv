@@ -16,7 +16,6 @@ abstract class Arkenv(
                 it.getValue(isParse = true)
             }
         checkRemaining(delegates, argList).forEach { (arg, delegates) ->
-            println("$arg: ${delegates.map { it.property.name }}")
             argList.remove("-$arg")
             delegates.forEach { it.setTrue() }
         }
