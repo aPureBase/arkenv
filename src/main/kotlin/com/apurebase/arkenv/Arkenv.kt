@@ -3,7 +3,8 @@ package com.apurebase.arkenv
 abstract class Arkenv(
     val programName: String = "Arkenv",
     val withEnv: Boolean = true,
-    val envPrefix: String = ""
+    val envPrefix: String = "",
+    val enableEnvSecrets: Boolean = false
 ) {
 
     fun parseArguments(args: Array<String>) {

@@ -69,5 +69,3 @@ private fun List<MergeCandidate>.findCandidates(arg: String): List<MergeCandidat
 
 private fun List<String>.prepareNames(): List<String> =
     filter { it.isSimpleName() }.map { it.removePrefix("-") }
-
-private fun String.isSimpleName() = startsWith("-") && !startsWith("--")
