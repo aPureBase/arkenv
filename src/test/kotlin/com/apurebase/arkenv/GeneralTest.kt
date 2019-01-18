@@ -174,5 +174,18 @@ class GeneralTest {
             }
     }
 
+    @Test fun `parsing system in should work`() {
+        val ark = object : Arkenv() {
+            val name: String by argument("-n") {
+                acceptsManualInput = true
+            }
+        }
+        val expected = "this is a test"
+        System.setIn(expected.toByteArray().inputStream())
+        ark.parse(arrayOf()).expectThat {
+            get { name }.isEqualTo(expected)
+        }
+    }
+
     private fun <T> T.expectThat(block: Assertion.Builder<T>.() -> Unit) = expectThat(this, block)
 }

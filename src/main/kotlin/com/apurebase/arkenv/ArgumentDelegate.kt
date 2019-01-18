@@ -2,6 +2,8 @@ package com.apurebase.arkenv
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.KType
+import kotlin.reflect.KTypeParameter
 
 class ArgumentDelegate<T : Any?>(
     private val arkenv: Arkenv,
@@ -84,7 +86,10 @@ class ArgumentDelegate<T : Any?>(
         val envVal = if (argument.withEnv) getEnvValue() else null
         return when {
             isBoolean -> (index != null || envVal != null) as T
-            envVal == null && cliValue == null -> argument.defaultValue
+            envVal == null && cliValue == null -> {
+                if (argument.acceptsManualInput) readInput() ?: argument.defaultValue
+                else argument.defaultValue
+            }
             else -> {
                 val rawValue = cliValue ?: envVal!!
                 mapping(rawValue)
@@ -120,6 +125,13 @@ class ArgumentDelegate<T : Any?>(
             throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
         }
     }
+
+    private fun readInput(): T? = if (argument.acceptsManualInput) {
+        println("Accepting input for ${property.name}: ")
+        val input = readLine()
+        if (input == null) null
+        else mapping(input)
+    } else null
 
     private val allowedSurroundings = listOf("'", "\"")
 

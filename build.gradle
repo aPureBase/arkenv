@@ -42,7 +42,8 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    compile 'org.jetbrains.kotlinx:kotlinx.reflect.lite:1.0.0'
+    compile "org.jetbrains.kotlin:kotlin-reflect"
+    //compile 'org.jetbrains.kotlinx:kotlinx.reflect.lite:1.0.0'
 
     testCompile "org.jmockit:jmockit:1.44"
     testCompile group: 'org.amshove.kluent', name: 'kluent', version: '1.46'
