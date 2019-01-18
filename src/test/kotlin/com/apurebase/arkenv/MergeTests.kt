@@ -36,16 +36,16 @@ class MergeTests {
     }
 
     @Test fun `should parse even complex combinations`() {
-        fun Ark.verify() = expectThat {
+        fun Ark.verify(vararg args: String) = parse(args.toList().toTypedArray()).expectThat {
             get { a }.isTrue()
             get { b }.isTrue()
             get { c }.isTrue()
         }
 
-        Ark.parse(arrayOf("-abc")).verify()
-        Ark.parse(arrayOf("-123")).verify()
-        Ark.parse(arrayOf("-3ba")).verify()
-        Ark.parse(arrayOf("-c21")).verify()
+        Ark.verify("-abc")
+        Ark.verify("-123")
+        Ark.verify("-3ba")
+        Ark.verify("-c21")
         Ark.parse(arrayOf("-bcda")).expectThat {
             get { a }.isTrue()
             get { b }.isFalse()
@@ -57,6 +57,17 @@ class MergeTests {
             get { b }.isFalse()
             get { c }.isFalse()
             get { d }.isFalse()
+        }
+    }
+
+    @Test fun `multiple matches in same arg`() {
+        val ark = object : Arkenv() {
+            val first: Boolean by argument("-a", "-abc")
+            val second: Boolean by argument("-b")
+        }
+        ark.parse(arrayOf("-abcb")).expectThat {
+            get { first }.isTrue()
+            get { second }.isTrue()
         }
     }
 }

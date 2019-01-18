@@ -9,7 +9,7 @@ internal fun Arkenv.checkRemaining(
     val mergeCandidates = findMergeCandidates(availableDelegates)
     return argList
         .prepareNames()
-        .map { arg -> arg to resolveMatch(arg, mergeCandidates, listOf(), 0) }
+        .map { arg -> arg to resolveMatch(arg, mergeCandidates, listOf(), 0, 0) }
         .filter { it.second.isNotEmpty() }
 }
 
@@ -36,37 +36,33 @@ private fun resolveMatch(
     arg: String,
     candidates: List<MergeCandidate>,
     results: List<ArgumentDelegate<*>>,
-    index: Int
+    index: Int,
+    nameIndex: Int
 ): List<ArgumentDelegate<*>> {
     val options = candidates.findCandidates(arg)
+    val chosen = options.getOrNull(index) ?: return listOf()
+    val remaining = candidates - chosen
+    val reducedArgument = arg.removePrefix(chosen.names[nameIndex])
     return when {
-        arg.isBlank() -> results
-        options.isEmpty() -> listOf()
-        else -> findNextMatch(arg, candidates, options, results, index)
+        reducedArgument.isBlank() -> results + chosen.delegate
+        else -> {
+            val matches = resolveMatch(reducedArgument, remaining, results + chosen.delegate, 0, 0)
+            when {
+                shouldContinueSearch(matches, options, index) ->
+                    resolveMatch(arg, candidates, results, index + 1, 0)
+                shouldContinueSearch(matches, chosen.names, nameIndex) ->
+                    resolveMatch(arg, candidates, results, index, nameIndex + 1)
+                else -> matches
+            }
+        }
     }
 }
 
-private fun findNextMatch(
-    arg: String,
-    candidates: List<MergeCandidate>,
-    options: List<MergeCandidate>,
-    results: List<ArgumentDelegate<*>>,
-    index: Int
-): List<ArgumentDelegate<*>> {
-    val chosen = options[index]
-    val remaining = candidates.filterNot { it == chosen }
-    val reducedArgument = arg.removePrefix(chosen.names.first()) // TODO for all
-    val matches = resolveMatch(
-        arg = reducedArgument,
-        candidates = remaining,
-        results = results + chosen.delegate,
-        index = 0
-    )
-    return when {
-        matches.isEmpty() && options.size > index + 1 -> resolveMatch(arg, candidates, results, index + 1)
-        else -> matches
-    }
-}
+/**
+ * Continue search if there are no matches and there are more items in the list.
+ */
+private fun shouldContinueSearch(matches: List<ArgumentDelegate<*>>, list: List<*>, index: Int) =
+    matches.isEmpty() && list.size > index + 1
 
 private fun List<MergeCandidate>.findCandidates(arg: String): List<MergeCandidate> =
     map { it.filterNames(arg) }.filter(MergeCandidate::hasNames)
