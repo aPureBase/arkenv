@@ -2,8 +2,6 @@ package com.apurebase.arkenv
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
 
 class ArgumentDelegate<T : Any?>(
     private val arkenv: Arkenv,
@@ -22,6 +20,12 @@ class ArgumentDelegate<T : Any?>(
         isSet = false
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun setTrue() = when {
+        isBoolean -> value = true as T
+        else -> throw IllegalStateException("Attempted to set value to true but ${property.name} is not boolean")
+    }
+
     /**
      * Points to the index in [parsedArgs] where [Argument.names] is placed.
      */
@@ -34,17 +38,16 @@ class ArgumentDelegate<T : Any?>(
         val list = mutableListOf<String>()
         var isReading = false
         arkenv.argList.forEach {
-            if (isReading) {
-                list[list.lastIndex] = "${list.last()} $it"
-            } else {
-                list.add(it)
+            when {
+                isReading -> list[list.lastIndex] = "${list.last()} $it"
+                else -> list.add(it)
             }
-
-            if (isReading && it.endsWith(allowedSurroundings)) {
-                list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
-                isReading = false
-            } else if (!isReading && it.startsWith(allowedSurroundings)) {
-                isReading = true
+            when {
+                isReading && it.endsWith(allowedSurroundings) -> {
+                    list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
+                    isReading = false
+                }
+                !isReading && it.startsWith(allowedSurroundings) -> isReading = true
             }
         }
         parsedArgs = list
@@ -87,7 +90,7 @@ class ArgumentDelegate<T : Any?>(
         return when {
             isBoolean -> (index != null || envVal != null) as T
             envVal == null && cliValue == null -> {
-                if (argument.acceptsManualInput) readInput() ?: argument.defaultValue
+                if (argument.acceptsManualInput) readInput(mapping) ?: argument.defaultValue
                 else argument.defaultValue
             }
             else -> {
@@ -125,13 +128,6 @@ class ArgumentDelegate<T : Any?>(
             throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
         }
     }
-
-    private fun readInput(): T? = if (argument.acceptsManualInput) {
-        println("Accepting input for ${property.name}: ")
-        val input = readLine()
-        if (input == null) null
-        else mapping(input)
-    } else null
 
     private val allowedSurroundings = listOf("'", "\"")
 

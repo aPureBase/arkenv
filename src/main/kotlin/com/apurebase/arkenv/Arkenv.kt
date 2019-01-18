@@ -15,6 +15,11 @@ abstract class Arkenv(
                 it.reset()
                 it.getValue(isParse = true)
             }
+        checkRemaining(delegates, argList).forEach { (arg, delegates) ->
+            println("$arg: ${delegates.map { it.property.name }}")
+            argList.remove("-$arg")
+            delegates.forEach { it.setTrue() }
+        }
     }
 
     val argList = mutableListOf<String>()
@@ -49,27 +54,21 @@ abstract class Arkenv(
         }
     }.toString()
 
-    /**
-     * Main argument is used for the last argument,
-     * which doesn't have a named property to it
-     *
-     * Main argument can't be passed through environment variables
-     */
-    inline fun <reified T : Any> mainArgument(noinline block: Argument<T>.() -> Unit = {}): ArkenvLoader<T> =
-        argument(listOf(), true, block)
-
-    inline fun <reified T : Any> argument(
-        vararg names: String,
-        noinline block: Argument<T>.() -> Unit = {}
-    ): ArkenvLoader<T> = argument(names.toList(), false, block)
-
     private fun ArgumentDelegate<*>.getValue(isParse: Boolean): Any? =
         getValue(this, property).also { value ->
             if (isParse && index != null) removeArgumentFromList(index!!, value)
         }
 
     private fun ArgumentDelegate<*>.removeArgumentFromList(index: Int, value: Any?) {
-        if (index > -1) argList.removeAt(index)
-        if (!isBoolean && value != null) argList.remove(value)
+        removeValueArgument(index, isBoolean, value)
+        removeNameArgument(index, argument.isMainArg)
+    }
+
+    private fun removeNameArgument(index: Int, isMainArg: Boolean) {
+        if (index > -1 && !isMainArg) argList.removeAt(index)
+    }
+
+    private fun removeValueArgument(index: Int, isBoolean: Boolean, value: Any?) {
+        if (!isBoolean && value != null) argList.removeAt(index + 1)
     }
 }
