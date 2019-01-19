@@ -3,7 +3,7 @@ package com.apurebase.arkenv
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class ArgumentDelegate<T : Any?>(
+internal class ArgumentDelegate<T : Any?>(
     private val arkenv: Arkenv,
     val argument: Argument<T>,
     val property: KProperty<*>,
@@ -13,15 +13,15 @@ class ArgumentDelegate<T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     private var value: T = null as T
-    var isSet: Boolean = false
+    internal var isSet: Boolean = false
         private set
 
-    fun reset() {
+    internal fun reset() {
         isSet = false
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun setTrue() = when {
+    internal fun setTrue() = when {
         isBoolean -> value = true as T
         else -> throw IllegalStateException("Attempted to set value to true but ${property.name} is not boolean")
     }
@@ -29,7 +29,7 @@ class ArgumentDelegate<T : Any?>(
     /**
      * Points to the index in [parsedArgs] where [Argument.names] is placed.
      */
-    var index: Int? = null
+    internal var index: Int? = null
         private set
 
     private var parsedArgs: List<String> = listOf()
