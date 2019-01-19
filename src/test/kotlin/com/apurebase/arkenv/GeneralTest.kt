@@ -3,11 +3,8 @@ package com.apurebase.arkenv
 import org.amshove.kluent.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import strikt.api.Assertion
-import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
-import java.util.logging.Logger
 
 class GeneralTest {
 
@@ -84,9 +81,9 @@ class GeneralTest {
             val other by argument<Boolean>("-o")
         }
 
-        A().parse(arrayOf("-s", "\"$first", "$second\"", "-o")).run {
-            spaceArg shouldBeEqualTo expected
-            other shouldBe true
+        A().parse(arrayOf("-s", "\"$first", "$second\"", "-o")).expectThat {
+            get { spaceArg }.isEqualTo(expected)
+            get { other }.isTrue()
         }
     }
 
@@ -175,6 +172,19 @@ class GeneralTest {
             }
     }
 
+    @Test fun `parsing system in should work`() {
+        val ark = object : Arkenv() {
+            val name: String by argument("-n") {
+                acceptsManualInput = true
+            }
+        }
+        val expected = "this is a test"
+        System.setIn(expected.toByteArray().inputStream())
+        ark.parse(arrayOf()).expectThat {
+            get { name }.isEqualTo(expected)
+        }
+    }
+
     @Test fun `onParse callbacks should be called`() {
         var globalCalled = false
         var lastCalledArg = ""
@@ -195,6 +205,4 @@ class GeneralTest {
         globalCalled.expectThat { isTrue() }
         lastCalledArg.expectThat { isEqualTo("last") }
     }
-
-    private fun <T> T.expectThat(block: Assertion.Builder<T>.() -> Unit) = expectThat(this, block)
 }

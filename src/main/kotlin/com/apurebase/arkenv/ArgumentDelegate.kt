@@ -20,6 +20,12 @@ class ArgumentDelegate<T : Any?>(
         isSet = false
     }
 
+    @Suppress("UNCHECKED_CAST")
+    fun setTrue() = when {
+        isBoolean -> value = true as T
+        else -> throw IllegalStateException("Attempted to set value to true but ${property.name} is not boolean")
+    }
+
     /**
      * Points to the index in [parsedArgs] where [Argument.names] is placed.
      */
@@ -32,17 +38,16 @@ class ArgumentDelegate<T : Any?>(
         val list = mutableListOf<String>()
         var isReading = false
         arkenv.argList.forEach {
-            if (isReading) {
-                list[list.lastIndex] = "${list.last()} $it"
-            } else {
-                list.add(it)
+            when {
+                isReading -> list[list.lastIndex] = "${list.last()} $it"
+                else -> list.add(it)
             }
-
-            if (isReading && it.endsWith(allowedSurroundings)) {
-                list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
-                isReading = false
-            } else if (!isReading && it.startsWith(allowedSurroundings)) {
-                isReading = true
+            when {
+                isReading && it.endsWith(allowedSurroundings) -> {
+                    list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
+                    isReading = false
+                }
+                !isReading && it.startsWith(allowedSurroundings) -> isReading = true
             }
         }
         parsedArgs = list
@@ -84,7 +89,10 @@ class ArgumentDelegate<T : Any?>(
         val envVal = if (argument.withEnv) getEnvValue() else null
         return when {
             isBoolean -> (index != null || envVal != null) as T
-            envVal == null && cliValue == null -> argument.defaultValue
+            envVal == null && cliValue == null -> {
+                if (argument.acceptsManualInput) readInput(mapping) ?: argument.defaultValue
+                else argument.defaultValue
+            }
             else -> {
                 val rawValue = cliValue ?: envVal!!
                 mapping(rawValue)
