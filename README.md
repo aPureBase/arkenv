@@ -3,9 +3,10 @@
 [![Pipelines](https://gitlab.com/apurebase/arkenv/badges/master/pipeline.svg)](https://gitlab.com/apurebase/arkenv/pipelines)
 [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
 
-
-
 # Arkenv
+
+![Arkenv Logo](/docs/arkenv_logo.png?raw=true "Arkenv Logo")
+
 Kotlin Cli & Env argument parser using delegates. 
 
 This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). 
