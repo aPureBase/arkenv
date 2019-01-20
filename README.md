@@ -53,7 +53,6 @@ class Arguments : Arkenv() {
     val mainString: String by mainArgument {
         description = "This is a main arg, so no names"
     }
-
 }
 ```
 
@@ -72,12 +71,10 @@ fun main(args: Array<String>) {
 ```gradle
 repositories {
     jcenter()
-    ...
 }
 
 dependencies {
     compile "com.apurebase:arkenv:$arkenv_version"
-    ...
 }
 ```
 
@@ -160,18 +157,18 @@ val name: String by argument("-n") {
 ```
 
 When set to true, Arkenv will ask for a value on parse, which can then be provided by the user.
+
 If the argument is already defined then no input is requested.
 
 #### Docker Secrets
 
 In some cases we don't want to directly expose the arguments to the program. 
+
 An alternative is to use secret files, which can be loaded via environment variables. 
 
 ```kotlin
 val ark = object : Arkenv(enableEnvSecrets = true) {
-    val apiKey: String by argument("--api-key") {
-        ...
-    }
+    val apiKey: String by argument("--api-key")
 }
 ```
 
