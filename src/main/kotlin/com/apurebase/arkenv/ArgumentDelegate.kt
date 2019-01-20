@@ -86,7 +86,7 @@ class ArgumentDelegate<T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
-        val envVal = if (argument.withEnv) getEnvValue() else null
+        val envVal = if (argument.withEnv) getEnvValue(argument, arkenv.enableEnvSecrets) else null
         return when {
             isBoolean -> (index != null || envVal != null) as T
             envVal == null && cliValue == null -> {
@@ -98,21 +98,6 @@ class ArgumentDelegate<T : Any?>(
                 mapping(rawValue)
             }
         }
-    }
-
-    private fun getEnvValue(): String? {
-        // If an envVariable is defined we'll pick this as highest order value
-        if (argument.envVariable != null) {
-            val definedEnvValue = System.getenv(argument.envVariable)
-            if (!definedEnvValue.isNullOrEmpty()) return definedEnvValue
-        }
-
-        // Loop over all argument names and pick the first one that matches
-        return argument.names.mapNotNull {
-            if (it.startsWith("--")) {
-                System.getenv(argument.envPrefix + it.toSnakeCase())
-            } else null
-        }.firstOrNull()
     }
 
     private val cliValue: String?
