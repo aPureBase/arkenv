@@ -1,19 +1,20 @@
 image: adoptopenjdk/openjdk8-openj9:alpine
 
 stages:
+  - build
   - test
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 before_script:
-#  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - export GRADLE_USER_HOME=`pwd`/.gradle
   - chmod +x ./gradlew
 
 cache:
   paths:
     - build
-#    - .gradle
+    - .gradle
 
 
 ########
@@ -21,8 +22,12 @@ cache:
 ########
 
 build:
-  stage: test
+  stage: build
   script: ./gradlew --build-cache assemble --no-daemon
+  artifacts:
+    expire_in: '5 day'
+    paths:
+      - build/libs
 
 test:
   stage: test
