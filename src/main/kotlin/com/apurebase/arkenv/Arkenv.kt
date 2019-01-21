@@ -1,5 +1,14 @@
 package com.apurebase.arkenv
 
+/**
+ * The base class that provides the argument parsing capabilities.
+ * Extend this to define your own arguments.
+ * @property programName the name of your program
+ * @property withEnv whether to enable environment variable parsing. Defaults to true
+ * @property envPrefix a common prefix for all environment variables
+ * @property enableEnvSecrets whether to enable docker secrets parsing. Will attempt to parse any environment variable
+ * with the _FILE suffix and read the value from the specified path.
+ */
 abstract class Arkenv(
     val programName: String = "Arkenv",
     val withEnv: Boolean = true,
@@ -7,6 +16,9 @@ abstract class Arkenv(
     val enableEnvSecrets: Boolean = false
 ) {
 
+    /**
+     * Parses the [args] and resets all previously parsed state.
+     */
     fun parseArguments(args: Array<String>) {
         argList.clear()
         argList.addAll(args)
@@ -16,7 +28,7 @@ abstract class Arkenv(
             .forEach {
                 it.reset()
                 val value = it.getValue(isParse = true)
-                onParseArgument(it, value)
+                onParseArgument(it.property.name, it.argument, value)
             }
         checkRemaining(delegates, argList).forEach { (arg, delegates) ->
             argList.remove("-$arg")
@@ -26,20 +38,30 @@ abstract class Arkenv(
 
     open fun onParse(args: Array<String>) {}
 
-    open fun onParseArgument(delegate: ArgumentDelegate<*>, value: Any?) {}
+    open fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {}
 
-    val argList = mutableListOf<String>()
-    val delegates = mutableListOf<ArgumentDelegate<*>>()
+    internal val argList = mutableListOf<String>()
+    internal val delegates = mutableListOf<ArgumentDelegate<*>>()
 
     val help: Boolean by ArkenvLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
 
+    /**
+     * Defines an argument that can be parsed.
+     * @param names the names that the argument can be called with
+     * @param isMainArg whether this argument is a main argument, meaning it doesn't use names,
+     * but the last supplied argument
+     * @param configuration optional configuration of the argument's properties
+     */
     inline fun <reified T : Any> argument(
         names: List<String>,
         isMainArg: Boolean = false,
-        noinline block: Argument<T>.() -> Unit = {}
-    ) = ArkenvLoader(names, isMainArg, block, T::class, this)
+        noinline configuration: Argument<T>.() -> Unit = {}
+    ) = ArkenvLoader(names, isMainArg, configuration, T::class, this)
 
-    fun isHelp(): Boolean = if (argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet) false else help
+    internal fun isHelp(): Boolean = when {
+        argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false
+        else -> help
+    }
 
     override fun toString(): String = StringBuilder().let { sb ->
         val indent = "    "

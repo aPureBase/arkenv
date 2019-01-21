@@ -192,8 +192,8 @@ class GeneralTest {
             val some: Int by argument("-s")
             val last: String by argument("-l")
 
-            override fun onParseArgument(delegate: ArgumentDelegate<*>, value: Any?) {
-                lastCalledArg = delegate.property.name
+            override fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {
+                lastCalledArg = name
             }
 
             override fun onParse(args: Array<String>) {
