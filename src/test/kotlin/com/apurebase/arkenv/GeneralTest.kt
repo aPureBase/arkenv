@@ -3,8 +3,6 @@ package com.apurebase.arkenv
 import org.amshove.kluent.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import strikt.api.Assertion
-import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
 
@@ -24,12 +22,14 @@ class GeneralTest {
         }
     }
 
-    @Disabled("TODO") @Test fun `custom help should parse`() {
-        class CustomHelp : Arkenv() {
-            //override val help: Boolean by argument("-ca")
-            val nullProp: Int by argument("-np")
-        }
-        CustomHelp().parse(arrayOf("-ca")).also(::println)
+    @Disabled("It is possible but dangerous to allow overriding help") @Test fun `custom help should parse`() {
+//        class CustomHelp : Arkenv() {
+//            override val help: Boolean by argument("-ca") {
+//                isHelp = true // current limitation
+//            }
+//            val nullProp: Int by argument("-np")
+//        }
+//        CustomHelp().parse(arrayOf("-ca")).also(::println)
     }
 
     @Test fun `repeatedly accessing a prop should not throw`() {
@@ -81,9 +81,9 @@ class GeneralTest {
             val other by argument<Boolean>("-o")
         }
 
-        A().parse(arrayOf("-s", "\"$first", "$second\"", "-o")).run {
-            spaceArg shouldBeEqualTo expected
-            other shouldBe true
+        A().parse(arrayOf("-s", "\"$first", "$second\"", "-o")).expectThat {
+            get { spaceArg }.isEqualTo(expected)
+            get { other }.isTrue()
         }
     }
 
@@ -172,5 +172,37 @@ class GeneralTest {
             }
     }
 
-    private fun <T> T.expectThat(block: Assertion.Builder<T>.() -> Unit) = expectThat(this, block)
+    @Test fun `parsing system in should work`() {
+        val ark = object : Arkenv() {
+            val name: String by argument("-n") {
+                acceptsManualInput = true
+            }
+        }
+        val expected = "this is a test"
+        System.setIn(expected.toByteArray().inputStream())
+        ark.parse(arrayOf()).expectThat {
+            get { name }.isEqualTo(expected)
+        }
+    }
+
+    @Test fun `onParse callbacks should be called`() {
+        var globalCalled = false
+        var lastCalledArg = ""
+        val ark = object : Arkenv() {
+            val some: Int by argument("-s")
+            val last: String by argument("-l")
+
+            override fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {
+                lastCalledArg = name
+            }
+
+            override fun onParse(args: Array<String>) {
+                globalCalled = true
+            }
+        }
+
+        ark.parse(arrayOf("-s", "5", "-l", "test"))
+        globalCalled.expectThat { isTrue() }
+        lastCalledArg.expectThat { isEqualTo("last") }
+    }
 }

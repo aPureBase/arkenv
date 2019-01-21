@@ -1,34 +1,67 @@
 package com.apurebase.arkenv
 
+/**
+ * The base class that provides the argument parsing capabilities.
+ * Extend this to define your own arguments.
+ * @property programName the name of your program
+ * @property withEnv whether to enable environment variable parsing. Defaults to true
+ * @property envPrefix a common prefix for all environment variables
+ * @property enableEnvSecrets whether to enable docker secrets parsing. Will attempt to parse any environment variable
+ * with the _FILE suffix and read the value from the specified path.
+ */
 abstract class Arkenv(
     val programName: String = "Arkenv",
     val withEnv: Boolean = true,
-    val envPrefix: String = ""
+    val envPrefix: String = "",
+    val enableEnvSecrets: Boolean = false
 ) {
 
+    /**
+     * Parses the [args] and resets all previously parsed state.
+     */
     fun parseArguments(args: Array<String>) {
         argList.clear()
         argList.addAll(args)
+        onParse(args)
         delegates
             .sortedBy { it.argument.isMainArg }
             .forEach {
                 it.reset()
-                it.getValue(isParse = true)
+                val value = it.getValue(isParse = true)
+                onParseArgument(it.property.name, it.argument, value)
             }
+        checkRemaining(delegates, argList).forEach { (arg, delegates) ->
+            argList.remove("-$arg")
+            delegates.forEach { it.setTrue() }
+        }
     }
 
-    val argList = mutableListOf<String>()
-    val delegates = mutableListOf<ArgumentDelegate<*>>()
+    open fun onParse(args: Array<String>) {}
+
+    open fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {}
+
+    internal val argList = mutableListOf<String>()
+    internal val delegates = mutableListOf<ArgumentDelegate<*>>()
 
     val help: Boolean by ArkenvLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
 
+    /**
+     * Defines an argument that can be parsed.
+     * @param names the names that the argument can be called with
+     * @param isMainArg whether this argument is a main argument, meaning it doesn't use names,
+     * but the last supplied argument
+     * @param configuration optional configuration of the argument's properties
+     */
     inline fun <reified T : Any> argument(
         names: List<String>,
         isMainArg: Boolean = false,
-        noinline block: Argument<T>.() -> Unit = {}
-    ) = ArkenvLoader(names, isMainArg, block, T::class, this)
+        noinline configuration: Argument<T>.() -> Unit = {}
+    ) = ArkenvLoader(names, isMainArg, configuration, T::class, this)
 
-    fun isHelp(): Boolean = if (argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet) false else help
+    internal fun isHelp(): Boolean = when {
+        argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false
+        else -> help
+    }
 
     override fun toString(): String = StringBuilder().let { sb ->
         val indent = "    "
@@ -49,27 +82,21 @@ abstract class Arkenv(
         }
     }.toString()
 
-    /**
-     * Main argument is used for the last argument,
-     * which doesn't have a named property to it
-     *
-     * Main argument can't be passed through environment variables
-     */
-    inline fun <reified T : Any> mainArgument(noinline block: Argument<T>.() -> Unit = {}): ArkenvLoader<T> =
-        argument(listOf(), true, block)
-
-    inline fun <reified T : Any> argument(
-        vararg names: String,
-        noinline block: Argument<T>.() -> Unit = {}
-    ): ArkenvLoader<T> = argument(names.toList(), false, block)
-
     private fun ArgumentDelegate<*>.getValue(isParse: Boolean): Any? =
         getValue(this, property).also { value ->
             if (isParse && index != null) removeArgumentFromList(index!!, value)
         }
 
     private fun ArgumentDelegate<*>.removeArgumentFromList(index: Int, value: Any?) {
-        if (index > -1) argList.removeAt(index)
-        if (!isBoolean && value != null) argList.remove(value)
+        removeValueArgument(index, isBoolean, value)
+        removeNameArgument(index, argument.isMainArg)
+    }
+
+    private fun removeNameArgument(index: Int, isMainArg: Boolean) {
+        if (index > -1 && !isMainArg) argList.removeAt(index)
+    }
+
+    private fun removeValueArgument(index: Int, isBoolean: Boolean, value: Any?) {
+        if (!isBoolean && value != null) argList.removeAt(index + 1)
     }
 }

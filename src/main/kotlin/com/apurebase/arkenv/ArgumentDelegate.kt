@@ -3,7 +3,7 @@ package com.apurebase.arkenv
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class ArgumentDelegate<T : Any?>(
+internal class ArgumentDelegate<T : Any?>(
     private val arkenv: Arkenv,
     val argument: Argument<T>,
     val property: KProperty<*>,
@@ -13,17 +13,23 @@ class ArgumentDelegate<T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     private var value: T = null as T
-    var isSet: Boolean = false
+    internal var isSet: Boolean = false
         private set
 
-    fun reset() {
+    internal fun reset() {
         isSet = false
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    internal fun setTrue() = when {
+        isBoolean -> value = true as T
+        else -> throw IllegalStateException("Attempted to set value to true but ${property.name} is not boolean")
     }
 
     /**
      * Points to the index in [parsedArgs] where [Argument.names] is placed.
      */
-    var index: Int? = null
+    internal var index: Int? = null
         private set
 
     private var parsedArgs: List<String> = listOf()
@@ -32,17 +38,16 @@ class ArgumentDelegate<T : Any?>(
         val list = mutableListOf<String>()
         var isReading = false
         arkenv.argList.forEach {
-            if (isReading) {
-                list[list.lastIndex] = "${list.last()} $it"
-            } else {
-                list.add(it)
+            when {
+                isReading -> list[list.lastIndex] = "${list.last()} $it"
+                else -> list.add(it)
             }
-
-            if (isReading && it.endsWith(allowedSurroundings)) {
-                list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
-                isReading = false
-            } else if (!isReading && it.startsWith(allowedSurroundings)) {
-                isReading = true
+            when {
+                isReading && it.endsWith(allowedSurroundings) -> {
+                    list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
+                    isReading = false
+                }
+                !isReading && it.startsWith(allowedSurroundings) -> isReading = true
             }
         }
         parsedArgs = list
@@ -63,37 +68,36 @@ class ArgumentDelegate<T : Any?>(
             findIndex()
             value = setValue(property)
             checkNullable(property)
+            checkValidation()
             isSet = true
         }
         return value
     }
 
+    private fun checkValidation() = argument
+        .validation
+        .filterNot { it.assertion(value) }
+        .map { it.message }
+        .let {
+            if (it.isNotEmpty()) it
+                .reduce { acc, s -> "$acc. $s" }
+                .run { throw IllegalArgumentException("Argument ${property.name} did not pass validation: $this") }
+        }
+
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
-        val envVal = if (argument.withEnv) getEnvValue() else null
+        val envVal = if (argument.withEnv) getEnvValue(argument, arkenv.enableEnvSecrets) else null
         return when {
             isBoolean -> (index != null || envVal != null) as T
-            envVal == null && cliValue == null -> argument.defaultValue
+            envVal == null && cliValue == null -> {
+                if (argument.acceptsManualInput) readInput(mapping) ?: argument.defaultValue
+                else argument.defaultValue
+            }
             else -> {
                 val rawValue = cliValue ?: envVal!!
                 mapping(rawValue)
             }
         }
-    }
-
-    private fun getEnvValue(): String? {
-        // If an envVariable is defined we'll pick this as highest order value
-        if (argument.envVariable != null) {
-            val definedEnvValue = System.getenv(argument.envVariable)
-            if (!definedEnvValue.isNullOrEmpty()) return definedEnvValue
-        }
-
-        // Loop over all argument names and pick the first one that matches
-        return argument.names.mapNotNull {
-            if (it.startsWith("--")) {
-                System.getenv(argument.envPrefix + it.toSnakeCase())
-            } else null
-        }.firstOrNull()
     }
 
     private val cliValue: String?
