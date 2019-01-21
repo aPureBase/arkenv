@@ -22,7 +22,7 @@ cache:
 
 build:
   stage: test
-  script: ./gradlew --build-cache assemble --no-daemon
+  script: ./gradlew --build-cache assemble
 
 test:
   stage: test
