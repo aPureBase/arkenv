@@ -22,17 +22,23 @@ abstract class Arkenv(
     fun parseArguments(args: Array<String>) {
         argList.clear()
         argList.addAll(args)
+        onParse(args)
         delegates
             .sortedBy { it.argument.isMainArg }
             .forEach {
                 it.reset()
-                it.getValue(isParse = true)
+                val value = it.getValue(isParse = true)
+                onParseArgument(it.property.name, it.argument, value)
             }
         checkRemaining(delegates, argList).forEach { (arg, delegates) ->
             argList.remove("-$arg")
             delegates.forEach { it.setTrue() }
         }
     }
+
+    open fun onParse(args: Array<String>) {}
+
+    open fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {}
 
     internal val argList = mutableListOf<String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
