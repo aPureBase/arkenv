@@ -7,13 +7,13 @@ variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 before_script:
-  - export GRADLE_USER_HOME=`pwd`/.gradle
+#  - export GRADLE_USER_HOME=`pwd`/.gradle
   - chmod +x ./gradlew
 
 cache:
   paths:
     - build
-    - .gradle
+#    - .gradle
 
 
 ########
