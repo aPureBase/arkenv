@@ -1,7 +1,6 @@
 image: adoptopenjdk/openjdk8-openj9:alpine
 
 stages:
-  - build
   - test
 
 variables:
@@ -22,12 +21,8 @@ cache:
 ########
 
 build:
-  stage: build
+  stage: test
   script: ./gradlew --build-cache assemble --no-daemon
-  artifacts:
-    expire_in: '5 day'
-    paths:
-      - build/libs
 
 test:
   stage: test
