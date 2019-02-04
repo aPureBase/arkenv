@@ -8,7 +8,7 @@ import java.io.FileNotFoundException
 
 class EnvFileTests {
 
-    class EnvFileArk(override val dotEnvFilePath: String?) : Arkenv() {
+    private class EnvFileArk(override val dotEnvFilePath: String?) : Arkenv() {
         val mysqlPassword: String by argument("--mysql-password")
         val port: Int by argument("--database-port")
     }
@@ -21,7 +21,7 @@ class EnvFileTests {
     }
 
     @Test fun `should load values from dot env file`() {
-        val path = File("src/test/resources/.env").absolutePath
+        val path = getTestResourcePath(".env")
         EnvFileArk(path).parse(arrayOf()).expectThat {
             get { mysqlPassword }.isEqualTo("this_is_expected")
             get { port }.isEqualTo(5050)

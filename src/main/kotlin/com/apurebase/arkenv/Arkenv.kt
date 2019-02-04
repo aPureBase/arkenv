@@ -1,5 +1,8 @@
 package com.apurebase.arkenv
 
+import java.io.File
+import java.util.*
+
 /**
  * The base class that provides the argument parsing capabilities.
  * Extend this to define your own arguments.
@@ -14,7 +17,8 @@ abstract class Arkenv(
     open val withEnv: Boolean = true,
     open val envPrefix: String = "",
     open val enableEnvSecrets: Boolean = false,
-    open val dotEnvFilePath: String? = null
+    open val dotEnvFilePath: String? = null,
+    open val propertiesFilePath: String? = null
 ) {
 
     /**
@@ -26,6 +30,7 @@ abstract class Arkenv(
         onParse(args)
         dotEnv.clear()
         parseDotEnv(dotEnvFilePath).let(dotEnv::putAll)
+        parseProperties(propertiesFilePath).let(dotEnv::putAll)
         delegates
             .sortedBy { it.argument.isMainArg }
             .forEach {

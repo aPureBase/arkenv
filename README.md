@@ -205,3 +205,14 @@ class EnvFileArk : Arkenv(dotEnvFilePath = ".env") {
 ```
 The parsing rules are the same as for [Environment Variables](#environment-variables), 
 meaning it accepts the snake case version of double-hyphen arguments. 
+
+#### Properties
+Arkenv also supports the properties file format. Define a property file path with 
+`propertiesFilePath` in the constructor.
+
+```kotlin
+class PropertiesArk : Arkenv(propertiesFilePath = "app.properties") {
+    val mysqlPassword: String by argument("--mysql-password")
+    val port: Int by argument("--database-port")
+}
+```

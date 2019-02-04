@@ -1,6 +1,7 @@
 package com.apurebase.arkenv
 
 import java.io.File
+import java.util.*
 
 internal fun parseDotEnv(path: String?): Map<String, String> = when (path) {
     null -> mapOf()
@@ -8,7 +9,15 @@ internal fun parseDotEnv(path: String?): Map<String, String> = when (path) {
         .readLines()
         .filter(String::isNotBlank)
         .map { it.split("=") }
-        .associate { it[0] to it[1] }
+        .associate { it[0].trim() to it[1].trim() }
+}
+
+internal fun parseProperties(path: String?): Map<String, String> = when {
+    path != null -> Properties()
+        .apply { File(path).inputStream().use(::load) }
+        .map { (key, value) -> key.toString() to value.toString() }
+        .toMap()
+    else -> mapOf()
 }
 
 internal fun getEnvValue(argument: Argument<*>, dotEnv: Map<String, String>, enableEnvSecrets: Boolean): String? {
