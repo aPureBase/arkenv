@@ -24,6 +24,8 @@ Please report issues and open pull requests there.
   - [Manual Input](#manual-input)
   - [Docker Secrets](#docker-secrets)
   - [Dot Env Files](#dot-env-files)
+  - [Properties](#properties)
+  
 
 ### Usage
 Define your arguments by extending `Arkenv` and declaring props with the `argument` delegate.
