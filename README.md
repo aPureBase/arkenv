@@ -203,3 +203,5 @@ class EnvFileArk : Arkenv(dotEnvFilePath = ".env") {
     val port: Int by argument("--database-port")
 }
 ```
+The parsing rules are the same as for [Environment Variables](#environment-variables), 
+meaning it accepts the snake case version of double-hyphen arguments. 
