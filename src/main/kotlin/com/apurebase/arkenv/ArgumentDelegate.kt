@@ -86,7 +86,7 @@ internal class ArgumentDelegate<T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
-        val envVal = if (argument.withEnv) getEnvValue(argument, arkenv.enableEnvSecrets) else null
+        val envVal = if (argument.withEnv) getEnvValue(argument, arkenv.dotEnv, arkenv.enableEnvSecrets) else null
         return when {
             isBoolean -> (index != null || envVal != null) as T
             envVal == null && cliValue == null -> {
