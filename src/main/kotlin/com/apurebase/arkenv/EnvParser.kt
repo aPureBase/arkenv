@@ -5,15 +5,11 @@ import java.util.*
 
 internal fun parseDotEnv(path: String?): Map<String, String> = when (path) {
     null -> mapOf()
-    else -> {
-        val map = mutableMapOf<String, String>()
-        File(path).useLines { lines ->
-            lines.map(String::trimStart)
-                .filterNot { it.isBlank() || it.startsWith("#") }
-                .map { it.split("=") }
-                .forEach { map[it[0].trimEnd()] = it[1] }
-        }
-        map
+    else -> File(path).useLines { lines ->
+        lines.map(String::trimStart)
+            .filterNot { it.isBlank() || it.startsWith("#") }
+            .map { it.split("=") }
+            .associate { it[0].trimEnd() to it[1] }
     }
 }
 
