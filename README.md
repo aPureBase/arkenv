@@ -23,6 +23,9 @@ Please report issues and open pull requests there.
   - [Validation](#validation)
   - [Manual Input](#manual-input)
   - [Docker Secrets](#docker-secrets)
+  - [Dot Env Files](#dot-env-files)
+  - [Properties](#properties)
+  
 
 ### Usage
 Define your arguments by extending `Arkenv` and declaring props with the `argument` delegate.
@@ -182,3 +185,36 @@ $ export API_KEY_FILE=file_including_api_key.txt
 ```
 
 Arkenv loads the file and reads the entire content. 
+
+#### Dot Env Files
+A lot of tools integrate with the dot env (.env) file format, 
+which allows to define environment variables in a plain file. 
+
+In order to seamlessly integrate your application, Arkenv supports parsing these files.
+
+An example of such a file, named `.env` could look like this:
+```bash
+MYSQL_PASSWORD=this_is_expected
+DATABASE_PORT=5050
+```
+
+Use `dotEnvFilePath` to specify the location of the dot env file. 
+```kotlin
+class EnvFileArk : Arkenv(dotEnvFilePath = ".env") {
+    val mysqlPassword: String by argument("--mysql-password")
+    val port: Int by argument("--database-port")
+}
+```
+The parsing rules are the same as for [Environment Variables](#environment-variables), 
+meaning it accepts the snake case version of double-hyphen arguments. 
+
+#### Properties
+Arkenv also supports the properties file format. Define a property file path with 
+`propertiesFilePath` in the constructor.
+
+```kotlin
+class PropertiesArk : Arkenv(propertiesFilePath = "app.properties") {
+    val mysqlPassword: String by argument("--mysql-password")
+    val port: Int by argument("--database-port")
+}
+```
