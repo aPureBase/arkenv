@@ -172,19 +172,6 @@ class GeneralTest {
             }
     }
 
-    @Test fun `parsing system in should work`() {
-        val ark = object : Arkenv() {
-            val name: String by argument("-n") {
-                acceptsManualInput = true
-            }
-        }
-        val expected = "this is a test"
-        System.setIn(expected.toByteArray().inputStream())
-        ark.parse(arrayOf()).expectThat {
-            get { name }.isEqualTo(expected)
-        }
-    }
-
     @Test fun `onParse callbacks should be called`() {
         var globalCalled = false
         var lastCalledArg = ""
@@ -204,5 +191,10 @@ class GeneralTest {
         ark.parse(arrayOf("-s", "5", "-l", "test"))
         globalCalled.expectThat { isTrue() }
         lastCalledArg.expectThat { isEqualTo("last") }
+    }
+
+    @Test fun `should pass when delegates are empty`() {
+        val ark = object : Arkenv() {}
+        ark.parse(arrayOf("-empty"))
     }
 }
