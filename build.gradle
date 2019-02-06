@@ -10,7 +10,7 @@ plugins {
     id "io.gitlab.arturbosch.detekt" version "1.0.0.RC8"
 }
 
-version '1.4.0'
+version '1.4.1'
 group 'com.apurebase'
 
 apply plugin: 'java'
