@@ -17,8 +17,6 @@ internal fun String.endsWith(list: Iterable<String>): Boolean = list.any { endsW
 
 internal fun String.startsWith(list: Iterable<String>): Boolean = list.any { startsWith(it) }
 
-internal fun String.contains(list: Iterable<String>): Boolean = list.any { contains(it) }
-
 internal fun String.removeSurrounding(list: Iterable<String>): String =
     list.fold(this) { acc, s -> acc.removeSurrounding(s) }
 
