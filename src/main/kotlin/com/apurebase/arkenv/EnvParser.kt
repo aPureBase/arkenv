@@ -5,11 +5,12 @@ import java.util.*
 
 internal fun parseDotEnv(path: String?): Map<String, String> = when (path) {
     null -> mapOf()
-    else -> File(path)
-        .readLines()
-        .filter(String::isNotBlank)
-        .map { it.split("=") }
-        .associate { it[0].trim() to it[1].trim() }
+    else -> File(path).useLines { lines ->
+        lines.map(String::trimStart)
+            .filterNot { it.isBlank() || it.startsWith("#") }
+            .map { it.split("=") }
+            .associate { it[0].trimEnd() to it[1].substringBefore('#').trim() }
+    }
 }
 
 internal fun parseProperties(path: String?): Map<String, String> = when {

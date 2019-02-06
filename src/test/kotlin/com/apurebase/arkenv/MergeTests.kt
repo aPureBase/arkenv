@@ -1,7 +1,6 @@
 package com.apurebase.arkenv
 
 import org.junit.jupiter.api.Test
-import strikt.api.expectThat
 import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
