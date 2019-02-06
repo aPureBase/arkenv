@@ -9,7 +9,7 @@ internal fun parseDotEnv(path: String?): Map<String, String> = when (path) {
         lines.map(String::trimStart)
             .filterNot { it.isBlank() || it.startsWith("#") }
             .map { it.split("=") }
-            .associate { it[0].trimEnd() to it[1] }
+            .associate { it[0].trimEnd() to it[1].substringBefore('#').trim() }
     }
 }
 

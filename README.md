@@ -214,7 +214,6 @@ Arkenv also supports the properties file format. Define a property file path wit
 
 ```kotlin
 class PropertiesArk : Arkenv(propertiesFilePath = "app.properties") {
-    val mysqlPassword: String by argument("--mysql-password")
-    val port: Int by argument("--database-port")
+    ...
 }
 ```
