@@ -3,18 +3,11 @@ image: adoptopenjdk/openjdk8-openj9:alpine
 stages:
   - build
   - test
+  - docs
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
-before_script:
-  - export GRADLE_USER_HOME=`pwd`/.gradle
-  - chmod +x ./gradlew
-
-cache:
-  paths:
-    - build
-    - .gradle
 
 
 ########
@@ -23,15 +16,48 @@ cache:
 
 build:
   stage: build
-  script: ./gradlew --build-cache assemble --no-daemon
-  artifacts:
-    expire_in: '5 day'
+  cache:
     paths:
-      - build/libs
+      - build
+      - .gradle
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - chmod +x ./gradlew
+  script:
+    - ./gradlew --build-cache assemble --no-daemon
+  
 
 test:
   stage: test
+  cache:
+    paths:
+      - build
+      - .gradle
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - chmod +x ./gradlew
   script:
     - ./gradlew check --no-daemon
     - chmod +x ./scripts/coverage.sh
     - ./scripts/coverage.sh
+  
+pages:
+  image: alpine/bundle:2.6.1
+  stage: docs
+  artifacts:
+    paths:
+      - public
+  cache:
+    paths:
+      - docs/vendor
+  variables:
+    JEKYLL_ENV: production
+    LC_ALL: C.UTF-8
+  script:
+    - cd docs
+    - bundle install --path vendor/bundle
+    - bundle exec jekyll build -d ../public
+  only:
+    - master
+
+

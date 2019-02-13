@@ -1,0 +1,34 @@
+title: Arkenv
+description: >-
+  Kotlin Cli & Env argument parser.
+baseurl: "/arkenv/" 
+url: "https://apurebase.gitlab.io"
+# github_username:  jeggy
+# email: jo@jebster.net
+
+# Build settings
+markdown: kramdown
+theme: "just-the-docs"
+
+permalink: pretty
+
+
+# Just the Docs
+search_enabled: true
+color_scheme: test
+sass:
+  load_paths:
+    - _sass
+aux_links:
+  "Arkenv on GitLab":
+    - "//gitlab.com/apurebase/arkenv"
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - any_additional_item # any user-specific listing goes at the end
