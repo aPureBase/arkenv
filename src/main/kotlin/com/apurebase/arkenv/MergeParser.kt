@@ -33,27 +33,20 @@ private class MergeCandidate(val delegate: ArgumentDelegate<*>, val names: List<
 }
 
 private fun resolveMatch(
-    arg: String,
-    candidates: List<MergeCandidate>,
-    results: List<ArgumentDelegate<*>>,
-    index: Int,
-    nameIndex: Int
+    arg: String, candidates: List<MergeCandidate>, results: List<ArgumentDelegate<*>>, index: Int, nameIndex: Int
 ): List<ArgumentDelegate<*>> {
     val options = candidates.findCandidates(arg)
     val chosen = options.getOrNull(index) ?: return listOf()
     val remaining = candidates - chosen
     val reducedArgument = arg.removePrefix(chosen.names[nameIndex])
-    return when {
-        reducedArgument.isBlank() -> results + chosen.delegate
-        else -> {
-            val matches = resolveMatch(reducedArgument, remaining, results + chosen.delegate, 0, 0)
-            when {
-                shouldContinueSearch(matches, options, index) ->
-                    resolveMatch(arg, candidates, results, index + 1, 0)
-                shouldContinueSearch(matches, chosen.names, nameIndex) ->
-                    resolveMatch(arg, candidates, results, index, nameIndex + 1)
-                else -> matches
-            }
+    return if (reducedArgument.isBlank()) results + chosen.delegate
+    else {
+        val matches = resolveMatch(reducedArgument, remaining, results + chosen.delegate, 0, 0)
+        when {
+            shouldContinueSearch(matches, options, index) -> resolveMatch(arg, candidates, results, index + 1, 0)
+            shouldContinueSearch(matches, chosen.names, nameIndex) ->
+                resolveMatch(arg, candidates, results, index, nameIndex + 1)
+            else -> matches
         }
     }
 }
