@@ -9,15 +9,20 @@ import strikt.assertions.isTrue
 class GeneralTest {
 
     @Test fun help() {
-        class HelpArgs : Arkenv() {
+        class HelpArgs(name: String) : Arkenv(name) {
             val required: String by argument("-r") {
                 description = "This arg is required but can be null if help is true"
             }
         }
 
-        HelpArgs().parse(arrayOf("-h")).let(::println)
+        val expectedName = "TestProgram"
+        val ark = HelpArgs(expectedName).parse(arrayOf("-h"))
+        val helpInfo = ark.toString()
+        helpInfo shouldContain expectedName
+        helpInfo shouldContain HelpArgs::required.name
+        helpInfo shouldContain "This arg is required but can be null if help is true"
 
-        HelpArgs().let {
+        HelpArgs("Test").let {
             it::required shouldThrow IllegalArgumentException::class
         }
     }
