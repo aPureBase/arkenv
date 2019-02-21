@@ -15,7 +15,9 @@ class GeneralTest {
             }
         }
 
-        HelpArgs().parse(arrayOf("-h")).let(::println)
+        val ark = HelpArgs().parse(arrayOf("-h"))
+        val helpInfo = ark.toString()
+        helpInfo shouldContain HelpArgs::required.name
 
         HelpArgs().let {
             it::required shouldThrow IllegalArgumentException::class
