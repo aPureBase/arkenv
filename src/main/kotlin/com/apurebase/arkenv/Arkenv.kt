@@ -72,7 +72,7 @@ abstract class Arkenv(
         else -> help
     }
 
-    override fun toString(): String = StringBuilder().let { sb ->
+    override fun toString(): String = StringBuilder().also { sb ->
         val indent = "    "
         val doubleIndent = indent + indent
         sb.append("$programName: \n")
