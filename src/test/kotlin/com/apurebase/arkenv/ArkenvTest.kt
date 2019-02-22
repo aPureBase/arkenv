@@ -15,6 +15,7 @@ abstract class ArkenvTest {
     }
 
     @Test fun `nullable should be null`() {
+        MockSystem()
         Nullable().apply {
             int shouldBe null
             str shouldBe null

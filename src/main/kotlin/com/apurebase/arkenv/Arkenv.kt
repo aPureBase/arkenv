@@ -15,7 +15,7 @@ abstract class Arkenv(
     open val envPrefix: String = "",
     open val enableEnvSecrets: Boolean = false,
     open val dotEnvFilePath: String? = null,
-    open val propertiesFile: PropertiesFile? = null
+    open val propertiesFile: String? = null
 ) {
 
     /**
