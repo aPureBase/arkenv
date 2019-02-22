@@ -13,9 +13,13 @@ internal fun parseDotEnv(path: String?): Map<String, String> = when (path) {
     }
 }
 
-internal fun parseProperties(path: String?): Map<String, String> = when {
-    path != null -> Properties()
-        .apply { File(path).inputStream().use(::load) }
+internal fun parseProperties(propertiesFile: PropertiesFile?): Map<String, String> = when {
+    propertiesFile != null -> Properties()
+        .apply {
+            propertiesFile.classLoader
+                .getResourceAsStream(propertiesFile.name)
+                .use(::load)
+        }
         .map { (key, value) -> key.toString() to value.toString() }
         .toMap()
     else -> mapOf()
