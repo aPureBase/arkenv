@@ -16,12 +16,16 @@ class ValidationTests {
         }
 
         ark.parse(arrayOf("-f", "5"))
-        val message = assertThrows<Exception> { ark.parse(arrayOf("-f", "0")) }.message.shouldNotBeNull()
+
+        val actualValue = "0"
+        val message =
+            assertThrows<ValidationException> { ark.parse(arrayOf("-f", actualValue)) }.message.shouldNotBeNull()
         println(message)
         message shouldContain "did not pass validation"
         message shouldContain "failingProp"
         message shouldContain "number should be positive"
         message shouldContain "this should also fail"
+        message shouldContain actualValue
     }
 
 }
