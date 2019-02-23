@@ -12,8 +12,12 @@ class PropertiesTests {
         val multiLine: String by argument("--multi-string")
     }
 
-    @Test fun `should load from properties file`() {
+    @Test fun `should load properties file`() {
         verify("app.properties")
+    }
+
+    @Test fun `should load lowercase properties`() {
+        verify("app_lower.properties")
     }
 
     private fun verify(path: String) {
@@ -25,17 +29,8 @@ class PropertiesTests {
             }
     }
 
-    @Test fun `should load lowercase properties`() {
-        val path = getTestResourcePath("app_lower.properties")
-        PropertiesArk(path).parse(arrayOf()).expectThat {
-            get { mysqlPassword }.isEqualTo("this_is_expected")
-            get { port }.isEqualTo(5050)
-            get { multiLine }.isEqualTo("this stretches lines")
-        }
-    }
-
     @Test fun `should throw when dot env file can not be found`() {
-        val ark = PropertiesArk("does_not_exit.env")
+        val ark = PropertiesArk("does_not_exist.env")
         assertThrows<NullPointerException> {
             ark.parse(arrayOf())
         }

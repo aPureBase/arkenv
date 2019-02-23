@@ -20,7 +20,7 @@ internal fun parseProperties(propertiesFile: String?): Map<String, String> = whe
                 .getResourceAsStream(propertiesFile)
                 .use(::load)
         }
-        .map { (key, value) -> key.toString() to value.toString() }
+        .map { (key, value) -> key.toString().toUpperCase() to value.toString() }
         .toMap()
     else -> mapOf()
 }
