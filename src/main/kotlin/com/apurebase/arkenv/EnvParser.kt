@@ -13,9 +13,13 @@ internal fun parseDotEnv(path: String?): Map<String, String> = when (path) {
     }
 }
 
-internal fun parseProperties(path: String?): Map<String, String> = when {
-    path != null -> Properties()
-        .apply { File(path).inputStream().use(::load) }
+internal fun parseProperties(propertiesFile: String?): Map<String, String> = when {
+    propertiesFile != null -> Properties()
+        .apply {
+            Arkenv::class.java.classLoader
+                .getResourceAsStream(propertiesFile)
+                .use(::load)
+        }
         .map { (key, value) -> key.toString() to value.toString() }
         .toMap()
     else -> mapOf()
