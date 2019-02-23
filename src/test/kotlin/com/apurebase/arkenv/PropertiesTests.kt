@@ -22,6 +22,15 @@ class PropertiesTests {
         }
     }
 
+    @Test fun `should load lowercase properties`() {
+        val path = getTestResourcePath("app_lower.properties")
+        PropertiesArk(path).parse(arrayOf()).expectThat {
+            get { mysqlPassword }.isEqualTo("this_is_expected")
+            get { port }.isEqualTo(5050)
+            get { multiLine }.isEqualTo("this stretches lines")
+        }
+    }
+
     @Test fun `should throw when dot env file can not be found`() {
         val ark = PropertiesArk("does_not_exit.env")
         assertThrows<FileNotFoundException> {

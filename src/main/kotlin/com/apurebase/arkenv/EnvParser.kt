@@ -16,7 +16,7 @@ internal fun parseDotEnv(path: String?): Map<String, String> = when (path) {
 internal fun parseProperties(path: String?): Map<String, String> = when {
     path != null -> Properties()
         .apply { File(path).inputStream().use(::load) }
-        .map { (key, value) -> key.toString() to value.toString() }
+        .map { (key, value) -> key.toString().toUpperCase() to value.toString() }
         .toMap()
     else -> mapOf()
 }
