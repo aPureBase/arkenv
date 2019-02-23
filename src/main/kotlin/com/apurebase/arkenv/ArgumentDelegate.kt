@@ -81,7 +81,7 @@ internal class ArgumentDelegate<T : Any?>(
         .let {
             if (it.isNotEmpty()) it
                 .reduce { acc, s -> "$acc. $s" }
-                .run { throw ValidationException(property.name, value, this) }
+                .run { throw ValidationException(property, value, this) }
         }
 
     @Suppress("UNCHECKED_CAST")
