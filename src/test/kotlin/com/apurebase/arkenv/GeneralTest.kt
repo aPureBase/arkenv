@@ -105,23 +105,6 @@ class GeneralTest {
         }
     }
 
-    @Test fun `defaultValue should be used when no other value can be found`() {
-        class DefArgs : Arkenv() {
-            val def: Int by mainArgument {
-                defaultValue = 5
-            }
-
-            val defString: String by mainArgument {
-                defaultValue = "hey"
-            }
-        }
-
-        DefArgs().run {
-            def shouldEqualTo 5
-            defString shouldBeEqualTo "hey"
-        }
-    }
-
     @Test fun `objects should be usable`() {
         ObjectArgs.parse(arrayOf("-i", "10"))
         ObjectArgs.int shouldEqualTo 10
