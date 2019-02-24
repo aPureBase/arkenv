@@ -13,8 +13,17 @@ internal class ArgumentDelegate<T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     private var value: T = null as T
+
     internal var isSet: Boolean = false
         private set
+
+    var isDefault: Boolean = false
+        private set
+
+    private val defaultValue: T? by lazy {
+        isDefault = true
+        argument.defaultValue?.invoke()
+    }
 
     internal fun reset() {
         isSet = false
@@ -81,7 +90,7 @@ internal class ArgumentDelegate<T : Any?>(
         .let {
             if (it.isNotEmpty()) it
                 .reduce { acc, s -> "$acc. $s" }
-                .run { throw IllegalArgumentException("Argument ${property.name} did not pass validation: $this") }
+                .run { throw ValidationException(property, value, this) }
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -90,8 +99,8 @@ internal class ArgumentDelegate<T : Any?>(
         return when {
             isBoolean -> (index != null || envVal != null) as T
             envVal == null && cliValue == null -> {
-                if (argument.acceptsManualInput) readInput(mapping) ?: argument.defaultValue
-                else argument.defaultValue
+                if (argument.acceptsManualInput) readInput(mapping) ?: defaultValue as T
+                else defaultValue as T
             }
             else -> {
                 val rawValue = cliValue ?: envVal!!
@@ -116,5 +125,5 @@ internal class ArgumentDelegate<T : Any?>(
 
     private val allowedSurroundings = listOf("'", "\"")
 
-    private fun valuesAreNull(): Boolean = value == null && argument.defaultValue == null
+    private fun valuesAreNull(): Boolean = value == null && defaultValue == null
 }

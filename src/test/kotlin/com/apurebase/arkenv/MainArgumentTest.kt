@@ -8,20 +8,46 @@ import strikt.assertions.isEqualTo
 
 internal class MainArgumentTest {
 
-    class Arkuments : Arkenv() {
+    private class Ark : Arkenv() {
         val main: String by mainArgument { }
-        val extra: String by argument("-e") { }
+        val extra: String by argument("-e", "--extra") { }
     }
 
     @Test fun `mixed main and normal`() {
-        val args = Arkuments().parse(arrayOf("-e", "import", "abc"))
+        val args = Ark().parse(arrayOf("-e", "import", "abc"))
         args.main shouldEqual "abc"
         args.extra shouldEqual "import"
     }
 
+    @Test fun `mixed main and env`() {
+        MockSystem("EXTRA" to "import")
+        Ark()
+            .parse(arrayOf("abc"))
+            .expectThat {
+                get { main }.isEqualTo("abc")
+                get { extra }.isEqualTo("import")
+            }
+    }
+
+    @Test fun `env before main`() {
+        val ark = object : Arkenv() {
+            val extra: String by argument("-e", "--extra") { }
+            val main: String by mainArgument {
+                defaultValue = { "default" }
+            }
+        }
+        MockSystem("EXTRA" to "import")
+        ark
+            .parse(arrayOf("abc"))
+            .expectThat {
+                get { main }.isEqualTo("abc")
+                get { extra }.isEqualTo("import")
+            }
+    }
+
     @Test fun `no main argument passed`() {
-        { Arkuments().main } shouldThrow IllegalArgumentException::class
-        { Arkuments().parse(arrayOf("-e", "import")) } shouldThrow IllegalArgumentException::class
+        { Ark().main } shouldThrow IllegalArgumentException::class
+        { Ark().parse(arrayOf("-e", "import")) } shouldThrow IllegalArgumentException::class
     }
 
     @Test fun `main should not eat unused args`() {

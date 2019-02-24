@@ -43,8 +43,7 @@ class Argument<T : Any?>(val names: List<String>) {
     /**
      * A default value that will be used when no other argument is found for parsing
      */
-    @Suppress("UNCHECKED_CAST")
-    var defaultValue: T = null as T
+    var defaultValue: (() -> T)? = null
 
     /**
      * When true, this argument will ask for manual input via the command line on parse,

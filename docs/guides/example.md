@@ -11,7 +11,7 @@ nav_order: 1
 class Arguments : Arkenv() {
     val port: Int by argument("-p") {
         description = "An Int with a default value"
-        defaultValue = 5000
+        defaultValue = { 5000 }
     }
 }
 
