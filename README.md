@@ -28,9 +28,9 @@ class Arguments : Arkenv() {
         description = "A bool, which will be false by default"
     }
 
-    val port: Int by argument("-p") {
+    val port: Int by argument("-p", "--this-can-be-set-via-env") {
         description = "An Int with a default value"
-        defaultValue = 5000
+        defaultValue = { 5000 }
     }
 
     val nullInt: Int? by argument("-ni") {
