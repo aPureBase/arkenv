@@ -94,7 +94,7 @@ abstract class Arkenv(
         }
 
     private fun ArgumentDelegate<*>.removeArgumentFromList(index: Int, value: Any?) {
-        removeValueArgument(index, isBoolean, value)
+        removeValueArgument(index, isBoolean, value, isDefault)
         removeNameArgument(index, argument.isMainArg)
     }
 
@@ -102,7 +102,12 @@ abstract class Arkenv(
         if (index > -1 && !isMainArg) argList.removeAt(index)
     }
 
-    private fun removeValueArgument(index: Int, isBoolean: Boolean, value: Any?) {
-        if (!isBoolean && value != null) argList.removeAt(index + 1)
+    private fun removeValueArgument(
+        index: Int,
+        isBoolean: Boolean,
+        value: Any?,
+        default: Boolean
+    ) {
+        if (!isBoolean && !default && value != null) argList.removeAt(index + 1)
     }
 }
