@@ -1,7 +1,6 @@
 image: adoptopenjdk/openjdk8-openj9:alpine
 
 stages:
-  - build
   - test
   - publish
 
@@ -15,7 +14,7 @@ variables:
 ########
 
 build:
-  stage: build
+  stage: test
   cache:
     paths:
       - build
