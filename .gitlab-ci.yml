@@ -3,7 +3,7 @@ image: adoptopenjdk/openjdk8-openj9:alpine
 stages:
   - build
   - test
-  - docs
+  - publish
 
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
@@ -40,10 +40,24 @@ test:
     - ./gradlew check --no-daemon
     - chmod +x ./scripts/coverage.sh
     - ./scripts/coverage.sh
-  
+
+bintray:publish:
+  stage: publish
+  cache:
+    paths:
+      - build
+      - .gradle
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+    - chmod +x ./gradlew
+  script:
+    - ./gradlew bintrayUpload
+  only:
+    - tags
+
 pages:
   image: alpine/bundle:2.6.1
-  stage: docs
+  stage: publish
   artifacts:
     paths:
       - public
