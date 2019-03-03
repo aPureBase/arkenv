@@ -18,6 +18,16 @@ abstract class Arkenv(
     open val propertiesFile: String? = null
 ) {
 
+    open val loaders: MutableList<ArkenvLoader> = mutableListOf(
+        EnvironmentVariableLoader(),
+        PropertiesLoader()
+    )
+
+    internal open val parsers: MutableList<ArkenvParser> = mutableListOf(
+        CliParser(),
+        EnvironmentVariableParser()
+    )
+
     /**
      * Parses the [args] and resets all previously parsed state.
      */
@@ -25,9 +35,10 @@ abstract class Arkenv(
         argList.clear()
         argList.addAll(args)
         onParse(args)
+
         dotEnv.clear()
-        parseDotEnv(dotEnvFilePath).let(dotEnv::putAll)
-        parseProperties(propertiesFile).let(dotEnv::putAll)
+        loaders.forEach { it.load(this) }
+
         delegates
             .sortedBy { it.argument.isMainArg }
             .forEach {
@@ -47,9 +58,9 @@ abstract class Arkenv(
 
     internal val argList = mutableListOf<String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
-    internal val dotEnv = mutableMapOf<String, String>()
+    val dotEnv = mutableMapOf<String, String>()
 
-    val help: Boolean by ArkenvLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
+    val help: Boolean by ArkenvDelegateLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
 
     /**
      * Defines an argument that can be parsed.
@@ -62,7 +73,7 @@ abstract class Arkenv(
         names: List<String>,
         isMainArg: Boolean = false,
         noinline configuration: Argument<T>.() -> Unit = {}
-    ) = ArkenvLoader(names, isMainArg, configuration, T::class, this)
+    ) = ArkenvDelegateLoader(names, isMainArg, configuration, T::class, this)
 
     internal fun isHelp(): Boolean = when {
         argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false

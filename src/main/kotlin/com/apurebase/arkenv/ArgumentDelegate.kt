@@ -41,7 +41,7 @@ internal class ArgumentDelegate<T : Any?>(
     internal var index: Int? = null
         private set
 
-    private var parsedArgs: List<String> = listOf()
+    internal var parsedArgs: List<String> = listOf()
 
     private fun parseArguments() {
         val list = mutableListOf<String>()
@@ -95,24 +95,14 @@ internal class ArgumentDelegate<T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
-        val envVal = if (argument.withEnv) getEnvValue(argument, arkenv.dotEnv, arkenv.enableEnvSecrets) else null
+        val values = arkenv.parsers.mapNotNull { it.parse(arkenv, this) }
         return when {
-            isBoolean -> (index != null || envVal != null) as T
-            envVal == null && cliValue == null -> {
-                if (argument.acceptsManualInput) readInput(mapping) ?: defaultValue as T
-                else defaultValue as T
-            }
-            else -> {
-                val rawValue = cliValue ?: envVal!!
-                mapping(rawValue)
-            }
+            isBoolean -> (index != null || values.isNotEmpty()) as T
+            values.isEmpty() -> if (argument.acceptsManualInput) readInput(mapping) ?: defaultValue as T
+            else defaultValue as T
+            else -> mapping(values.first())
         }
     }
-
-    private val cliValue: String?
-        get() = index?.let {
-            parsedArgs.getOrNull(it + 1)
-        }
 
     @Suppress("NO_REFLECTION_IN_CLASS_PATH")
     private fun checkNullable(property: KProperty<*>) {

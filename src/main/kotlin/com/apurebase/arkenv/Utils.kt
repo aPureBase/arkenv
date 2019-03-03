@@ -11,7 +11,7 @@ fun <T : Arkenv> T.parse(args: Array<String>) = apply { parseArguments(args) }
  *
  * Main argument can't be passed through environment variables
  */
-inline fun <reified T : Any> Arkenv.mainArgument(noinline block: Argument<T>.() -> Unit = {}): ArkenvLoader<T> =
+inline fun <reified T : Any> Arkenv.mainArgument(noinline block: Argument<T>.() -> Unit = {}): ArkenvDelegateLoader<T> =
     argument(listOf(), true, block)
 
 /**
@@ -22,7 +22,7 @@ inline fun <reified T : Any> Arkenv.mainArgument(noinline block: Argument<T>.() 
 inline fun <reified T : Any> Arkenv.argument(
     vararg names: String,
     noinline configuration: Argument<T>.() -> Unit = {}
-): ArkenvLoader<T> = argument(names.toList(), false, configuration)
+): ArkenvDelegateLoader<T> = argument(names.toList(), false, configuration)
 
 internal fun <T> ArgumentDelegate<T>.readInput(mapping: (String) -> T): T? {
     println("Accepting input for ${property.name}: ")
