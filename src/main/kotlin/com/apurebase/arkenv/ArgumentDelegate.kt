@@ -98,8 +98,10 @@ class ArgumentDelegate<T : Any?>(
         val values = arkenv.parsers.mapNotNull { it.parse(arkenv, this) }
         return when {
             isBoolean -> (index != null || values.isNotEmpty()) as T
-            values.isEmpty() -> if (argument.acceptsManualInput) readInput(mapping) ?: defaultValue as T
-            else defaultValue as T
+            values.isEmpty() -> {
+                if (argument.acceptsManualInput) readInput(mapping) ?: defaultValue as T
+                else defaultValue as T
+            }
             else -> mapping(values.first())
         }
     }
