@@ -21,13 +21,13 @@ abstract class Arkenv(
 ) {
 
     open val loaders: MutableList<(Arkenv) -> Unit> = listOfNotNull(
-        EnvironmentVariableLoader()::load,
-        if (propertiesFile != null) PropertiesLoader()::load else null
+        ::loadEnvironmentVariables,
+        if (propertiesFile != null) ::loadProperties else null
     ).toMutableList()
 
-    internal open val parsers: MutableList<ArkenvParser> = mutableListOf(
-        CliParser(),
-        EnvironmentVariableParser()
+    open val parsers: MutableList<(Arkenv, ArgumentDelegate<*>) -> String?> = mutableListOf(
+        ::parseCli,
+        ::parseEnvironmentVariables
     )
 
     /**

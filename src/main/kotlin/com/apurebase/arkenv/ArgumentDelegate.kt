@@ -95,7 +95,7 @@ class ArgumentDelegate<T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
-        val values = arkenv.parsers.mapNotNull { it.parse(arkenv, this) }
+        val values = arkenv.parsers.mapNotNull { it(arkenv, this) }
         return when {
             isBoolean -> (index != null || values.isNotEmpty()) as T
             values.isEmpty() -> {
