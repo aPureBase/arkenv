@@ -3,7 +3,7 @@ package com.apurebase.arkenv
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-internal class ArgumentDelegate<T : Any?>(
+class ArgumentDelegate<T : Any?>(
     private val arkenv: Arkenv,
     val argument: Argument<T>,
     val property: KProperty<*>,
@@ -104,16 +104,16 @@ internal class ArgumentDelegate<T : Any?>(
         }
     }
 
-    @Suppress("NO_REFLECTION_IN_CLASS_PATH")
     private fun checkNullable(property: KProperty<*>) {
-        if (argument.isHelp) return
-        if (!arkenv.isHelp() && !property.returnType.isMarkedNullable && valuesAreNull()) {
+        if (!isHelp && !property.returnType.isMarkedNullable && valuesAreNull()) {
             val nameInfo = if (argument.isMainArg) "Main argument" else argument.names.joinToString()
             throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
         }
     }
 
     private val allowedSurroundings = listOf("'", "\"")
+
+    private val isHelp get() = argument.isHelp || arkenv.isHelp()
 
     private fun valuesAreNull(): Boolean = value == null && defaultValue == null
 }

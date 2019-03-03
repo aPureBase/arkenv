@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test
 internal class ProfilesTest {
 
     @Test fun `nested profile should parse correctly`() {
-        val args = arrayOf("--profile", "app_lower.properties", "-p", "20")
+        val args = arrayOf("--profile", "app_lower.properties")
         val profile = Ark().parse(args).profile
-        Profile(profile).parse(args).port shouldEqualTo 20
+        Profile(profile).parse(args).port shouldEqualTo 5050
     }
 
     private class Ark : Arkenv() {
@@ -18,6 +18,6 @@ internal class ProfilesTest {
     }
 
     private class Profile(name: String) : Arkenv(propertiesFile = name) {
-        val port: Int by argument("-p", "--port")
+        val port: Int by argument("-p", "--database-port")
     }
 }
