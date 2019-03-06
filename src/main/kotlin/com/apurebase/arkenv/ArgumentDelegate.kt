@@ -97,12 +97,21 @@ class ArgumentDelegate<T : Any?>(
     private fun setValue(property: KProperty<*>): T {
         val values = arkenv.parsers.mapNotNull { it(arkenv, this) }
         return when {
-            isBoolean -> (index != null || values.isNotEmpty()) as T
+            isBoolean -> mapBoolean(values)
             values.isEmpty() -> {
                 if (argument.acceptsManualInput) readInput(mapping) ?: defaultValue as T
                 else defaultValue as T
             }
             else -> mapping(values.first())
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun mapBoolean(values: Collection<String>): T {
+        val isValuesNotEmpty = values.isNotEmpty()
+        return when {
+            isValuesNotEmpty && values.first() == "false" -> false as T
+            else -> (index != null || isValuesNotEmpty || defaultValue == true) as T
         }
     }
 
