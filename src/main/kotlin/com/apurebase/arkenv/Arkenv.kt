@@ -8,6 +8,8 @@ package com.apurebase.arkenv
  * @property envPrefix a common prefix for all environment variables
  * @property enableEnvSecrets whether to enable docker secrets parsing. Will attempt to parse any environment variable
  * with the _FILE suffix and read the value from the specified path.
+ * @property dotEnvFilePath location of the dot env file to read variables from
+ * @property propertiesFile name of the properties file to load variables from
  */
 abstract class Arkenv(
     open val programName: String = "Arkenv",
@@ -15,8 +17,18 @@ abstract class Arkenv(
     open val envPrefix: String = "",
     open val enableEnvSecrets: Boolean = false,
     open val dotEnvFilePath: String? = null,
-    open val propertiesFile: String? = null
+    val propertiesFile: String? = null
 ) {
+
+    open val loaders: MutableList<(Arkenv) -> Unit> = listOfNotNull(
+        ::loadEnvironmentVariables,
+        if (propertiesFile != null) ::loadProperties else null
+    ).toMutableList()
+
+    open val parsers: MutableList<(Arkenv, ArgumentDelegate<*>) -> String?> = mutableListOf(
+        ::parseCli,
+        ::parseEnvironmentVariables
+    )
 
     /**
      * Parses the [args] and resets all previously parsed state.
@@ -25,9 +37,10 @@ abstract class Arkenv(
         argList.clear()
         argList.addAll(args)
         onParse(args)
+
         dotEnv.clear()
-        parseDotEnv(dotEnvFilePath).let(dotEnv::putAll)
-        parseProperties(propertiesFile).let(dotEnv::putAll)
+        loaders.forEach { it(this) }
+
         delegates
             .sortedBy { it.argument.isMainArg }
             .forEach {
@@ -47,9 +60,9 @@ abstract class Arkenv(
 
     internal val argList = mutableListOf<String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
-    internal val dotEnv = mutableMapOf<String, String>()
+    val dotEnv = mutableMapOf<String, String>()
 
-    val help: Boolean by ArkenvLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
+    val help: Boolean by ArkenvDelegateLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
 
     /**
      * Defines an argument that can be parsed.
@@ -62,7 +75,7 @@ abstract class Arkenv(
         names: List<String>,
         isMainArg: Boolean = false,
         noinline configuration: Argument<T>.() -> Unit = {}
-    ) = ArkenvLoader(names, isMainArg, configuration, T::class, this)
+    ) = ArkenvDelegateLoader(names, isMainArg, configuration, T::class, this)
 
     internal fun isHelp(): Boolean = when {
         argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false

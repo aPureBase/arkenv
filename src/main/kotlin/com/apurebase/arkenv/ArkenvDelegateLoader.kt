@@ -4,7 +4,7 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-class ArkenvLoader<T : Any>(
+class ArkenvDelegateLoader<T : Any>(
     private val names: List<String>,
     private val isMainArg: Boolean = false,
     private val block: Argument<T>.() -> Unit = {},
