@@ -41,6 +41,8 @@ abstract class Arkenv(
 
         dotEnv.clear()
         loaders.forEach { it(this) }
+        println(argList)
+        println(dotEnv)
 
         delegates
             .sortedBy { it.argument.isMainArg }
