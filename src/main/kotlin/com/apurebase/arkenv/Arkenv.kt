@@ -1,34 +1,22 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.feature.ArkenvFeature
+import com.apurebase.arkenv.feature.CliFeature
+import com.apurebase.arkenv.feature.EnvironmentVariableFeature
+import kotlin.reflect.jvm.jvmName
+
 /**
  * The base class that provides the argument parsing capabilities.
  * Extend this to define your own arguments.
  * @property programName the name of your program
- * @property withEnv whether to enable environment variable parsing. Defaults to true
- * @property envPrefix a common prefix for all environment variables
- * @property enableEnvSecrets whether to enable docker secrets parsing. Will attempt to parse any environment variable
  * with the _FILE suffix and read the value from the specified path.
- * @property dotEnvFilePath location of the dot env file to read variables from
  */
-abstract class Arkenv(
-    open val programName: String = "Arkenv",
-    val withEnv: Boolean = true,
-    open val envPrefix: String = "",
-    open val enableEnvSecrets: Boolean = false,
-    open val dotEnvFilePath: String? = null
-) {
+abstract class Arkenv(open val programName: String = "Arkenv") {
 
-    val features: MutableList<ArkenvFeature> = mutableListOf()
-
-    open val loaders: MutableList<(Arkenv) -> Unit> = listOfNotNull(
-        ::loadCliAssignments,
-        if (withEnv) ::loadEnvironmentVariables else null
-    ).toMutableList()
-
-    open val parsers: MutableList<(Arkenv, ArgumentDelegate<*>) -> String?> = listOfNotNull(
-        ::parseCli,
-        if (withEnv) ::parseEnvironmentVariables else null
-    ).toMutableList()
+    internal val features: MutableMap<String, ArkenvFeature> = mutableMapOf(
+        CliFeature::class.jvmName to CliFeature(),
+        EnvironmentVariableFeature::class.jvmName to EnvironmentVariableFeature()
+    )
 
     /**
      * Parses the [args] and resets all previously parsed state.
@@ -39,8 +27,7 @@ abstract class Arkenv(
         onParse(args)
 
         dotEnv.clear()
-        features.forEach { it.install(this) }
-        loaders.forEach { it(this) }
+        features.values.forEach { it.installLoader(this) }
 
         delegates
             .sortedBy { it.argument.isMainArg }
@@ -117,10 +104,7 @@ abstract class Arkenv(
     }
 
     private fun removeValueArgument(
-        index: Int,
-        isBoolean: Boolean,
-        value: Any?,
-        default: Boolean
+        index: Int, isBoolean: Boolean, value: Any?, default: Boolean
     ) {
         if (!isBoolean && !default && value != null) argList.removeAt(index + 1)
     }

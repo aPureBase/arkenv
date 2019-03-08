@@ -1,5 +1,6 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.feature.ArkenvFeature
 import org.amshove.kluent.shouldEqualTo
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
@@ -8,25 +9,32 @@ import strikt.assertions.isEqualTo
 
 class LoaderTest {
 
-    private open class Ark : Arkenv() {
+    private open class Ark(feature: ArkenvFeature) : Arkenv() {
+        init {
+            install(feature)
+        }
         val port: Int by argument("--port")
     }
 
     @Test fun `custom loader`() {
-        val ark = Ark()
-        ark.loaders.add {
-            // load yaml or whatever
-            it.dotEnv["PORT"] = "99"
+        val feature = object : ArkenvFeature {
+            override fun installLoader(arkenv: Arkenv) {
+                arkenv.dotEnv["PORT"] = "99"
+            }
         }
 
+        val ark = Ark(feature)
         ark.parse(arrayOf())
-
         ark.port shouldEqualTo 99
     }
 
     @Test fun `yaml example`() {
-        val ark = object : Ark() {
-            val name: String by argument("--name")
+        class YamlFeature(private val yaml: String) : ArkenvFeature {
+            override fun installLoader(arkenv: Arkenv) {
+                val map = (Yaml().load(yaml) as Map<String, Any>)
+                    .map { (key, value) -> key.toUpperCase() to value.toString() }
+                arkenv.dotEnv.putAll(map)
+            }
         }
 
         @Language("yaml")
@@ -35,10 +43,8 @@ class LoaderTest {
           name: hello world
         """.trimIndent()
 
-        ark.loaders.add {
-            val map = (Yaml().load(yaml) as Map<String, Any>)
-                .map { (key, value) -> key.toUpperCase() to value.toString() }
-            it.dotEnv.putAll(map)
+        val ark = object : Ark(YamlFeature(yaml)) {
+            val name: String by argument("--name")
         }
 
         ark.parse(arrayOf()).expectThat {

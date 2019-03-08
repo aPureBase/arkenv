@@ -15,10 +15,11 @@ class ArkenvDelegateLoader<T : Any>(
         names.isEmpty() && !isMainArg -> throw IllegalArgumentException("No argument names provided")
         else -> {
             val argumentConfig = Argument<T>(names).also {
-                it.withEnv = arkenv.withEnv
-                it.envPrefix = arkenv.envPrefix
                 it.isMainArg = isMainArg
             }.apply(block)
+            arkenv.features.values.forEach {
+                it.configure(argumentConfig)
+            }
             ArgumentDelegate(
                 arkenv,
                 argumentConfig,

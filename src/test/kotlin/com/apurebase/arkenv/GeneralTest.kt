@@ -126,8 +126,9 @@ class GeneralTest {
         }
     }
 
+    @Disabled("TODO: rework to feature test")
     @Test fun `when env is off should not use env vars`() {
-        class EnvArgs(withEnv: Boolean) : Arkenv(withEnv = withEnv) {
+        class EnvArgs(withEnv: Boolean) : Arkenv() {
             val arg: String by argument("-a", "--arg")
         }
 
