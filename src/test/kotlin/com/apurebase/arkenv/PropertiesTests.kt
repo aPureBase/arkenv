@@ -6,7 +6,10 @@ import strikt.assertions.isEqualTo
 
 class PropertiesTests {
 
-    private class PropertiesArk(propertiesFile: String) : Arkenv(propertiesFile = propertiesFile) {
+    private class PropertiesArk(propertiesFile: String) : Arkenv() {
+        init {
+            install(PropertyFeature(propertiesFile))
+        }
         val mysqlPassword: String by argument("--mysql-password")
         val port: Int by argument("--database-port")
         val multiLine: String by argument("--multi-string")

@@ -2,9 +2,7 @@ package com.apurebase.arkenv
 
 import java.util.*
 
-fun loadProperties(arkenv: Arkenv) {
-    parseProperties(arkenv.propertiesFile).let(arkenv.dotEnv::putAll)
-}
+fun loadProperties(file: String, arkenv: Arkenv) = parseProperties(file).let(arkenv.dotEnv::putAll)
 
 private fun parseProperties(propertiesFile: String?): Map<String, String> = when {
     propertiesFile != null -> Properties()

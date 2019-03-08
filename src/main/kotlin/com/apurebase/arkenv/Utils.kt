@@ -30,3 +30,11 @@ internal fun <T> ArgumentDelegate<T>.readInput(mapping: (String) -> T): T? {
     return if (input == null) null
     else mapping(input)
 }
+
+fun Arkenv.install(feature: ArkenvFeature) {
+    features.add(feature)
+}
+
+fun Arkenv.uninstall(feature: ArkenvFeature) {
+    features.remove(feature)
+}

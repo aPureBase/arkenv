@@ -17,7 +17,11 @@ internal class ProfilesTest {
         }
     }
 
-    private class Profile(name: String) : Arkenv(propertiesFile = name) {
+    private class Profile(name: String) : Arkenv() {
+        init {
+            install(PropertyFeature(name))
+        }
+
         val port: Int by argument("-p", "--database-port")
     }
 }

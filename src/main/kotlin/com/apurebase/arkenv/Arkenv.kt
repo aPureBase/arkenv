@@ -9,27 +9,26 @@ package com.apurebase.arkenv
  * @property enableEnvSecrets whether to enable docker secrets parsing. Will attempt to parse any environment variable
  * with the _FILE suffix and read the value from the specified path.
  * @property dotEnvFilePath location of the dot env file to read variables from
- * @property propertiesFile name of the properties file to load variables from
  */
 abstract class Arkenv(
     open val programName: String = "Arkenv",
-    open val withEnv: Boolean = true,
+    val withEnv: Boolean = true,
     open val envPrefix: String = "",
     open val enableEnvSecrets: Boolean = false,
-    open val dotEnvFilePath: String? = null,
-    val propertiesFile: String? = null
+    open val dotEnvFilePath: String? = null
 ) {
+
+    val features: MutableList<ArkenvFeature> = mutableListOf()
 
     open val loaders: MutableList<(Arkenv) -> Unit> = listOfNotNull(
         ::loadCliAssignments,
-        ::loadEnvironmentVariables,
-        if (propertiesFile != null) ::loadProperties else null
+        if (withEnv) ::loadEnvironmentVariables else null
     ).toMutableList()
 
-    open val parsers: MutableList<(Arkenv, ArgumentDelegate<*>) -> String?> = mutableListOf(
+    open val parsers: MutableList<(Arkenv, ArgumentDelegate<*>) -> String?> = listOfNotNull(
         ::parseCli,
-        ::parseEnvironmentVariables
-    )
+        if (withEnv) ::parseEnvironmentVariables else null
+    ).toMutableList()
 
     /**
      * Parses the [args] and resets all previously parsed state.
@@ -40,6 +39,7 @@ abstract class Arkenv(
         onParse(args)
 
         dotEnv.clear()
+        features.forEach { it.install(this) }
         loaders.forEach { it(this) }
 
         delegates
