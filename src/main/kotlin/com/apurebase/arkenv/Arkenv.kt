@@ -21,6 +21,7 @@ abstract class Arkenv(
 ) {
 
     open val loaders: MutableList<(Arkenv) -> Unit> = listOfNotNull(
+        ::loadCliAssignments,
         ::loadEnvironmentVariables,
         if (propertiesFile != null) ::loadProperties else null
     ).toMutableList()
