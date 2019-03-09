@@ -34,10 +34,13 @@ internal fun <T> ArgumentDelegate<T>.readInput(mapping: (String) -> T): T? {
     else mapping(input)
 }
 
+internal fun ArkenvFeature.getKeyValPair() = this::class.jvmName to this
+
 fun Arkenv.install(feature: ArkenvFeature) {
-    features[feature::class.jvmName] = feature
+    val (key, value) = feature.getKeyValPair()
+    features[key] = value
 }
 
 fun Arkenv.uninstall(feature: ArkenvFeature) {
-    features.remove(feature::class.jvmName)
+    features.remove(feature.getKeyValPair().first)
 }

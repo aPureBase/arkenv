@@ -3,7 +3,6 @@ package com.apurebase.arkenv
 import com.apurebase.arkenv.feature.ArkenvFeature
 import com.apurebase.arkenv.feature.CliFeature
 import com.apurebase.arkenv.feature.EnvironmentVariableFeature
-import kotlin.reflect.jvm.jvmName
 
 /**
  * The base class that provides the argument parsing capabilities.
@@ -13,10 +12,9 @@ import kotlin.reflect.jvm.jvmName
  */
 abstract class Arkenv(open val programName: String = "Arkenv") {
 
-    internal val features: MutableMap<String, ArkenvFeature> = mutableMapOf(
-        CliFeature::class.jvmName to CliFeature(),
-        EnvironmentVariableFeature::class.jvmName to EnvironmentVariableFeature()
-    )
+    internal val features: MutableMap<String, ArkenvFeature> = listOf(
+        CliFeature(), EnvironmentVariableFeature()
+    ).associate { it.getKeyValPair() }.toMutableMap()
 
     /**
      * Parses the [args] and resets all previously parsed state.

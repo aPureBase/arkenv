@@ -43,9 +43,10 @@ class LoaderTest {
           name: hello world
         """.trimIndent()
 
-        val ark = object : Ark(YamlFeature(yaml)) {
+        class YamlArk(yaml: String) : Ark(YamlFeature(yaml)) {
             val name: String by argument("--name")
         }
+        val ark = YamlArk(yaml)
 
         ark.parse(arrayOf()).expectThat {
             get { port }.isEqualTo(99)
