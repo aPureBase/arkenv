@@ -9,7 +9,9 @@ class PropertyFeature(private val file: String) : ArkenvFeature {
         loadProperties(file, arkenv)
     }
 
-    private fun loadProperties(file: String, arkenv: Arkenv) = parseProperties(file).let(arkenv.dotEnv::putAll)
+    private fun loadProperties(file: String, arkenv: Arkenv) {
+        parseProperties(file).let(arkenv.dotEnv::putAll)
+    }
 
     private fun parseProperties(propertiesFile: String?): Map<String, String> = when {
         propertiesFile != null -> Properties()
