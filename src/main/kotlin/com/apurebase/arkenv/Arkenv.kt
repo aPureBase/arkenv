@@ -27,7 +27,7 @@ abstract class Arkenv(open val programName: String = "Arkenv") {
         onParse(args)
 
         dotEnv.clear()
-        features.values.forEach { it.installLoader(this) }
+        features.values.forEach { it.onLoad(this) }
 
         delegates
             .sortedBy { it.argument.isMainArg }

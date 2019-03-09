@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 class ParserTest {
 
     private val customFeature = object : ArkenvFeature {
-        override fun installParser(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? {
+        override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? {
             return "9000"
         }
     }

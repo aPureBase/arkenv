@@ -126,20 +126,6 @@ class GeneralTest {
         }
     }
 
-    @Disabled("TODO: rework to feature test")
-    @Test fun `when env is off should not use env vars`() {
-        class EnvArgs(withEnv: Boolean) : Arkenv() {
-            val arg: String by argument("-a", "--arg")
-        }
-
-        MockSystem("ARG" to "test")
-
-        EnvArgs(false).let {
-            it::arg shouldThrow IllegalArgumentException::class
-        }
-        EnvArgs(true).arg shouldBeEqualTo "test"
-    }
-
     @Test fun `null mainArg should throw`() {
         val arkenv = object : Arkenv() {
             val main: String by mainArgument { }

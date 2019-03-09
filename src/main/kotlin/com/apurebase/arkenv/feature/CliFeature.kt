@@ -5,11 +5,11 @@ import com.apurebase.arkenv.Arkenv
 
 class CliFeature : ArkenvFeature {
 
-    override fun installLoader(arkenv: Arkenv) {
+    override fun onLoad(arkenv: Arkenv) {
         loadCliAssignments(arkenv)
     }
 
-    override fun installParser(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? = parseCli(delegate)
+    override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? = parseCli(delegate)
 
     private fun loadCliAssignments(arkenv: Arkenv) {
         val args = arkenv.argList

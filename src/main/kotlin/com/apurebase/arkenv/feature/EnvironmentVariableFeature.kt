@@ -14,11 +14,9 @@ class EnvironmentVariableFeature(
     private val dotEnvFilePath: String? = null
 ) : ArkenvFeature {
 
-    override fun installLoader(arkenv: Arkenv) {
-        loadEnvironmentVariables(arkenv)
-    }
+    override fun onLoad(arkenv: Arkenv) = loadEnvironmentVariables(arkenv)
 
-    override fun installParser(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? =
+    override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? =
         parseEnvironmentVariables(arkenv, delegate, enableEnvSecrets)
 
     override fun configure(argument: Argument<*>) {

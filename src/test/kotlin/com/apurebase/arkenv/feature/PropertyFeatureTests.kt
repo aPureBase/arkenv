@@ -1,11 +1,11 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.feature.PropertyFeature
+import com.apurebase.arkenv.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
 
-class PropertiesTests {
+class PropertyFeatureTests {
 
     private class PropertiesArk(propertiesFile: String) : Arkenv() {
         init {

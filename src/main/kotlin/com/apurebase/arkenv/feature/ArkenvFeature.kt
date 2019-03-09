@@ -6,16 +6,15 @@ import com.apurebase.arkenv.Arkenv
 
 interface ArkenvFeature {
 
-    fun installLoader(arkenv: Arkenv) {
+    fun onLoad(arkenv: Arkenv) {
 
     }
 
-    fun installParser(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? {
+    fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? {
         return null
     }
 
     fun configure(argument: Argument<*>) {
 
     }
-
 }
