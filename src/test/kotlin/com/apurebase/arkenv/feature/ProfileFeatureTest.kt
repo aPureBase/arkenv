@@ -51,6 +51,12 @@ internal class ProfileFeatureTest {
         Ark().expectThat { isProduction() }
     }
 
+    @Test fun `should be able to override properties`() {
+        Ark("profile=dev", "--port", "6000").expectThat {
+            expect(6000, "profile-test")
+        }
+    }
+
     private fun Assertion.Builder<Ark>.isDefault() = expect(80, "profile-test", null)
 
     private fun Assertion.Builder<Ark>.isDevelopment(other: String? = null) = expect(5000, "profile-test", other)

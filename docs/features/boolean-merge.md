@@ -2,7 +2,7 @@
 layout: default
 title: Boolean Merge
 parent: Features
-nav_order: 5
+nav_order: 6
 ---
 
 # Boolean Merge

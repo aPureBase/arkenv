@@ -2,16 +2,20 @@
 layout: default
 title: Properties
 parent: Features
-nav_order: 7
+nav_order: 3
 ---
 
 # Properties
 
-Arkenv also supports the properties file format. Define a property file with 
-`propertiesFile` in the constructor.
+Arkenv supports the properties file format.
+ 
+Install the `PropertyFeature` and specify the file to load from. 
 
 ```kotlin
-class PropertiesArk : Arkenv(propertiesFile = "app.properties") {
+class PropertiesArk(propertiesFile: String) : Arkenv() {
+    init {
+        install(PropertyFeature(propertiesFile))
+    }
     val mysqlPassword: String by argument("--mysql-password")
 }
 ```
@@ -25,3 +29,5 @@ An example properties file could have the following content:
 ```properties
 mysql_password : JKE9ehnEA
 ```
+
+If you want to use profiles like in Spring Boot, see [Profiles]({{ site.baseurl }}features/profiles).
