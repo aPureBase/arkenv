@@ -18,10 +18,12 @@ Please report issues and open pull requests there.
 * [Basic example usage]({{site.baseurl}}guides/example)
 
 ## Features
+* [Command Line]({{ site.baseurl }}features/command-line)
 * [Environment Variables]({{ site.baseurl }}features/environment-variables)
+* [Properties]({{ site.baseurl }}features/properties)
+* [Profiles]({{ site.baseurl }}features/profiles)
 * [Boolean Merge]({{ site.baseurl }}features/boolean-merge)
 * [Validation]({{ site.baseurl }}features/validation)
 * [Manual Input]({{ site.baseurl }}features/manual-input)
 * [Docker Secrets]({{ site.baseurl }}features/docker-secrets)
 * [Dot Env Files]({{ site.baseurl }}features/dot-env-files)
-* [Properties]({{ site.baseurl }}features/properties)
