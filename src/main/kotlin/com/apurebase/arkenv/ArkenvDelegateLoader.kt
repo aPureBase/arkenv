@@ -13,20 +13,23 @@ class ArkenvDelegateLoader<T : Any>(
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, T> = when {
         names.isEmpty() && !isMainArg -> throw IllegalArgumentException("No argument names provided")
-        else -> {
-            val argumentConfig = Argument<T>(names).also {
-                it.withEnv = arkenv.withEnv
-                it.envPrefix = arkenv.envPrefix
-                it.isMainArg = isMainArg
-            }.apply(block)
-            ArgumentDelegate(
-                arkenv,
-                argumentConfig,
-                prop,
-                kClass == Boolean::class,
-                argumentConfig.mapping ?: getMapping(prop)
-            ).also { arkenv.delegates.add(it) }
+        else -> createDelegate(prop)
+    }
+
+    private fun createDelegate(prop: KProperty<*>): ArgumentDelegate<T> {
+        val argumentConfig = Argument<T>(names).also {
+            it.isMainArg = isMainArg
+        }.apply(block)
+        arkenv.features.values.forEach {
+            it.configure(argumentConfig)
         }
+        return ArgumentDelegate(
+            arkenv,
+            argumentConfig,
+            prop,
+            kClass == Boolean::class,
+            argumentConfig.mapping ?: getMapping(prop)
+        ).also { arkenv.delegates.add(it) }
     }
 
     @Suppress("UNCHECKED_CAST")

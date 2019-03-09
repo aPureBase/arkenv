@@ -1,5 +1,6 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.feature.EnvironmentVariableFeature
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
@@ -8,7 +9,10 @@ import java.io.FileNotFoundException
 
 class EnvFileTests {
 
-    private class EnvFileArk(override val dotEnvFilePath: String?) : Arkenv() {
+    private class EnvFileArk(dotEnvFilePath: String?) : Arkenv() {
+        init {
+            install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvFilePath))
+        }
         val mysqlPassword: String by argument("--mysql-password")
         val port: Int by argument("--database-port")
     }

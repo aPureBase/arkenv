@@ -37,6 +37,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect"
     //compile 'org.jetbrains.kotlinx:kotlinx.reflect.lite:1.0.0'
 
+    testCompile "org.yaml:snakeyaml:1.24"
     testCompile "org.jmockit:jmockit:1.45"
     testCompile group: 'org.amshove.kluent', name: 'kluent', version: '1.48'
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version

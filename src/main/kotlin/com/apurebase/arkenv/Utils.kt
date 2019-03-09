@@ -1,5 +1,8 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.feature.ArkenvFeature
+import kotlin.reflect.jvm.jvmName
+
 /**
  * Parses the [args] and returns the [Arkenv] instance.
  */
@@ -29,4 +32,15 @@ internal fun <T> ArgumentDelegate<T>.readInput(mapping: (String) -> T): T? {
     val input = readLine()
     return if (input == null) null
     else mapping(input)
+}
+
+internal fun ArkenvFeature.getKeyValPair() = this::class.jvmName to this
+
+fun Arkenv.install(feature: ArkenvFeature) {
+    val (key, value) = feature.getKeyValPair()
+    features[key] = value
+}
+
+fun Arkenv.uninstall(feature: ArkenvFeature) {
+    features.remove(feature.getKeyValPair().first)
 }

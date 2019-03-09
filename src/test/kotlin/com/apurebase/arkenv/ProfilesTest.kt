@@ -1,5 +1,6 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.feature.PropertyFeature
 import org.amshove.kluent.shouldEqualTo
 import org.junit.jupiter.api.Test
 
@@ -17,7 +18,11 @@ internal class ProfilesTest {
         }
     }
 
-    private class Profile(name: String) : Arkenv(propertiesFile = name) {
+    private class Profile(name: String) : Arkenv() {
+        init {
+            install(PropertyFeature(name))
+        }
+
         val port: Int by argument("-p", "--database-port")
     }
 }
