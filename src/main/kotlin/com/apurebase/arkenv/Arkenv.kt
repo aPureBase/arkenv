@@ -12,9 +12,12 @@ import com.apurebase.arkenv.feature.EnvironmentVariableFeature
  */
 abstract class Arkenv(open val programName: String = "Arkenv") {
 
-    internal val features: MutableMap<String, ArkenvFeature> = listOf(
-        CliFeature(), EnvironmentVariableFeature()
-    ).associate { it.getKeyValPair() }.toMutableMap()
+    internal val features: MutableMap<String, ArkenvFeature> = mutableMapOf()
+
+    init {
+        install(CliFeature())
+        install(EnvironmentVariableFeature())
+    }
 
     /**
      * Parses the [args] and resets all previously parsed state.
