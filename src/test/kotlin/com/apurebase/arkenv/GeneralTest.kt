@@ -9,7 +9,10 @@ import strikt.assertions.isTrue
 class GeneralTest {
 
     @Test fun help() {
-        class HelpArgs(name: String) : Arkenv(name) {
+        class HelpArgs(name: String) : Arkenv() {
+            init {
+                programName = name
+            }
             val required: String by argument("-r") {
                 description = "This arg is required but can be null if help is true"
             }

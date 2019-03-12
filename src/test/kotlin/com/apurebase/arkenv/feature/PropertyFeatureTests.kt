@@ -4,6 +4,7 @@ import com.apurebase.arkenv.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
+import java.io.File
 
 class PropertyFeatureTests {
 
@@ -38,5 +39,15 @@ class PropertyFeatureTests {
         assertThrows<NullPointerException> {
             ark.parse(arrayOf())
         }
+    }
+
+    @Test fun `should be able to load from file`() {
+        val name = "file_based_props.properties"
+        val content = this::class.java.classLoader.getResource("app.properties").readText()
+        File(name).let {
+            it.deleteOnExit()
+            it.writeText(content)
+        }
+        verify(name)
     }
 }

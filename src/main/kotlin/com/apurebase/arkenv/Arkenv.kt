@@ -10,13 +10,15 @@ import com.apurebase.arkenv.feature.EnvironmentVariableFeature
  * @property programName the name of your program
  * with the _FILE suffix and read the value from the specified path.
  */
-abstract class Arkenv(open val programName: String = "Arkenv") {
+abstract class Arkenv(builder: Arkenv.() -> Unit = {}) {
 
+    var programName: String = "Arkenv"
     internal val features: MutableMap<String, ArkenvFeature> = mutableMapOf()
 
     init {
         install(CliFeature())
         install(EnvironmentVariableFeature())
+        builder()
     }
 
     /**
