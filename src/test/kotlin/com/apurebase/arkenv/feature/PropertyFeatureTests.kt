@@ -12,6 +12,7 @@ class PropertyFeatureTests {
         init {
             install(PropertyFeature(propertiesFile))
         }
+
         val mysqlPassword: String by argument("--mysql-password")
         val port: Int by argument("--database-port")
         val multiLine: String by argument("--multi-string")
@@ -26,12 +27,11 @@ class PropertyFeatureTests {
     }
 
     private fun verify(path: String) {
-        PropertiesArk(path)
-            .parse(arrayOf()).expectThat {
-                get { mysqlPassword }.isEqualTo("this_is_expected")
-                get { port }.isEqualTo(5050)
-                get { multiLine }.isEqualTo("this stretches lines")
-            }
+        PropertiesArk(path).parse(arrayOf()).expectThat {
+            get { mysqlPassword }.isEqualTo("this_is_expected")
+            get { port }.isEqualTo(5050)
+            get { multiLine }.isEqualTo("this stretches lines")
+        }
     }
 
     @Test fun `should throw when dot env file can not be found`() {
@@ -49,5 +49,18 @@ class PropertyFeatureTests {
             it.writeText(content)
         }
         verify(name)
+    }
+
+    @Test fun `should load from default config`() {
+        val name = "file_based_props.properties"
+        val content = this::class.java.classLoader.getResource("app.properties").readText()
+        val root = File("config")
+        root.mkdirs()
+        File(root, name).let {
+            it.deleteOnExit()
+            it.writeText(content)
+        }
+        verify(name)
+        root.deleteRecursively()
     }
 }

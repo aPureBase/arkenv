@@ -6,7 +6,10 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.util.*
 
-class PropertyFeature(private val file: String) : ArkenvFeature {
+class PropertyFeature(
+    private val file: String,
+    private val locations: Collection<String> = listOf("", "config/")
+) : ArkenvFeature {
 
     override fun onLoad(arkenv: Arkenv) {
         loadProperties(file, arkenv)
@@ -22,8 +25,15 @@ class PropertyFeature(private val file: String) : ArkenvFeature {
             .map { (key, value) -> key.toString().toUpperCase() to value.toString() }
             .toMap()
 
-    private fun getStream(name: String) =
-        getFileStream(name) ?: getResourceStream(name)
+    private fun getStream(name: String): InputStream? {
+        locations
+            .map { it + name }
+            .forEach {
+                val stream = getFileStream(it) ?: getResourceStream(it)
+                if (stream != null) return stream
+            }
+        return null // throw exception ??
+    }
 
     private fun getFileStream(name: String): FileInputStream? =
         File(name).takeIf { it.exists() }?.inputStream()
