@@ -26,9 +26,10 @@ class PropertyFeatureTests {
         verify("app_lower.properties")
     }
 
+    private val defaultPort = 5050
     private fun verify(
         path: String,
-        port: Int = 5050,
+        port: Int = defaultPort,
         pw: String = "this_is_expected",
         locations: List<String> = listOf("", "config/")
     ) {
@@ -52,23 +53,26 @@ class PropertyFeatureTests {
         private val content = this::class.java.classLoader.getResource("app.properties").readText()
         private val name = "file_based_props.properties"
         private val dir = File("config")
+        private val files: MutableList<File> = mutableListOf()
+        private fun createFile(file: File, port: Int = defaultPort) {
+            file.writeText(content.replace(defaultPort.toString(), port.toString()))
+            files.add(file)
+        }
+
+        private fun mkdir(file: File) {
+            file.mkdirs()
+            files.add(file)
+        }
 
         @Test fun `should be able to load from file`() {
-            File(name).let {
-                it.deleteOnExit()
-                it.writeText(content)
-            }
+            createFile(File(name))
             verify(name)
         }
 
         @Test fun `default file config`() {
-            dir.mkdirs()
-            File(dir, name).let {
-                it.deleteOnExit()
-                it.writeText(content)
-            }
+            mkdir(dir)
+            createFile(File(dir, name))
             verify(name)
-            dir.deleteRecursively()
         }
 
         @Test fun `default classpath config`() {
@@ -79,10 +83,19 @@ class PropertyFeatureTests {
             verify("cp.properties", 4545, "custom nested classpath config", locations = listOf("custom/path/"))
         }
 
+        @Test fun `custom file config`() {
+            val name = "cfp.properties"
+            val dir = File("custom/file/path")
+            mkdir(dir)
+            createFile(File(dir, name), 5555)
+            verify(name, 5555, locations = listOf("custom/file/path/"))
+        }
+
         @AfterEach fun afterEach() {
+            files.forEach { it.deleteRecursively() }
             File(name).delete()
             dir.deleteRecursively()
+            File("custom").deleteRecursively()
         }
     }
-
 }
