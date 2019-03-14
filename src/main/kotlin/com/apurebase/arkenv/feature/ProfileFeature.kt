@@ -5,20 +5,20 @@ import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.parse
 
 open class ProfileFeature(
-    name: String = "--profile",
+    name: String = "--arkenv-profile",
     prefix: String = "application",
     locations: Collection<String> = listOf()
 ) : ArkenvFeature, Arkenv() {
 
     protected open val profile: String? by argument(name)
 
-    protected open val prefix: String by argument("--arkenv-config-name") {
+    protected open val prefix: String by argument("--arkenv-profile-name") {
         defaultValue = { prefix }
     }
 
     protected open val extension = "properties"
 
-    protected open val location: Collection<String> by argument("--arkenv-config-location") {
+    protected open val location: Collection<String> by argument("--arkenv-profile-location") {
         mapping = { it.split(",").map(String::trim) }
         defaultValue = { locations }
     }

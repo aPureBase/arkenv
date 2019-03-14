@@ -29,11 +29,11 @@ class ProfileFeatureCustomizationTest {
         }
 
         @Test fun `change via cli`() {
-            PrefixArk("application", "--arkenv-config-name", "config").expectThat { isMasterFile() }
+            PrefixArk("application", "--arkenv-profile-name", "config").expectThat { isMasterFile() }
         }
 
         @Test fun `change via env`() {
-            MockSystem("ARKENV_CONFIG_NAME" to "config")
+            MockSystem("ARKENV_PROFILE_NAME" to "config")
             PrefixArk("application").expectThat { isMasterFile() }
         }
     }
@@ -54,11 +54,11 @@ class ProfileFeatureCustomizationTest {
         }
 
         @Test fun `change via cli`() {
-            LocationArk(listOf(), "--arkenv-config-location", path).expectThat { isMasterFile() }
+            LocationArk(listOf(), "--arkenv-profile-location", path).expectThat { isMasterFile() }
         }
 
         @Test fun `change via env`() {
-            MockSystem("ARKENV_CONFIG_LOCATION" to path)
+            MockSystem("ARKENV_PROFILE_LOCATION" to path)
             LocationArk(listOf()).expectThat { isMasterFile() }
         }
     }
