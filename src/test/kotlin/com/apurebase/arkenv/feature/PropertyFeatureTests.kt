@@ -31,9 +31,10 @@ class PropertyFeatureTests {
         path: String,
         port: Int = defaultPort,
         pw: String = "this_is_expected",
-        locations: List<String> = listOf("", "config/")
+        locations: List<String> = listOf(),
+        args: Array<String> = arrayOf()
     ) {
-        PropertiesArk(path, locations).parse(arrayOf()).expectThat {
+        PropertiesArk(path, locations).parse(args).expectThat {
             get { this.mysqlPassword }.isEqualTo(pw)
             get { this.port }.isEqualTo(port)
             get { this.multiLine }.isEqualTo("this stretches lines")
@@ -89,6 +90,18 @@ class PropertyFeatureTests {
             mkdir(dir)
             createFile(File(dir, name), 5555)
             verify(name, 5555, locations = listOf("custom/file/path/"))
+        }
+
+        @Test fun `customize via env var`() {
+            MockSystem("ARKENV_PROPERTY_LOCATION" to "custom/path")
+            verify("cp.properties", 4545, "custom nested classpath config")
+        }
+
+        @Test fun `customize via cli`() {
+            verify(
+                "cp.properties", 4545, "custom nested classpath config",
+                args = arrayOf("--arkenv-property-location", "custom/path")
+            )
         }
 
         @AfterEach fun afterEach() {

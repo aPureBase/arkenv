@@ -4,7 +4,11 @@ import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.parse
 
-open class ProfileFeature(name: String = "--profile", prefix: String = "application") : ArkenvFeature, Arkenv() {
+open class ProfileFeature(
+    name: String = "--profile",
+    prefix: String = "application",
+    locations: Collection<String> = listOf()
+) : ArkenvFeature, Arkenv() {
 
     protected open val profile: String? by argument(name)
 
@@ -14,11 +18,16 @@ open class ProfileFeature(name: String = "--profile", prefix: String = "applicat
 
     protected open val extension = "properties"
 
+    protected open val location: Collection<String> by argument("--arkenv-config-location") {
+        mapping = { it.split(",").map(String::trim) }
+        defaultValue = { locations }
+    }
+
     override fun onLoad(arkenv: Arkenv) {
         parse(arkenv.argList.toTypedArray())
         val defaultName = makeFileName(null)
-        PropertyFeature(defaultName).onLoad(arkenv)
-        profile?.let { makeFileName(it) }?.let { PropertyFeature(it).onLoad(arkenv) }
+        PropertyFeature(defaultName, location).onLoad(arkenv)
+        profile?.let { makeFileName(it) }?.let { PropertyFeature(it, location).onLoad(arkenv) }
     }
 
     protected open fun makeFileName(profile: String?) =
