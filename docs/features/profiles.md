@@ -41,7 +41,7 @@ and extend it with the active dev or production profile.
 
 ### Customization
 
-##### Profile name
+##### Profile prefix
 If you do not like application.properties as the configuration file name, 
 you can switch to another file name by specifying a custom prefix.  
 

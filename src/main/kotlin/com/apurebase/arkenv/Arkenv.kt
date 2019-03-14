@@ -7,10 +7,8 @@ import com.apurebase.arkenv.feature.EnvironmentVariableFeature
 /**
  * The base class that provides the argument parsing capabilities.
  * Extend this to define your own arguments.
- * @property programName the name of your program
- * with the _FILE suffix and read the value from the specified path.
  */
-abstract class Arkenv(builder: Arkenv.() -> Unit = {}) {
+abstract class Arkenv {
 
     var programName: String = "Arkenv"
     internal val features: MutableMap<String, ArkenvFeature> = mutableMapOf()
@@ -18,7 +16,6 @@ abstract class Arkenv(builder: Arkenv.() -> Unit = {}) {
     init {
         install(CliFeature())
         install(EnvironmentVariableFeature())
-        builder()
     }
 
     /**

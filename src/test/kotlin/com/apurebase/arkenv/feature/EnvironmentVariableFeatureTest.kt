@@ -7,12 +7,12 @@ import org.junit.jupiter.api.Test
 
 internal class EnvironmentVariableFeatureTest {
 
-    private class EnvArgs(withEnv: Boolean) : Arkenv({
-        programName = "Test"
-        if (withEnv) install(EnvironmentVariableFeature())
-        else uninstall(EnvironmentVariableFeature())
-    }) {
-
+    private class EnvArgs(withEnv: Boolean) : Arkenv() {
+        init {
+            programName = "Test"
+            if (withEnv) install(EnvironmentVariableFeature())
+            else uninstall(EnvironmentVariableFeature())
+        }
         val arg: String by argument("-a", "--arg")
     }
 
