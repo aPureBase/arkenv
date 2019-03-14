@@ -12,7 +12,7 @@ open class ProfileFeature(
 
     protected open val profile: String? by argument(name)
 
-    protected open val prefix: String by argument("--arkenv-profile-name") {
+    protected open val prefix: String by argument("--arkenv-profile-prefix") {
         defaultValue = { prefix }
     }
 
