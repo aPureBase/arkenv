@@ -7,16 +7,16 @@ import org.junit.jupiter.api.Test
 
 internal class EnvironmentVariableFeatureTest {
 
-    @Test fun `when env is off should not use env vars`() {
-        class EnvArgs(withEnv: Boolean) : Arkenv() {
-            init {
-                if (withEnv) install(EnvironmentVariableFeature())
-                else uninstall(EnvironmentVariableFeature())
-            }
-
-            val arg: String by argument("-a", "--arg")
+    private class EnvArgs(withEnv: Boolean) : Arkenv() {
+        init {
+            programName = "Test"
+            if (withEnv) install(EnvironmentVariableFeature())
+            else uninstall(EnvironmentVariableFeature())
         }
+        val arg: String by argument("-a", "--arg")
+    }
 
+    @Test fun `when env is off should not use env vars`() {
         MockSystem("ARG" to "test")
 
         EnvArgs(false).let {

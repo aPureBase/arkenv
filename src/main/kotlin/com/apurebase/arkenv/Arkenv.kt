@@ -7,11 +7,10 @@ import com.apurebase.arkenv.feature.EnvironmentVariableFeature
 /**
  * The base class that provides the argument parsing capabilities.
  * Extend this to define your own arguments.
- * @property programName the name of your program
- * with the _FILE suffix and read the value from the specified path.
  */
-abstract class Arkenv(open val programName: String = "Arkenv") {
+abstract class Arkenv {
 
+    var programName: String = "Arkenv"
     internal val features: MutableMap<String, ArkenvFeature> = mutableMapOf()
 
     init {
@@ -27,49 +26,21 @@ abstract class Arkenv(open val programName: String = "Arkenv") {
         argList.addAll(args)
         onParse(args)
 
-        dotEnv.clear()
+        keyValue.clear()
         features.values.forEach { it.onLoad(this) }
-
-        delegates
-            .sortedBy { it.argument.isMainArg }
-            .forEach {
-                it.reset()
-                val value = it.getValue(isParse = true)
-                onParseArgument(it.property.name, it.argument, value)
-            }
-        checkRemaining(delegates, argList).forEach { (arg, delegates) ->
-            argList.remove("-$arg")
-            delegates.forEach { it.setTrue() }
-        }
+        parse()
+        parseBooleanMerge()
     }
 
     open fun onParse(args: Array<String>) {}
 
     open fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {}
 
+    val keyValue = mutableMapOf<String, String>()
     internal val argList = mutableListOf<String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
-    val dotEnv = mutableMapOf<String, String>()
 
     val help: Boolean by ArkenvDelegateLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
-
-    /**
-     * Defines an argument that can be parsed.
-     * @param names the names that the argument can be called with
-     * @param isMainArg whether this argument is a main argument, meaning it doesn't use names,
-     * but the last supplied argument
-     * @param configuration optional configuration of the argument's properties
-     */
-    inline fun <reified T : Any> argument(
-        names: List<String>,
-        isMainArg: Boolean = false,
-        noinline configuration: Argument<T>.() -> Unit = {}
-    ) = ArkenvDelegateLoader(names, isMainArg, configuration, T::class, this)
-
-    internal fun isHelp(): Boolean = when {
-        argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false
-        else -> help
-    }
 
     override fun toString(): String = StringBuilder().also { sb ->
         val indent = "    "
@@ -89,6 +60,20 @@ abstract class Arkenv(open val programName: String = "Arkenv") {
                 .appendln()
         }
     }.toString()
+
+    private fun parse() = delegates
+        .sortedBy { it.argument.isMainArg }
+        .forEach {
+            it.reset()
+            val value = it.getValue(isParse = true)
+            onParseArgument(it.property.name, it.argument, value)
+        }
+
+    private fun parseBooleanMerge() =
+        checkRemaining(delegates, argList).forEach { (arg, delegates) ->
+            argList.remove("-$arg")
+            delegates.forEach { it.setTrue() }
+        }
 
     private fun ArgumentDelegate<*>.getValue(isParse: Boolean): Any? =
         getValue(this, property).also { value ->

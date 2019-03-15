@@ -26,33 +26,33 @@ internal class ProfileFeatureTest {
     }
 
     @Test fun `nested profile should parse correctly`() {
-        Ark("--profile", "dev")
+        Ark("--arkenv-profile", "dev")
             .expectThat { isDevelopment() }
     }
 
     @Test fun `production profile`() {
-        Ark("--profile", "prod")
+        Ark("--arkenv-profile", "prod")
             .expectThat { isProduction() }
     }
 
     @Test fun `combine with other sources`() {
-        Ark("-o", "test", "profile=dev")
+        Ark("-o", "test", "arkenv-profile=dev")
             .expectThat { isDevelopment("test") }
     }
 
     @Test fun `should throw when profile cannot be found`() {
         assertThrows<NullPointerException> {
-            Ark("--profile", "wrong")
+            Ark("--arkenv-profile", "wrong")
         }
     }
 
     @Test fun `set profile via env`() {
-        MockSystem("PROFILE" to "prod")
+        MockSystem("ARKENV_PROFILE" to "prod")
         Ark().expectThat { isProduction() }
     }
 
     @Test fun `should be able to override properties`() {
-        Ark("profile=dev", "--port", "6000").expectThat {
+        Ark("arkenv-profile=dev", "--port", "6000").expectThat {
             expect(6000, "profile-test")
         }
     }

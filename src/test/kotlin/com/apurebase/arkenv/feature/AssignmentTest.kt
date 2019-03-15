@@ -11,7 +11,7 @@ class AssignmentTest {
 
     private class Ark : Arkenv() {
         val int: Int by argument("--int")
-        val bool: Boolean by argument("-b", "--bool") {
+        val bool: Boolean by argument("-b", "--bool", "--complex-arg") {
             defaultValue = { true }
         }
         val string: String? by argument("--str")
@@ -27,6 +27,12 @@ class AssignmentTest {
     @Test fun `should turn bool off`() {
         Ark().parse(arrayOf("int=-1", "bool=false")).expectThat {
             get { int }.isEqualTo(-1)
+            get { bool }.isEqualTo(false)
+        }
+    }
+
+    @Test fun `should be able to use complex arg in assignment`() {
+        Ark().parse(arrayOf("int=0", "complex-arg=false")).expectThat {
             get { bool }.isEqualTo(false)
         }
     }
