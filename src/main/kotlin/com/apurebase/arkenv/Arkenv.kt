@@ -52,19 +52,6 @@ abstract class Arkenv {
 
     val help: Boolean by ArkenvDelegateLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
 
-    /**
-     * Defines an argument that can be parsed.
-     * @param names the names that the argument can be called with
-     * @param isMainArg whether this argument is a main argument, meaning it doesn't use names,
-     * but the last supplied argument
-     * @param configuration optional configuration of the argument's properties
-     */
-    inline fun <reified T : Any> argument(
-        names: List<String>,
-        isMainArg: Boolean = false,
-        noinline configuration: Argument<T>.() -> Unit = {}
-    ) = ArkenvDelegateLoader(names, isMainArg, configuration, T::class, this)
-
     internal fun isHelp(): Boolean = when {
         argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false
         else -> help
