@@ -29,7 +29,7 @@ class EnvironmentVariableFeature(
         delegate: ArgumentDelegate<*>,
         enableEnvSecrets: Boolean
     ): String? = with(delegate) {
-        if (argument.withEnv) getEnvValue(argument, arkenv.dotEnv, enableEnvSecrets) else null
+        if (argument.withEnv) getEnvValue(argument, arkenv.keyValue, enableEnvSecrets) else null
     }
 
     private fun getEnvValue(argument: Argument<*>, dotEnv: Map<String, String>, enableEnvSecrets: Boolean): String? {
@@ -57,7 +57,7 @@ class EnvironmentVariableFeature(
 
     private fun loadEnvironmentVariables(arkenv: Arkenv) {
         if (dotEnvFilePath != null) {
-            parseDotEnv(dotEnvFilePath).let(arkenv.dotEnv::putAll)
+            parseDotEnv(dotEnvFilePath).let(arkenv.keyValue::putAll)
         }
     }
 

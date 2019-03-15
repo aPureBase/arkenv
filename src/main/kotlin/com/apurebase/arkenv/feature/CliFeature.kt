@@ -20,7 +20,7 @@ class CliFeature : ArkenvFeature {
             val spl = value.split('=')
             if (spl.size == 2 && names.contains(spl[0])) {
                 args.removeAt(i)
-                arkenv.dotEnv[spl.first().toUpperCase().replace('-', '_')] = spl.getOrNull(1) ?: ""
+                arkenv.keyValue[spl.first().toUpperCase().replace('-', '_')] = spl.getOrNull(1) ?: ""
             } else i++
         }
     }

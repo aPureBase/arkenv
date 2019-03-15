@@ -26,36 +26,21 @@ abstract class Arkenv {
         argList.addAll(args)
         onParse(args)
 
-        dotEnv.clear()
+        keyValue.clear()
         features.values.forEach { it.onLoad(this) }
-
-        delegates
-            .sortedBy { it.argument.isMainArg }
-            .forEach {
-                it.reset()
-                val value = it.getValue(isParse = true)
-                onParseArgument(it.property.name, it.argument, value)
-            }
-        checkRemaining(delegates, argList).forEach { (arg, delegates) ->
-            argList.remove("-$arg")
-            delegates.forEach { it.setTrue() }
-        }
+        parse()
+        parseBooleanMerge()
     }
 
     open fun onParse(args: Array<String>) {}
 
     open fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {}
 
+    val keyValue = mutableMapOf<String, String>()
     internal val argList = mutableListOf<String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
-    val dotEnv = mutableMapOf<String, String>()
 
     val help: Boolean by ArkenvDelegateLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
-
-    internal fun isHelp(): Boolean = when {
-        argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false
-        else -> help
-    }
 
     override fun toString(): String = StringBuilder().also { sb ->
         val indent = "    "
@@ -75,6 +60,20 @@ abstract class Arkenv {
                 .appendln()
         }
     }.toString()
+
+    private fun parse() = delegates
+        .sortedBy { it.argument.isMainArg }
+        .forEach {
+            it.reset()
+            val value = it.getValue(isParse = true)
+            onParseArgument(it.property.name, it.argument, value)
+        }
+
+    private fun parseBooleanMerge() =
+        checkRemaining(delegates, argList).forEach { (arg, delegates) ->
+            argList.remove("-$arg")
+            delegates.forEach { it.setTrue() }
+        }
 
     private fun ArgumentDelegate<*>.getValue(isParse: Boolean): Any? =
         getValue(this, property).also { value ->

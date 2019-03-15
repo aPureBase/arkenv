@@ -19,7 +19,7 @@ class LoaderTest {
     @Test fun `custom loader`() {
         val feature = object : ArkenvFeature {
             override fun onLoad(arkenv: Arkenv) {
-                arkenv.dotEnv["PORT"] = "99"
+                arkenv.keyValue["PORT"] = "99"
             }
         }
 
@@ -33,7 +33,7 @@ class LoaderTest {
             override fun onLoad(arkenv: Arkenv) {
                 val map = (Yaml().load(yaml) as Map<String, Any>)
                     .map { (key, value) -> key.toUpperCase() to value.toString() }
-                arkenv.dotEnv.putAll(map)
+                arkenv.keyValue.putAll(map)
             }
         }
 

@@ -26,7 +26,7 @@ class PropertyFeature(
     }
 
     private fun loadProperties(file: String, arkenv: Arkenv) {
-        parseProperties(file).let(arkenv.dotEnv::putAll)
+        parseProperties(file).let(arkenv.keyValue::putAll)
     }
 
     private fun parseProperties(propertiesFile: String): Map<String, String> =

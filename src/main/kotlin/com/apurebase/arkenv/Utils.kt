@@ -58,3 +58,8 @@ fun Arkenv.install(feature: ArkenvFeature) {
 fun Arkenv.uninstall(feature: ArkenvFeature) {
     features.remove(feature.getKeyValPair().first)
 }
+
+internal fun Arkenv.isHelp(): Boolean = when {
+    argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false
+    else -> help
+}
