@@ -2,8 +2,10 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import strikt.assertions.isEqualTo
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PlaceholderTests {
 
     private class Ark(doInstall: Boolean = false) : Arkenv() {
@@ -56,10 +58,41 @@ class PlaceholderTests {
             }
     }
 
-    private fun Ark.verify() {
-        expectThat {
-            get { name }.isEqualTo("MyApp")
-            get { description }.isEqualTo("MyApp is a Arkenv application")
-        }
+    @Test fun `refer to undeclared arg`() {
+        val testValue = "hello this is a test value"
+        val expected = "$testValue is not declared"
+        Ark()
+            .parse(arrayOf("--app-name", "MyApp", "--test", testValue, "--app-description", "\${test} is not declared"))
+            .expectThat {
+                get { description }.isEqualTo(expected)
+            }
+    }
+
+    @Test fun `refer to undeclared env var`() {
+        val testValue = "hello this is a test value"
+        val expected = "$testValue is not declared"
+        MockSystem("TEST" to testValue)
+        Ark()
+            .parse(arrayOf("--app-name", "MyApp", "--app-description", "\${test} is not declared"))
+            .expectThat {
+                get { description }.isEqualTo(expected)
+            }
+    }
+
+    @Test fun `refer to undeclared keyValue`() {
+        val testValue = "this_is_expected"
+        val expected = "$testValue is not declared"
+
+        val ark = Ark()
+        ark.install(EnvironmentVariableFeature(dotEnvFilePath = getTestResourcePath(".env")))
+        ark.parse(arrayOf("--app-name", "MyApp", "--app-description", "\${mysql_password} is not declared"))
+            .expectThat {
+                get { description }.isEqualTo(expected)
+            }
+    }
+
+    private fun Ark.verify() = expectThat {
+        get { name }.isEqualTo("MyApp")
+        get { description }.isEqualTo("MyApp is a Arkenv application")
     }
 }

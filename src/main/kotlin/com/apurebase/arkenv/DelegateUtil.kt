@@ -19,14 +19,41 @@ private fun findEndAndReplace(i: Int, final: String, arkenv: Arkenv): String {
     while (start < final.length) {
         if (final[start] == '}') {
             val placeholder = final.substring(i + 2, start).toUpperCase()
-            val replaceWith = arkenv.delegates
-                .find { del -> del.argument.names.any { it.toSnakeCase() == placeholder } }
-                ?.value?.toString()
-                    ?: throw IllegalArgumentException("Cannot find value for placeholder $placeholder")
+            val replaceWith = findPlaceholderReplacement(arkenv, placeholder)
             return final.replaceRange(i, start + 1, replaceWith)
         } else start++
     }
     return final
+}
+
+private fun findPlaceholderReplacement(arkenv: Arkenv, placeholder: String): String =
+    findReplacementInDelegates(arkenv.delegates, placeholder)
+            ?: findReplacementInArgs(arkenv.argList, placeholder)
+            ?: findReplacementInKeyValue(arkenv.keyValue, placeholder)
+            ?: findReplacementInEnv(placeholder)
+            ?: throw IllegalArgumentException("Cannot find value for placeholder $placeholder")
+
+private fun findReplacementInDelegates(delegates: Collection<ArgumentDelegate<*>>, placeholder: String): String? =
+    delegates
+        .find { del -> del.argument.names.any { it.toSnakeCase() == placeholder } }
+        ?.value?.toString()
+
+private fun findReplacementInArgs(args: List<String>, placeholder: String): String? {
+    var i = 0
+    while (i < args.size - 1) {
+        if (args[i].toSnakeCase() == placeholder) {
+            return args[i + 1]
+        } else i++
+    }
+    return null
+}
+
+private fun findReplacementInKeyValue(keyValue: Map<String, String>, placeholder: String): String? {
+    return keyValue[placeholder]
+}
+
+private fun findReplacementInEnv(placeholder: String): String? {
+    return System.getenv(placeholder)
 }
 
 internal fun <T> checkValidation(validation: List<Argument.Validation<T>>, value: T, property: KProperty<*>) =
