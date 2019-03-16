@@ -1,5 +1,6 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.feature.EnvironmentVariableFeature.Companion.getEnv
 import kotlin.reflect.KProperty
 
 internal fun parsePlaceholders(value: String, arkenv: Arkenv): String {
@@ -29,8 +30,7 @@ private fun findEndAndReplace(i: Int, final: String, arkenv: Arkenv): String {
 private fun findPlaceholderReplacement(arkenv: Arkenv, placeholder: String): String =
     findReplacementInDelegates(arkenv.delegates, placeholder)
             ?: findReplacementInArgs(arkenv.argList, placeholder)
-            ?: findReplacementInKeyValue(arkenv.keyValue, placeholder)
-            ?: findReplacementInEnv(placeholder)
+            ?: getEnv(placeholder, arkenv.keyValue, false)
             ?: throw IllegalArgumentException("Cannot find value for placeholder $placeholder")
 
 private fun findReplacementInDelegates(delegates: Collection<ArgumentDelegate<*>>, placeholder: String): String? =
@@ -46,14 +46,6 @@ private fun findReplacementInArgs(args: List<String>, placeholder: String): Stri
         } else i++
     }
     return null
-}
-
-private fun findReplacementInKeyValue(keyValue: Map<String, String>, placeholder: String): String? {
-    return keyValue[placeholder]
-}
-
-private fun findReplacementInEnv(placeholder: String): String? {
-    return System.getenv(placeholder)
 }
 
 internal fun <T> checkValidation(validation: List<Argument.Validation<T>>, value: T, property: KProperty<*>) =

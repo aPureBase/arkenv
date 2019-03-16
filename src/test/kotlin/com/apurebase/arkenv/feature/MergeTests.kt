@@ -1,5 +1,6 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.feature
 
+import com.apurebase.arkenv.*
 import org.junit.jupiter.api.Test
 import strikt.assertions.contains
 import strikt.assertions.isEqualTo
@@ -46,16 +47,16 @@ class MergeTests {
         Ark.verify("-3ba")
         Ark.verify("-c21")
         Ark.parse(arrayOf("-bcda")).expectThat {
-            get { a }.isTrue()
-            get { b }.isFalse()
-            get { c }.isFalse()
-            get { d }.isTrue()
+            get { Ark.a }.isTrue()
+            get { Ark.b }.isFalse()
+            get { Ark.c }.isFalse()
+            get { Ark.d }.isTrue()
         }
         Ark.parse(arrayOf("-bcdax")).expectThat {
-            get { a }.isFalse()
-            get { b }.isFalse()
-            get { c }.isFalse()
-            get { d }.isFalse()
+            get { Ark.a }.isFalse()
+            get { Ark.b }.isFalse()
+            get { Ark.c }.isFalse()
+            get { Ark.d }.isFalse()
         }
     }
 

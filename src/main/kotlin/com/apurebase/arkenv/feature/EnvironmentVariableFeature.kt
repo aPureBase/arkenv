@@ -47,25 +47,26 @@ class EnvironmentVariableFeature(
             .firstOrNull()
     }
 
-    private fun getEnv(name: String, dotEnv: Map<String, String>, enableEnvSecrets: Boolean) =
-        System.getenv(name) ?: dotEnv[name] ?: getEnvSecret(name, enableEnvSecrets)
-
-    private fun getEnvSecret(lookup: String, enableEnvSecrets: Boolean): String? = when {
-        enableEnvSecrets -> System.getenv("${lookup}_FILE")?.let(::File)?.readText()
-        else -> null
-    }
-
     private fun loadEnvironmentVariables(arkenv: Arkenv) {
         if (dotEnvFilePath != null) {
             parseDotEnv(dotEnvFilePath).let(arkenv.keyValue::putAll)
         }
     }
 
-    private fun parseDotEnv(path: String): Map<String, String> =
-        File(path).useLines { lines ->
+    companion object {
+        internal fun getEnv(name: String, dotEnv: Map<String, String>, enableEnvSecrets: Boolean) =
+            System.getenv(name) ?: dotEnv[name] ?: getEnvSecret(name, enableEnvSecrets)
+
+        private fun getEnvSecret(lookup: String, enableEnvSecrets: Boolean): String? = when {
+            enableEnvSecrets -> System.getenv("${lookup}_FILE")?.let(::File)?.readText()
+            else -> null
+        }
+
+        private fun parseDotEnv(path: String): Map<String, String> = File(path).useLines { lines ->
             lines.map(String::trimStart)
                 .filterNot { it.isBlank() || it.startsWith("#") }
                 .map { it.split("=") }
                 .associate { it[0].trimEnd() to it[1].substringBefore('#').trim() }
         }
+    }
 }

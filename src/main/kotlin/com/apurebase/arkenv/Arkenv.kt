@@ -12,6 +12,10 @@ abstract class Arkenv {
 
     var programName: String = "Arkenv"
     internal val features: MutableMap<String, ArkenvFeature> = mutableMapOf()
+    internal val argList = mutableListOf<String>()
+    internal val delegates = mutableListOf<ArgumentDelegate<*>>()
+    val keyValue = mutableMapOf<String, String>()
+    val help: Boolean by ArkenvDelegateLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
 
     init {
         install(CliFeature())
@@ -35,12 +39,6 @@ abstract class Arkenv {
     open fun onParse(args: Array<String>) {}
 
     open fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {}
-
-    val keyValue = mutableMapOf<String, String>()
-    internal val argList = mutableListOf<String>()
-    internal val delegates = mutableListOf<ArgumentDelegate<*>>()
-
-    val help: Boolean by ArkenvDelegateLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
 
     override fun toString(): String = StringBuilder().also { sb ->
         val indent = "    "

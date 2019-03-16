@@ -3,25 +3,21 @@ package com.apurebase.arkenv.feature
 import com.apurebase.arkenv.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PlaceholderTests {
 
-    private class Ark(doInstall: Boolean = false) : Arkenv() {
-        init {
-            if (doInstall) {
-                install(PropertyFeature("placeholders.properties"))
-            }
-        }
-
+    private class Ark : Arkenv() {
         val name: String by argument("--app-name")
         val description: String by argument("--app-description")
     }
 
     @Test fun `can refer to previously defined arg in properties`() {
-        Ark(doInstall = true)
-            .parse(arrayOf())
+        val ark = Ark()
+        ark.install(PropertyFeature("placeholders.properties"))
+        ark.parse(arrayOf())
             .verify()
     }
 
@@ -89,6 +85,13 @@ class PlaceholderTests {
             .expectThat {
                 get { description }.isEqualTo(expected)
             }
+    }
+
+    @Test fun `should throw when placeholder is not found`() {
+        val ark = Ark()
+        assertThrows<IllegalArgumentException> {
+            ark.parse(arrayOf("--app-name", "MyApp", "--app-description", "\${app_missing} is a Arkenv application"))
+        }
     }
 
     private fun Ark.verify() = expectThat {
