@@ -6,21 +6,54 @@ import strikt.assertions.isEqualTo
 
 class PlaceholderTests {
 
-    private class Ark : Arkenv() {
+    private class Ark(doInstall: Boolean = false) : Arkenv() {
         init {
-            install(PropertyFeature("placeholders.properties"))
+            if (doInstall) {
+                install(PropertyFeature("placeholders.properties"))
+            }
         }
 
         val name: String by argument("--app-name")
         val description: String by argument("--app-description")
     }
 
-    @Test fun `can refer to previously defined arg`() {
-        Ark().parse(arrayOf()).verify()
+    @Test fun `can refer to previously defined arg in properties`() {
+        Ark(doInstall = true)
+            .parse(arrayOf())
+            .verify()
+    }
+
+    @Test fun `can refer in cli arg`() {
+        Ark()
+            .parse(arrayOf("--app-name", "MyApp", "--app-description", "\${app_name} is a Arkenv application"))
+            .verify()
+    }
+
+    @Test fun `can refer in env var`() {
+        MockSystem(
+            "APP_NAME" to "MyApp",
+            "APP_DESCRIPTION" to "\${app_name} is a Arkenv application"
+        )
+        Ark()
+            .parse(arrayOf())
+            .verify()
     }
 
     @Test fun `should allow ${ expression`() {
-        // TODO put this at the end
+        Ark().parse(arrayOf("--app-name", "\${", "--app-description", "test"))
+            .expectThat {
+                get { name }.isEqualTo("\${")
+                get { description }.isEqualTo("test")
+            }
+    }
+
+    @Test fun `multiple replacements`() {
+        val name = "LongTextForTheName"
+        Ark()
+            .parse(arrayOf("--app-name", name, "--app-description", "\${app_name} is \${app_name}"))
+            .expectThat {
+                get { description }.isEqualTo("$name is $name")
+            }
     }
 
     private fun Ark.verify() {
