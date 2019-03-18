@@ -9,7 +9,7 @@ import java.io.InputStream
 import java.util.*
 
 class PropertyFeature(
-    private val file: String,
+    private val file: String = "application.properties",
     locations: Collection<String> = listOf()
 ) : ArkenvFeature, Arkenv() {
 

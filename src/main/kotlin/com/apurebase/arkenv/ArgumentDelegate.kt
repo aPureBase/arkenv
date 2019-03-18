@@ -12,7 +12,8 @@ class ArgumentDelegate<T : Any?>(
 ) : ReadOnlyProperty<Any?, T> {
 
     @Suppress("UNCHECKED_CAST")
-    private var value: T = null as T
+    internal var value: T = null as T
+        private set
 
     internal var isSet: Boolean = false
         private set
@@ -77,34 +78,27 @@ class ArgumentDelegate<T : Any?>(
             findIndex()
             value = setValue(property)
             checkNullable(property)
-            checkValidation()
+            checkValidation(argument.validation, value, property)
             isSet = true
         }
         return value
     }
 
-    private fun checkValidation() = argument
-        .validation
-        .filterNot { it.assertion(value) }
-        .map { it.message }
-        .let {
-            if (it.isNotEmpty()) it
-                .reduce { acc, s -> "$acc. $s" }
-                .run { throw ValidationException(property, value, this) }
-        }
-
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
-        val values = arkenv.features.values.mapNotNull { it.onParse(arkenv, this) }
+        val values = arkenv.features.values.mapNotNull { it.onParse(arkenv, this) } +
+                argument.names.mapNotNull { arkenv[it.toSnakeCase()] }
         return when {
             isBoolean -> mapBoolean(values)
             values.isEmpty() -> {
-                if (argument.acceptsManualInput) readInput(mapping) ?: defaultValue as T
+                if (argument.acceptsManualInput) readInput(::map) ?: defaultValue as T
                 else defaultValue as T
             }
-            else -> mapping(values.first())
+            else -> map(values.first())
         }
     }
+
+    private fun map(value: String): T = mapping(parsePlaceholders(value, arkenv))
 
     @Suppress("UNCHECKED_CAST")
     private fun mapBoolean(values: Collection<String>): T {

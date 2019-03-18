@@ -1,5 +1,6 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.feature
 
+import com.apurebase.arkenv.*
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test

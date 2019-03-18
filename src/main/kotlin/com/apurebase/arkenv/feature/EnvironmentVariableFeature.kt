@@ -17,7 +17,7 @@ class EnvironmentVariableFeature(
     override fun onLoad(arkenv: Arkenv) = loadEnvironmentVariables(arkenv)
 
     override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? =
-        parseEnvironmentVariables(arkenv, delegate, enableEnvSecrets)
+        parseEnvironmentVariables(delegate, enableEnvSecrets)
 
     override fun configure(argument: Argument<*>) {
         argument.withEnv = true
@@ -25,17 +25,16 @@ class EnvironmentVariableFeature(
     }
 
     private fun parseEnvironmentVariables(
-        arkenv: Arkenv,
         delegate: ArgumentDelegate<*>,
         enableEnvSecrets: Boolean
     ): String? = with(delegate) {
-        if (argument.withEnv) getEnvValue(argument, arkenv.keyValue, enableEnvSecrets) else null
+        if (argument.withEnv) getEnvValue(argument, enableEnvSecrets) else null
     }
 
-    private fun getEnvValue(argument: Argument<*>, dotEnv: Map<String, String>, enableEnvSecrets: Boolean): String? {
+    private fun getEnvValue(argument: Argument<*>, enableEnvSecrets: Boolean): String? {
         // If an envVariable is defined we'll pick this as highest order value
         argument.envVariable?.let {
-            val definedEnvValue = getEnv(it, dotEnv, enableEnvSecrets)
+            val definedEnvValue = getEnv(it, enableEnvSecrets)
             if (!definedEnvValue.isNullOrEmpty()) return definedEnvValue
         }
 
@@ -43,16 +42,8 @@ class EnvironmentVariableFeature(
         return argument.names
             .filter(String::isAdvancedName)
             .map { argument.envPrefix + it.toSnakeCase() }
-            .mapNotNull { getEnv(it, dotEnv, enableEnvSecrets) }
+            .mapNotNull { getEnv(it, enableEnvSecrets) }
             .firstOrNull()
-    }
-
-    private fun getEnv(name: String, dotEnv: Map<String, String>, enableEnvSecrets: Boolean) =
-        System.getenv(name) ?: dotEnv[name] ?: getEnvSecret(name, enableEnvSecrets)
-
-    private fun getEnvSecret(lookup: String, enableEnvSecrets: Boolean): String? = when {
-        enableEnvSecrets -> System.getenv("${lookup}_FILE")?.let(::File)?.readText()
-        else -> null
     }
 
     private fun loadEnvironmentVariables(arkenv: Arkenv) {
@@ -61,11 +52,20 @@ class EnvironmentVariableFeature(
         }
     }
 
-    private fun parseDotEnv(path: String): Map<String, String> =
-        File(path).useLines { lines ->
+    companion object {
+        internal fun getEnv(name: String, enableEnvSecrets: Boolean) =
+            System.getenv(name) ?: getEnvSecret(name, enableEnvSecrets)
+
+        private fun getEnvSecret(lookup: String, enableEnvSecrets: Boolean): String? = when {
+            enableEnvSecrets -> System.getenv("${lookup}_FILE")?.let(::File)?.readText()
+            else -> null
+        }
+
+        private fun parseDotEnv(path: String): Map<String, String> = File(path).useLines { lines ->
             lines.map(String::trimStart)
                 .filterNot { it.isBlank() || it.startsWith("#") }
                 .map { it.split("=") }
                 .associate { it[0].trimEnd() to it[1].substringBefore('#').trim() }
         }
+    }
 }

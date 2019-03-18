@@ -1,6 +1,6 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.feature.EnvironmentVariableFeature
+import com.apurebase.arkenv.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
