@@ -7,11 +7,15 @@ nav_order: 1
 ![Arkenv Logo]({{ site.url }}{{ site.baseurl }}arkenv_logo.png "Arkenv Logo")
 
 
-Kotlin Cli & Env argument parser using delegates.
+Type-safe Kotlin configuration parser `by` delegates. 
 
-This repository is hosted on Gitlab ([https://gitlab.com/apurebase/arkenv](https://gitlab.com/apurebase/arkenv)).
+Supports the most common external configuration sources, including: 
+* Command line
+* Environment Variables
+* Properties & Spring-like profiles
+* Dot env (.env) files
 
-Please report issues and open pull requests there.
+_This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). Please report issues and open pull requests there._
 
 
 ## Example usage
