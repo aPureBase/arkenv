@@ -28,7 +28,7 @@ class Argument<T : Any?>(val names: List<String>) {
     /**
      * A prefix that is applied to the environment variable names when parsing
      */
-    var envPrefix: String = ""
+    var envPrefix: String? = null
 
     /**
      * A custom name for the environment variable parsing

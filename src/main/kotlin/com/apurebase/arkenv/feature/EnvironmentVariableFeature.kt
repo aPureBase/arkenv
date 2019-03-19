@@ -9,7 +9,7 @@ import java.io.File
  * @property dotEnvFilePath location of the dot env file to read variables from
  */
 class EnvironmentVariableFeature(
-    private val envPrefix: String = "",
+    private val envPrefix: String? = null,
     private val enableEnvSecrets: Boolean = false,
     private val dotEnvFilePath: String? = null
 ) : ArkenvFeature {
@@ -40,11 +40,15 @@ class EnvironmentVariableFeature(
 
         // Loop over all argument names and pick the first one that matches
         return argument.names
+            .asSequence()
             .filter(String::isAdvancedName)
-            .map { argument.envPrefix + it.toSnakeCase() }
+            .map { parseArgumentName(argument, it) }
             .mapNotNull { getEnv(it, enableEnvSecrets) }
             .firstOrNull()
     }
+
+    private fun parseArgumentName(argument: Argument<*>, name: String): String =
+        (argument.envPrefix?.toSnakeCase()?.ensureEndsWith('_') ?: "") + name.toSnakeCase()
 
     private fun loadEnvironmentVariables(arkenv: Arkenv) {
         if (dotEnvFilePath != null) {

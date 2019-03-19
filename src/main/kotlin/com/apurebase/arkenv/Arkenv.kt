@@ -62,6 +62,9 @@ abstract class Arkenv {
     private fun parse() = delegates
         .sortedBy { it.argument.isMainArg }
         .forEach {
+            features.values.forEach { feature ->
+                feature.configure(it.argument)
+            }
             it.reset()
             val value = it.getValue(isParse = true)
             onParseArgument(it.property.name, it.argument, value)

@@ -2,8 +2,10 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldHaveKey
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
+import strikt.assertions.isEqualTo
 
 internal class EnvironmentVariableFeatureTest {
 
@@ -23,5 +25,18 @@ internal class EnvironmentVariableFeatureTest {
             it::arg shouldThrow IllegalArgumentException::class
         }
         EnvArgs(true).arg shouldBeEqualTo "test"
+    }
+
+    @Test fun `env prefix should work`() {
+        val ark = EnvArgs(false)
+        val feature = EnvironmentVariableFeature(envPrefix = "test")
+        ark.install(feature)
+        ark.features.shouldHaveKey(feature.getKeyValPair().first)
+
+        MockSystem("TEST_ARG" to "prefix")
+
+        ark.parse(arrayOf()).expectThat {
+            get { arg }.isEqualTo("prefix")
+        }
     }
 }

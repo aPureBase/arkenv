@@ -20,9 +20,6 @@ class ArkenvDelegateLoader<T : Any>(
         val argumentConfig = Argument<T>(names).also {
             it.isMainArg = isMainArg
         }.apply(block)
-        arkenv.features.values.forEach {
-            it.configure(argumentConfig)
-        }
         return ArgumentDelegate(
             arkenv,
             argumentConfig,
