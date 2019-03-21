@@ -50,9 +50,14 @@ you can switch to another file name by specifying a custom prefix.
 * Code: `ProfileFeature(prefix = "custom_prefix")`
 
 ##### Location
-You can also refer to an explicit location by using the spring.config.location environment property
- (which is a comma-separated list of directory locations or file paths).
+By default, Arkenv will look for profiles in the following relative locations 
+on both the classpath and the file system: 
+* `/` 
+* `/config`
  
-spring.config.name and spring.config.location are used very early to determine which files have
- to be loaded, so they must be defined as an environment property 
- (typically an OS environment variable, a system property, or a command-line argument).
+You can add additional locations by using the location argument, 
+which accepts a comma-separated list of directory locations or file paths.
+
+* Argument: `--arkenv-profile-location`
+* Env var: `ARKENV_PROFILE_LOCATION`
+* Code: `ProfileFeature(locations = listOf("some/dir"))`
