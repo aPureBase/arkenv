@@ -1,6 +1,7 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.api.Assertion
@@ -41,9 +42,9 @@ internal class ProfileFeatureTest {
     }
 
     @Test fun `should throw when profile cannot be found`() {
-        assertThrows<NullPointerException> {
+        assertThrows<IllegalArgumentException> {
             Ark("--arkenv-profile", "wrong")
-        }
+        }.message.shouldNotBeNull()
     }
 
     @Test fun `set profile via env`() {

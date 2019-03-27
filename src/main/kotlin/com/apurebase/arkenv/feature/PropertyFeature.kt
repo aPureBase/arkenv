@@ -42,7 +42,7 @@ class PropertyFeature(
                 val stream = getFileStream(it) ?: getResourceStream(it)
                 if (stream != null) return stream
             }
-        return null // throw exception ??
+        throw IllegalArgumentException("Could not find property file for $name. Locations: $locations")
     }
 
     private fun fixLocation(location: String) = // TODO test this

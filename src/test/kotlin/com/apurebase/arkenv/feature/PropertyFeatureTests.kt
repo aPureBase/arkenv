@@ -1,6 +1,8 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
+import org.amshove.kluent.shouldContain
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.*
 import strikt.assertions.isEqualTo
 import java.io.File
@@ -41,11 +43,16 @@ class PropertyFeatureTests {
         }
     }
 
-    @Test fun `should throw when dot env file can not be found`() {
-        val ark = PropertiesArk("does_not_exist.env", listOf())
-        assertThrows<NullPointerException> {
+    @Test fun `should throw when file can not be found`() {
+        val name = "does_not_exist.env"
+        val ark = PropertiesArk(name, listOf())
+        assertThrows<IllegalArgumentException> {
             ark.parse(arrayOf())
-        }
+        }.message
+            .shouldNotBeNull()
+            .shouldContain(name)
+            .shouldContain("config")
+            .also(::println)
     }
 
     @Nested
