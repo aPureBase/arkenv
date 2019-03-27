@@ -39,9 +39,9 @@ dependencies {
 
     testCompile "org.yaml:snakeyaml:1.24"
     testCompile "org.jmockit:jmockit:1.45"
-    testCompile group: 'org.amshove.kluent', name: 'kluent', version: '1.48'
+    testCompile group: 'org.amshove.kluent', name: 'kluent', version: '1.49'
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
-    testCompile "io.strikt:strikt-core:0.18.2"
+    testCompile "io.strikt:strikt-core:0.19.4"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:$junit_version"
 }
 

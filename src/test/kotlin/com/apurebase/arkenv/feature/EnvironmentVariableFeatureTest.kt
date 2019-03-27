@@ -7,9 +7,8 @@ import org.junit.jupiter.api.Test
 
 internal class EnvironmentVariableFeatureTest {
 
-    private class EnvArgs(withEnv: Boolean) : Arkenv() {
+    private class EnvArgs(withEnv: Boolean) : Arkenv("Test") {
         init {
-            programName = "Test"
             if (withEnv) install(EnvironmentVariableFeature())
             else uninstall(EnvironmentVariableFeature())
         }
