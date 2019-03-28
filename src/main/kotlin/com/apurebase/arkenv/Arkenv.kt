@@ -8,9 +8,8 @@ import com.apurebase.arkenv.feature.EnvironmentVariableFeature
  * The base class that provides the argument parsing capabilities.
  * Extend this to define your own arguments.
  */
-abstract class Arkenv {
+abstract class Arkenv(val programName: String = "Arkenv") {
 
-    var programName: String = "Arkenv"
     internal val features: MutableMap<String, ArkenvFeature> = mutableMapOf()
     internal val argList = mutableListOf<String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
