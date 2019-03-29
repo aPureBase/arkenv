@@ -69,6 +69,23 @@ internal class RelaxedBindingTests {
         }
     }
 
+    @Nested
+    inner class Assignment {
+        private fun verifyAssignment(arg: String) = Ark().parse(arrayOf(arg)).verify()
+
+        @Test fun `UPPERCASE`() {
+            verifyAssignment("DB_PORT=5")
+        }
+
+        @Test fun `camelCase`() {
+            verifyAssignment("dbPort=5")
+        }
+
+        @Test fun `kebab-case`() {
+            verifyAssignment("db-port=5")
+        }
+    }
+
     private fun Ark.verify() = expectThat {
         get { dbPort }.isEqualTo(5)
     }
