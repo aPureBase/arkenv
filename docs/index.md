@@ -20,15 +20,15 @@ Supports the most common external configuration sources, including:
 * [Basic example usage]({{site.baseurl}}guides/example)
 
 ## Features
-* [Command Line]({{ site.baseurl }}features/command-line)
-* [Environment Variables]({{ site.baseurl }}features/environment-variables)
-* [Properties]({{ site.baseurl }}features/properties)
-* [Profiles]({{ site.baseurl }}features/profiles)
-* [Boolean Merge]({{ site.baseurl }}features/boolean-merge)
-* [Validation]({{ site.baseurl }}features/validation)
-* [Manual Input]({{ site.baseurl }}features/manual-input)
-* [Docker Secrets]({{ site.baseurl }}features/docker-secrets)
-* [Dot Env Files]({{ site.baseurl }}features/dot-env-files)
+* [Command Line]({{site.baseurl}}features/command-line)
+* [Environment Variables]({{site.baseurl}}features/environment-variables)
+* [Properties]({{site.baseurl}}features/properties)
+* [Profiles]({{site.baseurl}}features/profiles)
+* [Boolean Merge]({{site.baseurl}}features/boolean-merge)
+* [Validation]({{site.baseurl}}features/validation)
+* [Manual Input]({{site.baseurl}}features/manual-input)
+* [Docker Secrets]({{site.baseurl}}features/docker-secrets)
+* [Dot Env Files]({{site.baseurl}}features/dot-env-files)
 
 
 ### Documentation
