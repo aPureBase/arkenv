@@ -17,7 +17,7 @@ class ArkenvDelegateLoader<T : Any>(
     }
 
     private fun createDelegate(prop: KProperty<*>, names: List<String>): ArgumentDelegate<T> {
-        val argumentConfig = Argument<T>(names).also {
+        val argumentConfig = Argument<T>(names.map(String::mapRelaxed)).also {
             it.isMainArg = isMainArg
         }.apply(block)
         return ArgumentDelegate(

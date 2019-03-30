@@ -117,10 +117,15 @@ class GeneralTest {
         }
 
         val expected = "expected"
+        fun verify() = ark.expectThat {
+            get { legalArg }.isEqualTo(expected)
+        }
         ark.parse(arrayOf("--LEGAL_ARG", expected))
-            .expectThat {
-                get { legalArg }.isEqualTo(expected)
-            }
+        verify()
+        ark.parse(arrayOf("--legal-arg", expected))
+        verify()
+        ark.parse(arrayOf("--legalArg", expected))
+        verify()
     }
 
     @Test fun `mixed should work`() {
