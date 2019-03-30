@@ -7,7 +7,7 @@ import strikt.assertions.isEqualTo
 
 internal class RelaxedBindingTests {
 
-    private class Ark : Arkenv() {
+    private class Ark(configuration: ArkenvBuilder.() -> Unit = {}) : Arkenv("Test", configuration) {
         val dbPort: Int by argument("--db-port")
     }
 
@@ -51,8 +51,9 @@ internal class RelaxedBindingTests {
     @Nested
     inner class Property {
         private fun verifyProperty(file: String) {
-            val ark = Ark()
-            ark.install(PropertyFeature("$file.properties", listOf("binding")))
+            val ark = Ark {
+                install(PropertyFeature("$file.properties", listOf("binding")))
+            }
             ark.parse(arrayOf()).verify()
         }
 

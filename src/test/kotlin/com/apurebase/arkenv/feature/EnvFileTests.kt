@@ -8,11 +8,9 @@ import java.io.FileNotFoundException
 
 class EnvFileTests {
 
-    private class EnvFileArk(dotEnvFilePath: String?) : Arkenv() {
-        init {
-            install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvFilePath))
-        }
-
+    private class EnvFileArk(dotEnvFilePath: String?) : Arkenv(configuration = {
+        install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvFilePath))
+    }) {
         val mysqlPassword: String by argument("--mysql-password")
         val port: Int by argument("--database-port")
     }

@@ -16,15 +16,14 @@ class CliFeature : ArkenvFeature {
     override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? = parseCli(delegate)
 
     private fun loadCliAssignments(arkenv: Arkenv) {
-        val args = arkenv.argList
         val names = arkenv.delegates.flatMap { it.argument.names }.map { it.trimStart('-') }
         var i = 0
-        while (i < args.size) {
-            val value = args[i]
+        while (i < arkenv.argList.size) {
+            val value = arkenv.argList[i]
             val spl = value.split('=')
             val key = spl.first().toSnakeCase()
             if (spl.size == 2 && names.contains(key)) {
-                args.removeAt(i)
+                arkenv.argList.removeAt(i)
                 arkenv.keyValue[key] = spl.getOrNull(1) ?: ""
             } else i++
         }

@@ -41,23 +41,7 @@ inline fun <reified T : Any> Arkenv.argument(
 inline fun <reified T : Any> Arkenv.mainArgument(noinline block: Argument<T>.() -> Unit = {}): ArkenvDelegateLoader<T> =
     argument(listOf(), true, block)
 
-internal fun <T> ArgumentDelegate<T>.readInput(mapping: (String) -> T): T? {
-    println("Accepting input for ${property.name}: ")
-    val input = readLine()
-    return if (input == null) null
-    else mapping(input)
-}
-
 internal fun ArkenvFeature.getKeyValPair() = this::class.jvmName to this
-
-fun Arkenv.install(feature: ArkenvFeature) {
-    val (key, value) = feature.getKeyValPair()
-    features[key] = value
-}
-
-fun Arkenv.uninstall(feature: ArkenvFeature) {
-    features.remove(feature.getKeyValPair().first)
-}
 
 internal fun Arkenv.isHelp(): Boolean = when {
     argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false

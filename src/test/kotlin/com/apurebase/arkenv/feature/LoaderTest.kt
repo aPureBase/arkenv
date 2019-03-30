@@ -1,18 +1,26 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.expectThat
+import com.apurebase.arkenv.parse
 import org.amshove.kluent.shouldEqualTo
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import org.yaml.snakeyaml.Yaml
 import strikt.assertions.isEqualTo
+import kotlin.collections.Map
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.map
+import kotlin.collections.putAll
+import kotlin.collections.set
 
 class LoaderTest {
 
-    private open class Ark(feature: ArkenvFeature) : Arkenv() {
-        init {
-            install(feature)
-        }
+    private open class Ark(feature: ArkenvFeature) : Arkenv(configuration = {
+        install(feature)
+    }) {
         val port: Int by argument("--port")
     }
 
@@ -46,6 +54,7 @@ class LoaderTest {
         class YamlArk(yaml: String) : Ark(YamlFeature(yaml)) {
             val name: String by argument("--name")
         }
+
         val ark = YamlArk(yaml)
 
         ark.parse(arrayOf()).expectThat {

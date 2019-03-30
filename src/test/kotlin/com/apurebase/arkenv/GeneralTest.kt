@@ -3,6 +3,7 @@ package com.apurebase.arkenv
 import org.amshove.kluent.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
 
@@ -171,5 +172,12 @@ class GeneralTest {
     @Test fun `should pass when delegates are empty`() {
         val ark = object : Arkenv() {}
         ark.parse(arrayOf("-empty"))
+    }
+
+    @Test fun `parse should fail`() {
+        val ark = object : Arkenv() {
+            val arg: Int by argument("-a")
+        }
+        assertThrows<IllegalArgumentException> { ark.parse(arrayOf()) }
     }
 }

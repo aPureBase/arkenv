@@ -8,15 +8,16 @@ import strikt.assertions.isEqualTo
 
 class ProfileFeatureCustomizationTest {
 
-    private open class Ark : Arkenv() {
+    private open class Ark(config: ArkenvBuilder.() -> Unit = {}) : Arkenv(configuration = config) {
         val port: Int by argument("--port")
         val name: String by argument("--name")
         val other: String? by argument("-o", "--other")
     }
 
-    private class PrefixArk(prefix: String, vararg arguments: String) : Ark() {
+    private class PrefixArk(prefix: String, vararg arguments: String) : Ark(config = {
+        install(ProfileFeature(prefix = prefix))
+    }) {
         init {
-            install(ProfileFeature(prefix = prefix))
             parse(arguments.toList().toTypedArray())
         }
     }
@@ -38,9 +39,10 @@ class ProfileFeatureCustomizationTest {
         }
     }
 
-    private class LocationArk(locations: Collection<String>, vararg arguments: String) : Ark() {
+    private class LocationArk(locations: Collection<String>, vararg arguments: String) : Ark(config = {
+        install(ProfileFeature(locations = locations))
+    }) {
         init {
-            install(ProfileFeature(locations = locations))
             parse(arguments.toList().toTypedArray())
         }
     }

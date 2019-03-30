@@ -10,11 +10,9 @@ import java.io.File
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PropertyFeatureTests {
 
-    private class PropertiesArk(propertiesFile: String, locations: List<String>) : Arkenv() {
-        init {
-            install(PropertyFeature(propertiesFile, locations))
-        }
-
+    private class PropertiesArk(propertiesFile: String, locations: List<String>) : Arkenv(configuration = {
+        install(PropertyFeature(propertiesFile, locations))
+    }) {
         val mysqlPassword: String by argument("--mysql-password")
         val port: Int by argument("--database-port")
         val multiLine: String by argument("--multi-string")

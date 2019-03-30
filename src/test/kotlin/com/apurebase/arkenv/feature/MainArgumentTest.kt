@@ -57,8 +57,6 @@ internal class MainArgumentTest {
         }
         ark.parse(arrayOf("-b", "99")).expectThat {
             get { main }.isEqualTo(99)
-            get { argList }.contains("-b")
-            get { argList }.not().contains("99")
         }
     }
 }
