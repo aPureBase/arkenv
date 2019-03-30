@@ -111,12 +111,16 @@ class GeneralTest {
         ObjectArgs.optional shouldBe null
     }
 
-    @Test fun `passing an empty arg list should throw`() {
-        {
-            object : Arkenv() {
-                val illegal: String by argument(listOf())
+    @Test fun `passing no names should use the property name`() {
+        val ark = object : Arkenv() {
+            val legalArg: String by argument()
+        }
+
+        val expected = "expected"
+        ark.parse(arrayOf("--LEGAL_ARG", expected))
+            .expectThat {
+                get { legalArg }.isEqualTo(expected)
             }
-        } shouldThrow IllegalArgumentException::class
     }
 
     @Test fun `mixed should work`() {
