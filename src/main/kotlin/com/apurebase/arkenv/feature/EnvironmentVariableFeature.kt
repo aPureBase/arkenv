@@ -57,8 +57,17 @@ class EnvironmentVariableFeature(
     }
 
     companion object {
-        internal fun getEnv(name: String, enableEnvSecrets: Boolean) =
-            System.getenv(name) ?: getEnvSecret(name, enableEnvSecrets)
+        internal fun getEnv(name: String, enableEnvSecrets: Boolean): String? =
+            System.getenv(name)
+                    ?: getEnvSecret(name, enableEnvSecrets)
+                    ?: getKebabCase(name)
+                    ?: getCamelCase(name)
+
+        private fun getKebabCase(name: String) = System.getenv(name.replace('_', '-').toLowerCase())
+
+        private fun getCamelCase(name: String): String? = System.getenv(
+            name.toLowerCase().split('_').joinToString("") { it.capitalize() }.decapitalize()
+        )
 
         private fun getEnvSecret(lookup: String, enableEnvSecrets: Boolean): String? = when {
             enableEnvSecrets -> System.getenv("${lookup}_FILE")?.let(::File)?.readText()

@@ -2,10 +2,14 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.ArgumentDelegate
 import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.mapRelaxed
+import com.apurebase.arkenv.toSnakeCase
+import kotlin.collections.set
 
 class CliFeature : ArkenvFeature {
 
     override fun onLoad(arkenv: Arkenv) {
+        arkenv.argList.replaceAll(String::mapRelaxed)
         loadCliAssignments(arkenv)
     }
 
@@ -18,9 +22,10 @@ class CliFeature : ArkenvFeature {
         while (i < args.size) {
             val value = args[i]
             val spl = value.split('=')
-            if (spl.size == 2 && names.contains(spl[0])) {
+            val key = spl.first().toSnakeCase()
+            if (spl.size == 2 && names.contains(key)) {
                 args.removeAt(i)
-                arkenv.keyValue[spl.first().toUpperCase().replace('-', '_')] = spl.getOrNull(1) ?: ""
+                arkenv.keyValue[key] = spl.getOrNull(1) ?: ""
             } else i++
         }
     }

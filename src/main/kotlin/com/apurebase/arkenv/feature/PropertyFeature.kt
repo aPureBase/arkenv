@@ -3,6 +3,7 @@ package com.apurebase.arkenv.feature
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.parse
+import com.apurebase.arkenv.toSnakeCase
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -32,7 +33,7 @@ class PropertyFeature(
     private fun parseProperties(propertiesFile: String): Map<String, String> =
         Properties()
             .apply { getStream(propertiesFile).use(::load) }
-            .map { (key, value) -> key.toString().toUpperCase() to value.toString() }
+            .map { (key, value) -> key.toString().toSnakeCase() to value.toString() }
             .toMap()
 
     private fun getStream(name: String): InputStream? {
@@ -50,7 +51,7 @@ class PropertyFeature(
         else location
 
     private fun getFileStream(name: String): FileInputStream? =
-        File(name).takeIf { it.exists() }?.inputStream()
+        File(name).takeIf(File::exists)?.inputStream()
 
     private fun getResourceStream(name: String): InputStream? =
         Arkenv::class.java.classLoader.getResourceAsStream(name)
