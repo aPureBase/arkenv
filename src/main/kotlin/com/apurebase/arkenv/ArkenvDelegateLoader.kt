@@ -12,11 +12,11 @@ class ArkenvDelegateLoader<T : Any>(
     private val arkenv: Arkenv
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, T> = when {
-        names.isEmpty() && !isMainArg -> throw IllegalArgumentException("No argument names provided")
-        else -> createDelegate(prop)
+        names.isEmpty()  -> createDelegate(prop, listOf("--${prop.name.toSnakeCase()}"))
+        else -> createDelegate(prop, names)
     }
 
-    private fun createDelegate(prop: KProperty<*>): ArgumentDelegate<T> {
+    private fun createDelegate(prop: KProperty<*>, names: List<String>): ArgumentDelegate<T> {
         val argumentConfig = Argument<T>(names.map(String::mapRelaxed)).also {
             it.isMainArg = isMainArg
         }.apply(block)
