@@ -1,6 +1,9 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.PropertyFeature
+import com.apurebase.arkenv.test.MockSystem
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.parse
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.assertions.isEqualTo
@@ -13,7 +16,7 @@ internal class RelaxedBindingTests {
 
     @Nested
     inner class Cli {
-        private fun verifyCli(key: String) = Ark().parse(arrayOf(key, "5")).verify()
+        private fun verifyCli(key: String) = Ark().parse(key, "5").verify()
 
         @Test fun `UPPERCASE`() {
             verifyCli("--DB_PORT")
@@ -30,7 +33,7 @@ internal class RelaxedBindingTests {
 
     @Nested
     inner class Env {
-        private fun verifyEnv() = Ark().parse(arrayOf()).verify()
+        private fun verifyEnv() = Ark().parse().verify()
 
         @Test fun `UPPERCASE`() {
             MockSystem("DB_PORT" to "5")
@@ -54,7 +57,7 @@ internal class RelaxedBindingTests {
             val ark = Ark {
                 install(PropertyFeature("$file.properties", listOf("binding")))
             }
-            ark.parse(arrayOf()).verify()
+            ark.parse().verify()
         }
 
         @Test fun `UPPERCASE`() {
@@ -72,7 +75,7 @@ internal class RelaxedBindingTests {
 
     @Nested
     inner class Assignment {
-        private fun verifyAssignment(arg: String) = Ark().parse(arrayOf(arg)).verify()
+        private fun verifyAssignment(arg: String) = Ark().parse(arg).verify()
 
         @Test fun `UPPERCASE`() {
             verifyAssignment("DB_PORT=5")

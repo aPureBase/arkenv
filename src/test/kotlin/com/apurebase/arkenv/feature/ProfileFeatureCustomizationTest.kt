@@ -1,6 +1,9 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
+import com.apurebase.arkenv.test.MockSystem
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.parse
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.api.Assertion
@@ -18,7 +21,7 @@ class ProfileFeatureCustomizationTest {
         install(ProfileFeature(prefix = prefix))
     }) {
         init {
-            parse(arguments.toList().toTypedArray())
+            parse(*arguments)
         }
     }
 
@@ -43,7 +46,7 @@ class ProfileFeatureCustomizationTest {
         install(ProfileFeature(locations = locations))
     }) {
         init {
-            parse(arguments.toList().toTypedArray())
+            parse(*arguments)
         }
     }
 

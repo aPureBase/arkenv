@@ -1,6 +1,9 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
+import com.apurebase.arkenv.test.MockSystem
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -20,38 +23,38 @@ internal class ProfileFeatureTest {
     }
 
     @Test fun `default profile should parse`() {
-        Ark().parse(arrayOf())
+        Ark().parse()
             .expectThat { isDefault() }
     }
 
     @Test fun `nested profile should parse correctly`() {
-        Ark().parse(arrayOf("--arkenv-profile", "dev"))
+        Ark().parse("--arkenv-profile", "dev")
             .expectThat { isDevelopment() }
     }
 
     @Test fun `production profile`() {
-        Ark().parse(arrayOf("--arkenv-profile", "prod"))
+        Ark().parse("--arkenv-profile", "prod")
             .expectThat { isProduction() }
     }
 
     @Test fun `combine with other sources`() {
-        Ark().parse(arrayOf("-o", "test", "arkenv-profile=dev"))
+        Ark().parse("-o", "test", "arkenv-profile=dev")
             .expectThat { isDevelopment("test") }
     }
 
     @Test fun `should throw when profile cannot be found`() {
         assertThrows<IllegalArgumentException> {
-            Ark().parse(arrayOf("--arkenv-profile", "wrong"))
+            Ark().parse("--arkenv-profile", "wrong")
         }.message.shouldNotBeNull()
     }
 
     @Test fun `set profile via env`() {
         MockSystem("ARKENV_PROFILE" to "prod")
-        Ark().parse(arrayOf()).expectThat { isProduction() }
+        Ark().parse().expectThat { isProduction() }
     }
 
     @Test fun `should be able to override properties`() {
-        Ark().parse(arrayOf("arkenv-profile=dev", "--port", "6000")).expectThat {
+        Ark().parse("arkenv-profile=dev", "--port", "6000").expectThat {
             expect(6000, "profile-test")
         }
     }

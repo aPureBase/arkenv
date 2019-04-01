@@ -2,18 +2,15 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument
-import com.apurebase.arkenv.expectThat
-import com.apurebase.arkenv.parse
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldEqualTo
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import org.yaml.snakeyaml.Yaml
 import strikt.assertions.isEqualTo
-import kotlin.collections.Map
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.map
-import kotlin.collections.putAll
 import kotlin.collections.set
 
 class LoaderTest {
@@ -32,7 +29,7 @@ class LoaderTest {
         }
 
         val ark = Ark(feature)
-        ark.parse(arrayOf())
+        ark.parse()
         ark.port shouldEqualTo 99
     }
 
@@ -57,7 +54,7 @@ class LoaderTest {
 
         val ark = YamlArk(yaml)
 
-        ark.parse(arrayOf()).expectThat {
+        ark.parse().expectThat {
             get { port }.isEqualTo(99)
             get { name }.isEqualTo("hello world")
         }

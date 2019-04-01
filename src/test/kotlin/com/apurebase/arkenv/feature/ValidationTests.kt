@@ -3,7 +3,7 @@ package com.apurebase.arkenv.feature
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.ValidationException
 import com.apurebase.arkenv.argument
-import com.apurebase.arkenv.parse
+import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
@@ -19,11 +19,11 @@ class ValidationTests {
             }
         }
 
-        ark.parse(arrayOf("-f", "5"))
+        ark.parse("-f", "5")
 
         val actualValue = "0"
         val message =
-            assertThrows<ValidationException> { ark.parse(arrayOf("-f", actualValue)) }.message.shouldNotBeNull()
+            assertThrows<ValidationException> { ark.parse("-f", actualValue) }.message.shouldNotBeNull()
         println(message)
         message shouldContain "did not pass validation"
         message shouldContain "failingProp"

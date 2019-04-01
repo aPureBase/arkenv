@@ -1,4 +1,4 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.test
 
 import mockit.Mock
 import mockit.MockUp

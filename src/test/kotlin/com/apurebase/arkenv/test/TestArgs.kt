@@ -1,4 +1,8 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.test
+
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.mainArgument
 
 class TestArgs : Arkenv() {
 

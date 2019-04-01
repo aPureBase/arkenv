@@ -1,5 +1,6 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.test.*
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldEqual
@@ -15,7 +16,7 @@ class EnvTest : ArkenvTest() {
             "EXECUTE" to ""
         )
 
-        TestArgs().parse(arrayOf(expectedMainString)).let {
+        TestArgs().parse(expectedMainString).let {
             it.help shouldBe false
             it.bool shouldBe true
             it.country shouldBeEqualTo "dk"
@@ -27,7 +28,7 @@ class EnvTest : ArkenvTest() {
     @Test fun `main arg by env should not work`() {
         val expected = "test"
         MockSystem(MainArg::mainArg.name to expected)
-        MainArg().parse(arrayOf("")).mainArg shouldBeEqualTo ""
+        MainArg().parse("").mainArg shouldBeEqualTo ""
     }
 
     @Test fun `only parse -- arguments`() {
@@ -36,7 +37,7 @@ class EnvTest : ArkenvTest() {
             "NI" to "5",
             "-ni" to "5"
         )
-        TestArgs().parse(arrayOf("Hello World")).let {
+        TestArgs().parse("Hello World").let {
             it.mainString shouldEqual "Hello World"
             it.country shouldEqual "DK"
             it.nullInt shouldEqual null
@@ -79,7 +80,7 @@ class EnvTest : ArkenvTest() {
     @Test fun `everything and cli argument`() {
         val expected = "main desc"
         MockSystem("DESCRIPTION" to "text", "DESC" to "SOME MORE DESC")
-        TestArgs().parse(arrayOf("-d", expected, "-c", "dk", "main")).description shouldEqual expected
+        TestArgs().parse("-d", expected, "-c", "dk", "main").description shouldEqual expected
     }
 
     @Test fun `custom env name should parse`() {
@@ -93,7 +94,7 @@ class EnvTest : ArkenvTest() {
         }
 
         { CustomEnv().arg } shouldThrow IllegalArgumentException::class // nothing passed
-        CustomEnv().parse(arrayOf("-a", expected)).arg shouldBeEqualTo expected // via arg
+        CustomEnv().parse("-a", expected).arg shouldBeEqualTo expected // via arg
 
         MockSystem(envName to expected)
         CustomEnv().arg shouldBeEqualTo expected // via env
