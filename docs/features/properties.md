@@ -30,4 +30,4 @@ An example properties file could have the following content:
 mysql_password : JKE9ehnEA
 ```
 
-If you want to use profiles like in Spring Boot, see [Profiles]({{ site.baseurl }}features/profiles).
+If you want to use profiles like in Spring Boot, see [Profiles]({{site.baseurl}}features/profiles).
