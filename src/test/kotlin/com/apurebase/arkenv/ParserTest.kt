@@ -13,11 +13,9 @@ class ParserTest {
     }
 
     @Test fun `custom parser`() {
-        val ark = object : Arkenv() {
-            init {
-                install(customFeature)
-            }
-
+        val ark = object : Arkenv(configuration = {
+            install(customFeature)
+        }) {
             val port: Int by argument("--port")
         }
 

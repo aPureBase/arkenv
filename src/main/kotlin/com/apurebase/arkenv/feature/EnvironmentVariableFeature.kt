@@ -14,7 +14,7 @@ class EnvironmentVariableFeature(
     private val dotEnvFilePath: String? = null
 ) : ArkenvFeature {
 
-    override fun onLoad(arkenv: Arkenv) = loadEnvironmentVariables(arkenv)
+    override fun onLoad(arkenv: Arkenv) = loadEnvironmentVariables(arkenv.keyValue)
 
     override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? =
         parseEnvironmentVariables(delegate, enableEnvSecrets)
@@ -50,9 +50,9 @@ class EnvironmentVariableFeature(
     private fun parseArgumentName(argument: Argument<*>, name: String): String =
         (argument.envPrefix?.toSnakeCase()?.ensureEndsWith('_') ?: "") + name.toSnakeCase()
 
-    private fun loadEnvironmentVariables(arkenv: Arkenv) {
+    private fun loadEnvironmentVariables(keyValue: MutableMap<String, String>) {
         if (dotEnvFilePath != null) {
-            parseDotEnv(dotEnvFilePath).let(arkenv.keyValue::putAll)
+            parseDotEnv(dotEnvFilePath).let(keyValue::putAll)
         }
     }
 

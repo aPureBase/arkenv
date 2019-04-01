@@ -1,9 +1,6 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.argument
-import com.apurebase.arkenv.parse
-import com.apurebase.arkenv.toSnakeCase
+import com.apurebase.arkenv.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -12,7 +9,7 @@ import java.util.*
 class PropertyFeature(
     private val file: String = "application.properties",
     locations: Collection<String> = listOf()
-) : ArkenvFeature, Arkenv() {
+) : ArkenvFeature, Arkenv("PropertyFeature") {
 
     private val defaultLocations = listOf("", "config/")
     private val locations: Collection<String> by argument("--arkenv-property-location") {
@@ -23,11 +20,11 @@ class PropertyFeature(
 
     override fun onLoad(arkenv: Arkenv) {
         parse(arkenv.argList.toTypedArray())
-        loadProperties(file, arkenv)
+        loadProperties(file, arkenv.keyValue)
     }
 
-    private fun loadProperties(file: String, arkenv: Arkenv) {
-        parseProperties(file).let(arkenv.keyValue::putAll)
+    private fun loadProperties(file: String, keyValue: MutableMap<String, String>) {
+        parseProperties(file).let(keyValue::putAll)
     }
 
     private fun parseProperties(propertiesFile: String): Map<String, String> =

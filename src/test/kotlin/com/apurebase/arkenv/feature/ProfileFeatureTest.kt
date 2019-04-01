@@ -9,51 +9,49 @@ import strikt.assertions.isEqualTo
 
 internal class ProfileFeatureTest {
 
-    private class Ark(vararg arguments: String) : Arkenv() {
-        init {
-            install(ProfileFeature())
-            parse(arguments.toList().toTypedArray())
-        }
-
+    private class Ark : Arkenv("Test", {
+        install(ProfileFeature())
+    }) {
         val port: Int by argument("--port")
+
         val name: String by argument("--name")
 
         val other: String? by argument("-o", "--other")
     }
 
     @Test fun `default profile should parse`() {
-        Ark()
+        Ark().parse(arrayOf())
             .expectThat { isDefault() }
     }
 
     @Test fun `nested profile should parse correctly`() {
-        Ark("--arkenv-profile", "dev")
+        Ark().parse(arrayOf("--arkenv-profile", "dev"))
             .expectThat { isDevelopment() }
     }
 
     @Test fun `production profile`() {
-        Ark("--arkenv-profile", "prod")
+        Ark().parse(arrayOf("--arkenv-profile", "prod"))
             .expectThat { isProduction() }
     }
 
     @Test fun `combine with other sources`() {
-        Ark("-o", "test", "arkenv-profile=dev")
+        Ark().parse(arrayOf("-o", "test", "arkenv-profile=dev"))
             .expectThat { isDevelopment("test") }
     }
 
     @Test fun `should throw when profile cannot be found`() {
         assertThrows<IllegalArgumentException> {
-            Ark("--arkenv-profile", "wrong")
+            Ark().parse(arrayOf("--arkenv-profile", "wrong"))
         }.message.shouldNotBeNull()
     }
 
     @Test fun `set profile via env`() {
         MockSystem("ARKENV_PROFILE" to "prod")
-        Ark().expectThat { isProduction() }
+        Ark().parse(arrayOf()).expectThat { isProduction() }
     }
 
     @Test fun `should be able to override properties`() {
-        Ark("arkenv-profile=dev", "--port", "6000").expectThat {
+        Ark().parse(arrayOf("arkenv-profile=dev", "--port", "6000")).expectThat {
             expect(6000, "profile-test")
         }
     }

@@ -9,14 +9,15 @@ import strikt.assertions.isEqualTo
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PlaceholderTests {
 
-    private class Ark : Arkenv() {
+    private class Ark(config: ArkenvBuilder.() -> Unit = {}) : Arkenv(configuration = config) {
         val name: String by argument("--app-name")
         val description: String by argument("--app-description")
     }
 
     @Test fun `can refer to previously defined arg in properties`() {
-        val ark = Ark()
-        ark.install(PropertyFeature("placeholders.properties"))
+        val ark = Ark {
+            install(PropertyFeature("placeholders.properties"))
+        }
         ark.parse(arrayOf())
             .verify()
     }
@@ -79,8 +80,9 @@ class PlaceholderTests {
         val testValue = "this_is_expected"
         val expected = "$testValue is not declared"
 
-        val ark = Ark()
-        ark.install(EnvironmentVariableFeature(dotEnvFilePath = getTestResourcePath(".env")))
+        val ark = Ark {
+            install(EnvironmentVariableFeature(dotEnvFilePath = getTestResourcePath(".env")))
+        }
         ark.parse(arrayOf("--app-name", "MyApp", "--app-description", "\${mysql_password} is not declared"))
             .expectThat {
                 get { description }.isEqualTo(expected)
