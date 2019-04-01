@@ -1,6 +1,9 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
+import com.apurebase.arkenv.test.MockSystem
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
@@ -29,12 +32,11 @@ internal class EnvironmentVariableFeatureTest {
         val ark = EnvArgs(false) {
             val feature = EnvironmentVariableFeature(envPrefix = "test")
             install(feature)
-//            features.shouldHaveKey(feature.getKeyValPair().first) TODO
         }
 
         MockSystem("TEST_ARG" to "prefix")
 
-        ark.parse(arrayOf()).expectThat {
+        ark.parse().expectThat {
             get { arg }.isEqualTo("prefix")
         }
     }

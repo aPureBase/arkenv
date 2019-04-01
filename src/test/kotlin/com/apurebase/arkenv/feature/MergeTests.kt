@@ -1,6 +1,8 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.parse
 import org.junit.jupiter.api.Test
 import strikt.assertions.contains
 import strikt.assertions.isEqualTo
@@ -18,8 +20,7 @@ class MergeTests {
     }
 
     @Test fun `should parse multiple grouped boolean arguments`() {
-        val args = arrayOf("-ds", "DoSomething")
-        Arguments().parse(args).expectThat {
+        Arguments().parse("-ds", "DoSomething").expectThat {
             get { doRun }.isTrue()
             get { production }.isFalse()
             get { something }.isTrue()
@@ -36,7 +37,7 @@ class MergeTests {
     }
 
     @Test fun `should parse even complex combinations`() {
-        fun Ark.verify(vararg args: String) = parse(args.toList().toTypedArray()).expectThat {
+        fun Ark.verify(vararg args: String) = parse(*args).expectThat {
             get { a }.isTrue()
             get { b }.isTrue()
             get { c }.isTrue()
@@ -46,13 +47,13 @@ class MergeTests {
         Ark.verify("-123")
         Ark.verify("-3ba")
         Ark.verify("-c21")
-        Ark.parse(arrayOf("-bcda")).expectThat {
+        Ark.parse("-bcda").expectThat {
             get { Ark.a }.isTrue()
             get { Ark.b }.isFalse()
             get { Ark.c }.isFalse()
             get { Ark.d }.isTrue()
         }
-        Ark.parse(arrayOf("-bcdax")).expectThat {
+        Ark.parse("-bcdax").expectThat {
             get { Ark.a }.isFalse()
             get { Ark.b }.isFalse()
             get { Ark.c }.isFalse()
@@ -65,7 +66,7 @@ class MergeTests {
             val first: Boolean by argument("-a", "-abc")
             val second: Boolean by argument("-b")
         }
-        ark.parse(arrayOf("-abcb")).expectThat {
+        ark.parse("-abcb").expectThat {
             get { first }.isTrue()
             get { second }.isTrue()
         }

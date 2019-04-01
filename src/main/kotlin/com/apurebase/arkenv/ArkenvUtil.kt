@@ -4,7 +4,15 @@ import com.apurebase.arkenv.feature.ArkenvFeature
 import kotlin.reflect.jvm.jvmName
 
 /**
- * Parses the [args] and returns the [Arkenv] instance.
+ * Parses the arguments contained in this instance using the installed features.
+ * Validation will be run and potentially throw an Exception if not passed.
+ *
+ * Be aware, that it is not recommended to call parse in the init block of your [Arkenv] class.
+ * If you still want to use it that way,
+ * make sure to put it after all arguments have been declared.
+ * @param args The command line arguments passed to the program via its main method
+ * @return the [Arkenv] instance that was parsed
+ * @throws ValidationException if any of the declared argument validation did not pass
  */
 fun <T : Arkenv> T.parse(args: Array<String>) = apply { parseArguments(args) }
 

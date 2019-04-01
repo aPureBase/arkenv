@@ -26,10 +26,7 @@ abstract class Arkenv(
         configuration?.invoke(builder)
     }
 
-    /**
-     * Parses the [args] and resets all previously parsed state.
-     */
-    fun parseArguments(args: Array<String>) {
+    internal fun parseArguments(args: Array<out String>) {
         argList.addAll(args)
         onParse(args)
         builder.features.forEach { it.onLoad(this) }
@@ -38,7 +35,7 @@ abstract class Arkenv(
         keyValue.clear()
     }
 
-    open fun onParse(args: Array<String>) {}
+    open fun onParse(args: Array<out String>) {}
 
     open fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {}
 
