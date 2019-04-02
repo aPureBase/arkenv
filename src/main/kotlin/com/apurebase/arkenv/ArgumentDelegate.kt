@@ -83,15 +83,18 @@ internal class ArgumentDelegate<T : Any?>(
         return value
     }
 
-    private fun checkValidation() = argument
-        .validation
-        .filterNot { it.assertion(value) }
-        .map { it.message }
-        .let {
-            if (it.isNotEmpty()) it
-                .reduce { acc, s -> "$acc. $s" }
-                .run { throw ValidationException(property, value, this) }
-        }
+    private fun checkValidation() {
+        if (value == null) return
+        argument
+            .validation
+            .filterNot { it.assertion(value) }
+            .map { it.message }
+            .let {
+                if (it.isNotEmpty()) it
+                    .reduce { acc, s -> "$acc. $s" }
+                    .run { throw ValidationException(property, value, this) }
+            }
+    }
 
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
