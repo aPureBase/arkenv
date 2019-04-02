@@ -1,5 +1,9 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.feature
 
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.parse
 import org.junit.jupiter.api.Test
 import strikt.assertions.isEqualTo
 
@@ -15,7 +19,7 @@ class ManualTests {
         val ark = SystemInArk()
         val expected = "this is a test"
         System.setIn(expected.toByteArray().inputStream())
-        ark.parse(arrayOf()).expectThat {
+        ark.parse().expectThat {
             get { name }.isEqualTo(expected)
         }
     }

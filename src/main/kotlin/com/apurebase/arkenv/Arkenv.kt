@@ -1,81 +1,50 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.feature.CliFeature
+import com.apurebase.arkenv.feature.EnvironmentVariableFeature
+
 /**
  * The base class that provides the argument parsing capabilities.
  * Extend this to define your own arguments.
- * @property programName the name of your program
- * @property withEnv whether to enable environment variable parsing. Defaults to true
- * @property envPrefix a common prefix for all environment variables
- * @property enableEnvSecrets whether to enable docker secrets parsing. Will attempt to parse any environment variable
- * with the _FILE suffix and read the value from the specified path.
+ * @param programName
+ * @param configuration
  */
 abstract class Arkenv(
-    open val programName: String = "Arkenv",
-    open val withEnv: Boolean = true,
-    open val envPrefix: String = "",
-    open val enableEnvSecrets: Boolean = false,
-    open val dotEnvFilePath: String? = null,
-    open val propertiesFile: String? = null
+    val programName: String = "Arkenv",
+    configuration: (ArkenvBuilder.() -> Unit)? = null
 ) {
 
-    /**
-     * Parses the [args] and resets all previously parsed state.
-     */
-    fun parseArguments(args: Array<String>) {
-        argList.clear()
-        argList.addAll(args)
-        onParse(args)
-        dotEnv.clear()
-        parseDotEnv(dotEnvFilePath).let(dotEnv::putAll)
-        parseProperties(propertiesFile).let(dotEnv::putAll)
-        delegates
-            .sortedBy { it.argument.isMainArg }
-            .forEach {
-                it.reset()
-                val value = it.getValue(isParse = true)
-                onParseArgument(it.property.name, it.argument, value)
-            }
-        checkRemaining(delegates, argList).forEach { (arg, delegates) ->
-            argList.remove("-$arg")
-            delegates.forEach { it.setTrue() }
-        }
+    internal val builder = ArkenvBuilder()
+    internal val argList = mutableListOf<String>()
+    internal val keyValue = mutableMapOf<String, String>()
+    internal val delegates = mutableListOf<ArgumentDelegate<*>>()
+    val help: Boolean by ArkenvDelegateLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
+
+    init {
+        builder.install(CliFeature())
+        builder.install(EnvironmentVariableFeature())
+        configuration?.invoke(builder)
     }
 
-    open fun onParse(args: Array<String>) {}
+    internal fun parseArguments(args: Array<out String>) {
+        argList.addAll(args)
+        onParse(args)
+        builder.features.forEach { it.onLoad(this) }
+        parse()
+        argList.clear()
+        keyValue.clear()
+    }
+
+    open fun onParse(args: Array<out String>) {}
 
     open fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {}
 
-    internal val argList = mutableListOf<String>()
-    internal val delegates = mutableListOf<ArgumentDelegate<*>>()
-    internal val dotEnv = mutableMapOf<String, String>()
-
-    val help: Boolean by ArkenvLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
-
-    /**
-     * Defines an argument that can be parsed.
-     * @param names the names that the argument can be called with
-     * @param isMainArg whether this argument is a main argument, meaning it doesn't use names,
-     * but the last supplied argument
-     * @param configuration optional configuration of the argument's properties
-     */
-    inline fun <reified T : Any> argument(
-        names: List<String>,
-        isMainArg: Boolean = false,
-        noinline configuration: Argument<T>.() -> Unit = {}
-    ) = ArkenvLoader(names, isMainArg, configuration, T::class, this)
-
-    internal fun isHelp(): Boolean = when {
-        argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false
-        else -> help
-    }
-
-    override fun toString(): String = StringBuilder().also { sb ->
+    override fun toString(): String = StringBuilder().apply {
         val indent = "    "
         val doubleIndent = indent + indent
-        sb.append("$programName: \n")
+        append("$programName: \n")
         delegates.forEach { delegate ->
-            sb
-                .append(indent)
+            append(indent)
                 .append(delegate.argument.names)
                 .append(doubleIndent)
                 .append(delegate.argument.description)
@@ -87,6 +56,26 @@ abstract class Arkenv(
                 .appendln()
         }
     }.toString()
+
+    private fun parse() {
+        delegates
+            .sortedBy { it.argument.isMainArg }
+            .forEach {
+                builder.features.forEach { feature ->
+                    feature.configure(it.argument)
+                }
+                it.reset()
+                val value = it.getValue(isParse = true)
+                onParseArgument(it.property.name, it.argument, value)
+            }
+        parseBooleanMerge()
+    }
+
+    private fun parseBooleanMerge() =
+        checkRemaining(delegates, argList).forEach { (arg, delegates) ->
+            argList.remove("-$arg")
+            delegates.forEach { it.setTrue() }
+        }
 
     private fun ArgumentDelegate<*>.getValue(isParse: Boolean): Any? =
         getValue(this, property).also { value ->
@@ -103,10 +92,7 @@ abstract class Arkenv(
     }
 
     private fun removeValueArgument(
-        index: Int,
-        isBoolean: Boolean,
-        value: Any?,
-        default: Boolean
+        index: Int, isBoolean: Boolean, value: Any?, default: Boolean
     ) {
         if (!isBoolean && !default && value != null) argList.removeAt(index + 1)
     }

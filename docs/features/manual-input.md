@@ -2,7 +2,7 @@
 layout: default
 title: Manual Input
 parent: Features
-nav_order: 5
+nav_order: 7
 ---
 
 # Manual Input

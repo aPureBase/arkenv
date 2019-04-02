@@ -3,7 +3,7 @@ package com.apurebase.arkenv
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-internal class ArgumentDelegate<T : Any?>(
+class ArgumentDelegate<T : Any?>(
     private val arkenv: Arkenv,
     val argument: Argument<T>,
     val property: KProperty<*>,
@@ -12,7 +12,8 @@ internal class ArgumentDelegate<T : Any?>(
 ) : ReadOnlyProperty<Any?, T> {
 
     @Suppress("UNCHECKED_CAST")
-    private var value: T = null as T
+    internal var value: T = null as T
+        private set
 
     internal var isSet: Boolean = false
         private set
@@ -41,7 +42,7 @@ internal class ArgumentDelegate<T : Any?>(
     internal var index: Int? = null
         private set
 
-    private var parsedArgs: List<String> = listOf()
+    internal var parsedArgs: List<String> = listOf()
 
     private fun parseArguments() {
         val list = mutableListOf<String>()
@@ -77,7 +78,7 @@ internal class ArgumentDelegate<T : Any?>(
             findIndex()
             value = setValue(property)
             checkNullable(property)
-            checkValidation()
+            checkValidation(argument.validation, value, property)
             isSet = true
         }
         return value
@@ -98,35 +99,39 @@ internal class ArgumentDelegate<T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
-        val envVal = if (argument.withEnv) getEnvValue(argument, arkenv.dotEnv, arkenv.enableEnvSecrets) else null
+        val values = arkenv.builder.features.mapNotNull { it.onParse(arkenv, this) } +
+                argument.names.mapNotNull { arkenv[it.toSnakeCase()] }
         return when {
-            isBoolean -> (index != null || envVal != null) as T
-            envVal == null && cliValue == null -> {
-                if (argument.acceptsManualInput) readInput(mapping) ?: defaultValue as T
+            isBoolean -> mapBoolean(values)
+            values.isEmpty() -> {
+                if (argument.acceptsManualInput) readInput(::map) ?: defaultValue as T
                 else defaultValue as T
             }
-            else -> {
-                val rawValue = cliValue ?: envVal!!
-                mapping(rawValue)
-            }
+            else -> map(values.first())
         }
     }
 
-    private val cliValue: String?
-        get() = index?.let {
-            parsedArgs.getOrNull(it + 1)
-        }
+    private fun map(value: String): T = mapping(parsePlaceholders(value, arkenv))
 
-    @Suppress("NO_REFLECTION_IN_CLASS_PATH")
+    @Suppress("UNCHECKED_CAST")
+    private fun mapBoolean(values: Collection<String>): T {
+        val isValuesNotEmpty = values.isNotEmpty()
+        return when {
+            isValuesNotEmpty && values.first() == "false" -> false as T
+            else -> (index != null || isValuesNotEmpty || defaultValue == true) as T
+        }
+    }
+
     private fun checkNullable(property: KProperty<*>) {
-        if (argument.isHelp) return
-        if (!arkenv.isHelp() && !property.returnType.isMarkedNullable && valuesAreNull()) {
+        if (!isHelp && !property.returnType.isMarkedNullable && valuesAreNull()) {
             val nameInfo = if (argument.isMainArg) "Main argument" else argument.names.joinToString()
             throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
         }
     }
 
     private val allowedSurroundings = listOf("'", "\"")
+
+    private val isHelp get() = argument.isHelp || arkenv.isHelp()
 
     private fun valuesAreNull(): Boolean = value == null && defaultValue == null
 }

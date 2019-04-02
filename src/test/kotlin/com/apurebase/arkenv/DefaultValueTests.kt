@@ -1,5 +1,8 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.test.MockSystem
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldEqualTo
 import org.junit.jupiter.api.Test
@@ -28,7 +31,7 @@ class DefaultValueTests {
     }
 
     @Test fun `default can be overruled by args`() {
-        DefArgs().parse(arrayOf("-i", "1", "no")).run {
+        DefArgs().parse("-i", "1", "no").run {
             def shouldEqualTo 1
             defString shouldBeEqualTo "no"
         }
@@ -36,7 +39,7 @@ class DefaultValueTests {
 
     @Test fun `default can be overruled by env`() {
         MockSystem("INT" to "1")
-        DefArgs().parse(arrayOf()).run {
+        DefArgs().parse().run {
             def shouldEqualTo 1
             defString shouldBeEqualTo "hey"
         }
@@ -50,11 +53,11 @@ class DefaultValueTests {
         }
 
         assertThrows<FileNotFoundException> {
-            Ark().parse(arrayOf())
+            Ark().parse()
         }
 
         MockSystem("REFRESH_TOKEN" to "value")
-        Ark().parse(arrayOf()).expectThat {
+        Ark().parse().expectThat {
             get { refreshToken }.isEqualTo("value")
         }
     }

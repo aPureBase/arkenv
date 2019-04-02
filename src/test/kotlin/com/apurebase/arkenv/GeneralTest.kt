@@ -1,8 +1,10 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.test.*
 import org.amshove.kluent.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
 
@@ -16,7 +18,7 @@ class GeneralTest {
         }
 
         val expectedName = "TestProgram"
-        val ark = HelpArgs(expectedName).parse(arrayOf("-h"))
+        val ark = HelpArgs(expectedName).parse("-h")
         val helpInfo = ark.toString()
         helpInfo shouldContain expectedName
         helpInfo shouldContain HelpArgs::required.name
@@ -34,16 +36,16 @@ class GeneralTest {
 //            }
 //            val nullProp: Int by argument("-np")
 //        }
-//        CustomHelp().parse(arrayOf("-ca")).also(::println)
+//        CustomHelp().parse("-ca").also(::println)
     }
 
     @Test fun `repeatedly accessing a prop should not throw`() {
-        Arkuments().parse(arrayOf("-c", "some")).also(::println).configPath.substring(1)
+        Arkuments().parse("-c", "some").also(::println).configPath.substring(1)
     }
 
     @Test fun `main arg should be the first value`() {
         val expected = "this_is_the_value"
-        MainArg().parse(arrayOf(expected)).mainArg shouldBeEqualTo expected
+        MainArg().parse(expected).mainArg shouldBeEqualTo expected
     }
 
     @Test fun `long should map correctly`() {
@@ -53,7 +55,7 @@ class GeneralTest {
             val long: Long by argument("-l")
         }
 
-        LongArg().parse(arrayOf("-l", "5000")).long shouldEqualTo expected
+        LongArg().parse("-l", "5000").long shouldEqualTo expected
     }
 
     @Test fun `custom mapping`() {
@@ -65,7 +67,7 @@ class GeneralTest {
             }
         }
 
-        CustomArg().parse(arrayOf("1,2,3")).list shouldEqual expected
+        CustomArg().parse("1,2,3").list shouldEqual expected
     }
 
     @Test fun `custom mapping not available should throw`() {
@@ -86,7 +88,7 @@ class GeneralTest {
             val other by argument<Boolean>("-o")
         }
 
-        A().parse(arrayOf("-s", "\"$first", "$second\"", "-o")).expectThat {
+        A().parse("-s", "\"$first", "$second\"", "-o").expectThat {
             get { spaceArg }.isEqualTo(expected)
             get { other }.isTrue()
         }
@@ -100,43 +102,39 @@ class GeneralTest {
             }
         }
 
-        FixedArgs().parse(arrayOf("-f", "")).run {
+        FixedArgs().parse("-f", "").run {
             fixed shouldEqualTo value
         }
     }
 
     @Test fun `objects should be usable`() {
-        ObjectArgs.parse(arrayOf("-i", "10"))
+        ObjectArgs.parse("-i", "10")
         ObjectArgs.int shouldEqualTo 10
         ObjectArgs.optional shouldBe null
     }
 
-    @Test fun `passing an empty arg list should throw`() {
-        {
-            object : Arkenv() {
-                val illegal: String by argument(listOf())
-            }
-        } shouldThrow IllegalArgumentException::class
+    @Test fun `passing no names should use the property name`() {
+        val ark = object : Arkenv() {
+            val legalArg: String by argument()
+        }
+
+        val expected = "expected"
+        fun verify() = ark.expectThat {
+            get { legalArg }.isEqualTo(expected)
+        }
+        ark.parse(arrayOf("--LEGAL_ARG", expected))
+        verify()
+        ark.parse(arrayOf("--legal-arg", expected))
+        verify()
+        ark.parse(arrayOf("--legalArg", expected))
+        verify()
     }
 
     @Test fun `mixed should work`() {
-        Mixed().parse(arrayOf("-sa", "5")).run {
+        Mixed().parse("-sa", "5").run {
             someArg shouldEqualTo 5
             other shouldBeEqualTo "val"
         }
-    }
-
-    @Test fun `when env is off should not use env vars`() {
-        class EnvArgs(withEnv: Boolean) : Arkenv(withEnv = withEnv) {
-            val arg: String by argument("-a", "--arg")
-        }
-
-        MockSystem("ARG" to "test")
-
-        EnvArgs(false).let {
-            it::arg shouldThrow IllegalArgumentException::class
-        }
-        EnvArgs(true).arg shouldBeEqualTo "test"
     }
 
     @Test fun `null mainArg should throw`() {
@@ -151,8 +149,8 @@ class GeneralTest {
         val expected = "expected"
         val expectedMain = "remember"
         TestArgs()
-            .parse(arrayOf("-c", "random", "main"))
-            .parse(arrayOf("-c", expected, "-b", expectedMain))
+            .parse("-c", "random", "main")
+            .parse("-c", expected, "-b", expectedMain)
             .expectThat {
                 get { country }.isEqualTo(expected)
                 get { mainString }.isEqualTo(expectedMain)
@@ -171,18 +169,26 @@ class GeneralTest {
                 lastCalledArg = name
             }
 
-            override fun onParse(args: Array<String>) {
+            override fun onParse(args: Array<out String>) {
+                args.forEach(::println)
                 globalCalled = true
             }
         }
 
-        ark.parse(arrayOf("-s", "5", "-l", "test"))
+        ark.parse("-s", "5", "-l", "test")
         globalCalled.expectThat { isTrue() }
         lastCalledArg.expectThat { isEqualTo("last") }
     }
 
     @Test fun `should pass when delegates are empty`() {
         val ark = object : Arkenv() {}
-        ark.parse(arrayOf("-empty"))
+        ark.parse("-empty")
+    }
+
+    @Test fun `parse should fail`() {
+        val ark = object : Arkenv() {
+            val arg: Int by argument("-a")
+        }
+        assertThrows<IllegalArgumentException> { ark.parse() }
     }
 }

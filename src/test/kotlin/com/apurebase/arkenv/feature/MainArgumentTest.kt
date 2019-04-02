@@ -1,9 +1,12 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.feature
 
+import com.apurebase.arkenv.*
+import com.apurebase.arkenv.test.MockSystem
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldEqual
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
-import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 
 internal class MainArgumentTest {
@@ -14,7 +17,7 @@ internal class MainArgumentTest {
     }
 
     @Test fun `mixed main and normal`() {
-        val args = Ark().parse(arrayOf("-e", "import", "abc"))
+        val args = Ark().parse("-e", "import", "abc")
         args.main shouldEqual "abc"
         args.extra shouldEqual "import"
     }
@@ -22,7 +25,7 @@ internal class MainArgumentTest {
     @Test fun `mixed main and env`() {
         MockSystem("EXTRA" to "import")
         Ark()
-            .parse(arrayOf("abc"))
+            .parse("abc")
             .expectThat {
                 get { main }.isEqualTo("abc")
                 get { extra }.isEqualTo("import")
@@ -38,7 +41,7 @@ internal class MainArgumentTest {
         }
         MockSystem("EXTRA" to "import")
         ark
-            .parse(arrayOf("abc"))
+            .parse("abc")
             .expectThat {
                 get { main }.isEqualTo("abc")
                 get { extra }.isEqualTo("import")
@@ -47,17 +50,15 @@ internal class MainArgumentTest {
 
     @Test fun `no main argument passed`() {
         { Ark().main } shouldThrow IllegalArgumentException::class
-        { Ark().parse(arrayOf("-e", "import")) } shouldThrow IllegalArgumentException::class
+        { Ark().parse("-e", "import") } shouldThrow IllegalArgumentException::class
     }
 
     @Test fun `main should not eat unused args`() {
         val ark = object : Arkenv() {
             val main: Int by mainArgument()
         }
-        ark.parse(arrayOf("-b", "99")).expectThat {
+        ark.parse("-b", "99").expectThat {
             get { main }.isEqualTo(99)
-            get { argList }.contains("-b")
-            get { argList }.not().contains("99")
         }
     }
 }

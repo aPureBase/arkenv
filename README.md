@@ -3,17 +3,23 @@
 [![Pipelines](https://gitlab.com/apurebase/arkenv/badges/master/pipeline.svg)](https://gitlab.com/apurebase/arkenv/pipelines)
 [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
 
+<img src="/docs/arkenv_logo.png?raw=true" width="200">
 
-![Arkenv Logo](/docs/arkenv_logo.png?raw=true "Arkenv Logo")
+Type-safe Kotlin configuration parser `by` delegates. 
 
-Kotlin Cli & Env argument parser using delegates. 
+Supports the most common external configuration sources, including: 
+* Command line
+* Environment Variables
+* Properties & Spring-like profiles
+* Dot env (.env) files
 
-This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). 
 
-Please report issues and open pull requests there.
+### Installation
+You will need to add jcenter as a repository. Then you can add Arkenv in Gradle:
 
-### Documentation
-Please visit [https://apurebase.gitlab.io/arkenv/](https://apurebase.gitlab.io/arkenv/) for in-depth documentation
+```groovy
+compile "com.apurebase:arkenv:$arkenv_version"
+```
 
 ### Usage
 Define your arguments by extending `Arkenv` and declaring props with the `argument` delegate.
@@ -47,3 +53,14 @@ class Arguments : Arkenv() {
     }
 }
 ```
+
+
+### Documentation
+Please visit [https://apurebase.gitlab.io/arkenv/](https://apurebase.gitlab.io/arkenv/) for in-depth documentation
+
+### Issues
+This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). Please report issues and open pull requests there.
+
+### Slack
+Find the Arkenv channel in the [official Kotlin Slack](https://kotlinlang.slack.com/messages/CGF74HD19/)
+

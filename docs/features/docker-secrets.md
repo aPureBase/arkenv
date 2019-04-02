@@ -2,7 +2,7 @@
 layout: default
 title: Docker Secrets
 parent: Features
-nav_order: 7
+nav_order: 9
 ---
 
 # Docker Secrets

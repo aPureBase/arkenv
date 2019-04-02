@@ -23,3 +23,10 @@ internal fun String.removeSurrounding(list: Iterable<String>): String =
 internal fun String.isAdvancedName() = startsWith("--")
 
 internal fun String.isSimpleName() = startsWith("-") && !isAdvancedName()
+
+internal fun String.ensureEndsWith(char: Char): String =
+    if (endsWith(char)) this else this + char
+
+internal fun String.mapRelaxed(): String =
+    if (isAdvancedName()) "--" + toSnakeCase()
+    else this
