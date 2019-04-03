@@ -11,25 +11,50 @@ Arkenv supports a feature model that allows for
 adding and removing functionality as required.
 
 ```kotlin
-class PropertiesArk(propertiesFile: String) : Arkenv() {
+class Ark : Arkenv(configuration = {
+    install(PropertyFeature())
+    uninstall(CliFeature())
+}) {
+
+    val mysqlPassword: String by argument()
+    
+    val port: Int by argument("--database-port")
+}
+
+class Ark(propertiesFile: String) : Arkenv() {
     init {
         install(PropertyFeature(propertiesFile))
         uninstall(CliFeature())
     }
     
-    val mysqlPassword: String by argument("--mysql-password")
+    val mysqlPassword: String by argument()
     
     val port: Int by argument("--database-port")
 }
 ```
 
-In the init block of Arkenv, call `install` to add a feature or
+In the constructor of Arkenv, specify a configuration lambda and call `install` to add a feature or
 `uninstall` to remove a feature. 
 
 In the above example, we first add support for reading arguments from
 a property file, and then remove the command line support. 
 
-By default, the `CliFeature` and `EnvironmentVariableFeature` are enabled.
+By default, the [CliFeature](({{site.baseurl}}features/command-line)) and 
+[EnvironmentVariableFeature]({{site.baseurl}}features/environment-variables) are enabled.
+
+### Order
+The parse order depends on the order in which features are installed. 
+Features that are installed earlier overrule features that are installed later.  
+
+Arkenv will start by installing the default features, and then proceed with your features
+installed in the configuration. 
+
+This means that by default command line arguments have the highest order and will surpass other configuration sources.
+
+Of course, this is only relevant when two or more sources define the same argument. 
+ 
+
+### Custom features
 
 To create a new feature from scratch, simply implement the `ArkenvFeature`
 interface. 
@@ -38,3 +63,30 @@ It has 3 overridable methods:
 * `onLoad` used to read arguments from a source and store them for parsing
 * `onParse` used on each argument property when parsing to obtain a value
 * `configure` can be used to further configure the declared arguments
+
+Your feature does not need to implement all of these. 
+
+Here is an example of how to use these:
+
+```kotlin
+class CustomFeature : ArkenvFeature {
+    fun onLoad(arkenv: Arkenv) {
+        // read line from config file, split by equals and put them in the keyValue map for later parsing
+        File("config")    
+            .readLines()
+            .map { it.split("=") }
+            .map { it[0] to it[1] }
+            .let { arkenv.keyValue.putAll(it) }
+    }
+    
+    fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? {
+        // load text from a file with the name of the property if exists
+        return File(delegate.property.name).takeIf(File::exists)?.readText()
+    }
+    
+    fun configure(argument: Argument<*>) {
+        // set a custom env var prefix for all arguments
+        argument.envPrefix = "CUSTOM_PREFIX"
+    }
+}
+```

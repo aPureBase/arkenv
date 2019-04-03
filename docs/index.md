@@ -19,7 +19,7 @@ Supports the most common external configuration sources, including:
 ## 🔨 Usage
 * [Basic example usage]({{site.baseurl}}guides/example)
 
-## ✨ Features
+## [✨ Features]({{site.baseurl}}features)
 * [Command Line]({{site.baseurl}}features/command-line)
 * [Environment Variables]({{site.baseurl}}features/environment-variables)
 * [Properties]({{site.baseurl}}features/properties)
