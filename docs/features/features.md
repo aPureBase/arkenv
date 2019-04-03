@@ -20,17 +20,6 @@ class Ark : Arkenv(configuration = {
     
     val port: Int by argument("--database-port")
 }
-
-class Ark(propertiesFile: String) : Arkenv() {
-    init {
-        install(PropertyFeature(propertiesFile))
-        uninstall(CliFeature())
-    }
-    
-    val mysqlPassword: String by argument()
-    
-    val port: Int by argument("--database-port")
-}
 ```
 
 In the constructor of Arkenv, specify a configuration lambda and call `install` to add a feature or
