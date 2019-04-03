@@ -14,14 +14,15 @@ Supports the most common external configuration sources, including:
 * Dot env (.env) files
 
 
-### Installation
-You will need to add jcenter as a repository. Then you can add Arkenv in Gradle:
+### 📦 Installation
+Add jcenter to your repositories. Then you can add Arkenv in Gradle:
 
 ```groovy
+repositories { jcenter() }
 compile "com.apurebase:arkenv:$arkenv_version"
 ```
 
-### Usage
+### 🔨 Usage
 Define your arguments by extending `Arkenv` and declaring props with the `argument` delegate.
 ```kotlin
 class Arguments : Arkenv() {
@@ -55,12 +56,14 @@ class Arguments : Arkenv() {
 ```
 
 
-### Documentation
-Please visit [https://apurebase.gitlab.io/arkenv/](https://apurebase.gitlab.io/arkenv/) for in-depth documentation
+### 📃 Documentation
+Please visit [https://apurebase.gitlab.io/arkenv/](https://apurebase.gitlab.io/arkenv/) for in-depth documentation.
 
-### Issues
-This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). Please report issues and open pull requests there.
+### 🤝 Contributing [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) 
+##### Issues
+This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). 
+Please report issues and open pull requests there.
 
-### Slack
-Find the Arkenv channel in the [official Kotlin Slack](https://kotlinlang.slack.com/messages/CGF74HD19/)
+##### Slack
+Find the Arkenv channel in the [official Kotlin Slack](https://kotlinlang.slack.com/messages/CGF74HD19/).
 
