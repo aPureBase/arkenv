@@ -78,23 +78,10 @@ class ArgumentDelegate<T : Any?>(
             findIndex()
             value = setValue(property)
             checkNullable(property)
-            checkValidation(argument.validation, value, property)
+            if (value != null) checkValidation(argument.validation, value, property)
             isSet = true
         }
         return value
-    }
-
-    private fun checkValidation() {
-        if (value == null) return
-        argument
-            .validation
-            .filterNot { it.assertion(value) }
-            .map { it.message }
-            .let {
-                if (it.isNotEmpty()) it
-                    .reduce { acc, s -> "$acc. $s" }
-                    .run { throw ValidationException(property, value, this) }
-            }
     }
 
     @Suppress("UNCHECKED_CAST")

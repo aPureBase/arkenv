@@ -3,6 +3,7 @@ package com.apurebase.arkenv.feature
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.ValidationException
 import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldNotBeNull
@@ -41,11 +42,16 @@ class ValidationTests {
             }
         }
 
-        ark.parse(arrayOf("-n", "101")).expectThat {
+        ark.parse("-n", "101").expectThat {
             get { nullable }.isEqualTo(101)
         }
-        ark.parse(arrayOf()).expectThat {
+
+        ark.parse().expectThat {
             get { nullable }.isNull()
+        }
+
+        assertThrows<ValidationException> {
+            ark.parse("-n", "99")
         }
     }
 }
