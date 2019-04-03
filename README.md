@@ -28,20 +28,18 @@ Define your arguments by extending `Arkenv` and declaring props with the `argume
 ```kotlin
 class Arguments : Arkenv() {
 
-    val country: String by argument("-c") {
-        description = "A simple String (required)"
-    }
+    val country: String by argument()
 
-    val bool: Boolean by argument("-b") {
+    val bool: Boolean by argument {
         description = "A bool, which will be false by default"
     }
 
     val port: Int by argument("-p", "--this-can-be-set-via-env") {
-        description = "An Int with a default value"
+        description = "An Int with a default value and custom names"
         defaultValue = { 5000 }
     }
 
-    val nullInt: Int? by argument("-ni") {
+    val nullInt: Int? by argument {
         description = "A nullable Int, which doesn't have to be declared"
     }
 
@@ -49,12 +47,18 @@ class Arguments : Arkenv() {
         description = "Complex types can be achieved with a mapping"
         mapping = { it.split("|") }
     }
-
-    val mainString: String by mainArgument {
-        description = "This is a main arg, so no names"
-    }
 }
 ```
+If you don't specify any names for the argument, it will use the property's name. 
+
+In the case of `country`, you can parse it like this:
+* From command line with `--country world`
+* As an environment variable `COUNTRY=world`
+
+By default, Arkenv supports parsing command line arguments and environment variables. 
+Read more about other features and their configuration [here](https://apurebase.gitlab.io/arkenv/features/features/). 
+
+You can also find more examples and guides in [the documentation](https://apurebase.gitlab.io/arkenv/guides/guides/) 
 
 
 ### 📃 Documentation
