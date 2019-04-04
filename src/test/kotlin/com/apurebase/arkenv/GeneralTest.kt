@@ -191,4 +191,13 @@ class GeneralTest {
         }
         assertThrows<IllegalArgumentException> { ark.parse() }
     }
+
+    @Test fun `version 2 naming`() {
+        val ark = object : Arkenv() {
+            val version: Int by argument("new-version")
+        }
+
+        ark.parse("--newVersion", "2")
+            .expectThat { get { version }.isEqualTo(2) }
+    }
 }
