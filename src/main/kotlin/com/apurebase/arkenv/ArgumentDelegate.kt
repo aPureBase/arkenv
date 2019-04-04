@@ -78,7 +78,7 @@ class ArgumentDelegate<T : Any?>(
             findIndex()
             value = setValue(property)
             checkNullable(property)
-            checkValidation(argument.validation, value, property)
+            if (value != null) checkValidation(argument.validation, value, property)
             isSet = true
         }
         return value

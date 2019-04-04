@@ -3,11 +3,14 @@ package com.apurebase.arkenv.feature
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.ValidationException
 import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import strikt.assertions.isEqualTo
+import strikt.assertions.isNull
 
 class ValidationTests {
 
@@ -32,4 +35,23 @@ class ValidationTests {
         message shouldContain actualValue
     }
 
+    @Test fun `should only validate nullable if not null`() {
+        val ark = object : Arkenv() {
+            val nullable: Int? by argument("-n") {
+                validate("only if not null") { it > 100 }
+            }
+        }
+
+        ark.parse("-n", "101").expectThat {
+            get { nullable }.isEqualTo(101)
+        }
+
+        ark.parse().expectThat {
+            get { nullable }.isNull()
+        }
+
+        assertThrows<ValidationException> {
+            ark.parse("-n", "99")
+        }
+    }
 }
