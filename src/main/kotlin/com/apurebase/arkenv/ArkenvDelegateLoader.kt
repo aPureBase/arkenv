@@ -17,7 +17,7 @@ class ArkenvDelegateLoader<T : Any>(
     }
 
     private fun createDelegate(prop: KProperty<*>, names: List<String>): ArgumentDelegate<T> {
-        val argumentConfig = Argument<T>(names.map(String::mapRelaxed)).also {
+        val argumentConfig = Argument<T>(processNames(names)).also {
             it.isMainArg = isMainArg
         }.apply(block)
         return ArgumentDelegate(
@@ -27,6 +27,11 @@ class ArkenvDelegateLoader<T : Any>(
             kClass == Boolean::class,
             argumentConfig.mapping ?: getMapping(prop)
         ).also { arkenv.delegates.add(it) }
+    }
+
+    private fun processNames(names: List<String>) = names.map {
+        if (!it.startsWith("-")) "--$it".mapRelaxed()
+        else it.mapRelaxed()
     }
 
     @Suppress("UNCHECKED_CAST")
