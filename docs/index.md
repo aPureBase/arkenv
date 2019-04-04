@@ -16,10 +16,10 @@ Supports the most common external configuration sources, including:
 * Dot env (.env) files
 
 
-## Example usage
+## 🔨 Usage
 * [Basic example usage]({{site.baseurl}}guides/example)
 
-## Features
+## [✨ Features]({{site.baseurl}}features)
 * [Command Line]({{site.baseurl}}features/command-line)
 * [Environment Variables]({{site.baseurl}}features/environment-variables)
 * [Properties]({{site.baseurl}}features/properties)
@@ -31,12 +31,11 @@ Supports the most common external configuration sources, including:
 * [Dot Env Files]({{site.baseurl}}features/dot-env-files)
 
 
-### Documentation
-Please visit [https://apurebase.gitlab.io/arkenv/](https://apurebase.gitlab.io/arkenv/) for in-depth documentation
+### 🤝 Contributing [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) 
+##### Issues
+This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). 
+Please report issues and open pull requests there.
 
-### Issues
-This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). Please report issues and open pull requests there.
-
-### Slack
-Find the Arkenv channel in the [official Kotlin Slack](https://kotlinlang.slack.com/messages/CGF74HD19/)
+##### Slack
+Find the Arkenv channel in the [official Kotlin Slack](https://kotlinlang.slack.com/messages/CGF74HD19/).
 
