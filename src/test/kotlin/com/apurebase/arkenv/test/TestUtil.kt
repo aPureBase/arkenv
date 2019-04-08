@@ -1,8 +1,11 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.test
 
+import com.apurebase.arkenv.Arkenv
 import strikt.api.Assertion
 import java.io.File
 
 fun <T> T.expectThat(block: Assertion.Builder<T>.() -> Unit) = strikt.api.expectThat(this, block)
 
 fun getTestResourcePath(name: String): String = File("src/test/resources/$name").absolutePath
+
+fun <T : Arkenv> T.parse(vararg arguments: String) = apply { parseArguments(arguments) }

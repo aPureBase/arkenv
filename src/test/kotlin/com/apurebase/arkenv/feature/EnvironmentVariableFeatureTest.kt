@@ -1,18 +1,21 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
+import com.apurebase.arkenv.test.MockSystem
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
+import strikt.assertions.isEqualTo
 
 internal class EnvironmentVariableFeatureTest {
 
-    private class EnvArgs(withEnv: Boolean) : Arkenv() {
-        init {
-            programName = "Test"
-            if (withEnv) install(EnvironmentVariableFeature())
-            else uninstall(EnvironmentVariableFeature())
-        }
+    private class EnvArgs(withEnv: Boolean, config: ArkenvBuilder.() -> Unit = {}) : Arkenv("Test", {
+        if (withEnv) install(EnvironmentVariableFeature())
+        else uninstall(EnvironmentVariableFeature())
+        config()
+    }) {
         val arg: String by argument("-a", "--arg")
     }
 
@@ -23,5 +26,18 @@ internal class EnvironmentVariableFeatureTest {
             it::arg shouldThrow IllegalArgumentException::class
         }
         EnvArgs(true).arg shouldBeEqualTo "test"
+    }
+
+    @Test fun `env prefix should work`() {
+        val ark = EnvArgs(false) {
+            val feature = EnvironmentVariableFeature(envPrefix = "test")
+            install(feature)
+        }
+
+        MockSystem("TEST_ARG" to "prefix")
+
+        ark.parse().expectThat {
+            get { arg }.isEqualTo("prefix")
+        }
     }
 }

@@ -37,6 +37,6 @@ The previous port example will then become `SOME_PREFIX_PORT`.
 
 * Code: `EnvironmentVariableFeature(envPrefix = "some_prefix")`
 
-##### [Dot env files]({{ site.baseurl }}features/dot-env-files)
+##### [Dot env files]({{site.baseurl}}features/dot-env-files)
 
-##### [Docker Secrets]({{ site.baseurl }}features/docker-secrets)
+##### [Docker Secrets]({{site.baseurl}}features/docker-secrets)

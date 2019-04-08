@@ -8,7 +8,7 @@ open class ProfileFeature(
     name: String = "--arkenv-profile",
     prefix: String = "application",
     locations: Collection<String> = listOf()
-) : ArkenvFeature, Arkenv() {
+) : ArkenvFeature, Arkenv("ProfileFeature") {
 
     protected open val profile: String? by argument(name)
 
@@ -25,10 +25,14 @@ open class ProfileFeature(
 
     override fun onLoad(arkenv: Arkenv) {
         parse(arkenv.argList.toTypedArray())
-        val defaultName = makeFileName(null)
-        PropertyFeature(defaultName, location).onLoad(arkenv)
-        profile?.let { makeFileName(it) }?.let { PropertyFeature(it, location).onLoad(arkenv) }
+        load(arkenv, null)
+        profile?.let { load(arkenv, it) }
     }
+
+    private fun load(
+        arkenv: Arkenv,
+        file: String?
+    ) = PropertyFeature(makeFileName(file), location).onLoad(arkenv)
 
     protected open fun makeFileName(profile: String?) =
         if (profile != null) "$prefix-$profile.$extension"

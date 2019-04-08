@@ -4,7 +4,15 @@ import com.apurebase.arkenv.feature.ArkenvFeature
 import kotlin.reflect.jvm.jvmName
 
 /**
- * Parses the [args] and returns the [Arkenv] instance.
+ * Parses the arguments contained in this instance using the installed features.
+ * Validation will be run and potentially throw an Exception if not passed.
+ *
+ * Be aware, that it is not recommended to call parse in the init block of your [Arkenv] class.
+ * If you still want to use it that way,
+ * make sure to put it after all arguments have been declared.
+ * @param args The command line arguments passed to the program via its main method
+ * @return the [Arkenv] instance that was parsed
+ * @throws ValidationException if any of the declared argument validation did not pass
  */
 fun <T : Arkenv> T.parse(args: Array<String>) = apply { parseArguments(args) }
 
@@ -41,23 +49,7 @@ inline fun <reified T : Any> Arkenv.argument(
 inline fun <reified T : Any> Arkenv.mainArgument(noinline block: Argument<T>.() -> Unit = {}): ArkenvDelegateLoader<T> =
     argument(listOf(), true, block)
 
-internal fun <T> ArgumentDelegate<T>.readInput(mapping: (String) -> T): T? {
-    println("Accepting input for ${property.name}: ")
-    val input = readLine()
-    return if (input == null) null
-    else mapping(input)
-}
-
 internal fun ArkenvFeature.getKeyValPair() = this::class.jvmName to this
-
-fun Arkenv.install(feature: ArkenvFeature) {
-    val (key, value) = feature.getKeyValPair()
-    features[key] = value
-}
-
-fun Arkenv.uninstall(feature: ArkenvFeature) {
-    features.remove(feature.getKeyValPair().first)
-}
 
 internal fun Arkenv.isHelp(): Boolean = when {
     argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false

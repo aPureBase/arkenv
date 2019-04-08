@@ -78,7 +78,7 @@ class ArgumentDelegate<T : Any?>(
             findIndex()
             value = setValue(property)
             checkNullable(property)
-            checkValidation(argument.validation, value, property)
+            if (value != null) checkValidation(argument.validation, value, property)
             isSet = true
         }
         return value
@@ -86,7 +86,7 @@ class ArgumentDelegate<T : Any?>(
 
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
-        val values = arkenv.features.values.mapNotNull { it.onParse(arkenv, this) } +
+        val values = arkenv.builder.features.mapNotNull { it.onParse(arkenv, this) } +
                 argument.names.mapNotNull { arkenv[it.toSnakeCase()] }
         return when {
             isBoolean -> mapBoolean(values)

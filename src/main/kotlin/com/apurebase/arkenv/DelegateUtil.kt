@@ -60,3 +60,10 @@ internal fun <T> checkValidation(validation: List<Argument.Validation<T>>, value
                 .reduce { acc, s -> "$acc. $s" }
                 .run { throw ValidationException(property, value, this) }
         }
+
+internal fun <T> ArgumentDelegate<T>.readInput(mapping: (String) -> T): T? {
+    println("Accepting input for ${property.name}: ")
+    val input = readLine()
+    return if (input == null) null
+    else mapping(input)
+}

@@ -1,6 +1,12 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.test.MockSystem
+import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.parse
+import org.amshove.kluent.shouldContain
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.*
 import strikt.assertions.isEqualTo
 import java.io.File
@@ -8,11 +14,9 @@ import java.io.File
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PropertyFeatureTests {
 
-    private class PropertiesArk(propertiesFile: String, locations: List<String>) : Arkenv() {
-        init {
-            install(PropertyFeature(propertiesFile, locations))
-        }
-
+    private class PropertiesArk(propertiesFile: String, locations: List<String>) : Arkenv(configuration = {
+        install(PropertyFeature(propertiesFile, locations))
+    }) {
         val mysqlPassword: String by argument("--mysql-password")
         val port: Int by argument("--database-port")
         val multiLine: String by argument("--multi-string")
@@ -32,20 +36,23 @@ class PropertyFeatureTests {
         port: Int = defaultPort,
         pw: String = "this_is_expected",
         locations: List<String> = listOf(),
-        args: Array<String> = arrayOf()
-    ) {
-        PropertiesArk(path, locations).parse(args).expectThat {
-            get { this.mysqlPassword }.isEqualTo(pw)
-            get { this.port }.isEqualTo(port)
-            get { this.multiLine }.isEqualTo("this stretches lines")
-        }
+        vararg args: String = arrayOf()
+    ) = PropertiesArk(path, locations).parse(*args).expectThat {
+        get { this.mysqlPassword }.isEqualTo(pw)
+        get { this.port }.isEqualTo(port)
+        get { this.multiLine }.isEqualTo("this stretches lines")
     }
 
-    @Test fun `should throw when dot env file can not be found`() {
-        val ark = PropertiesArk("does_not_exist.env", listOf())
-        assertThrows<NullPointerException> {
-            ark.parse(arrayOf())
-        }
+    @Test fun `should throw when file can not be found`() {
+        val name = "does_not_exist.env"
+        val ark = PropertiesArk(name, listOf())
+        assertThrows<IllegalArgumentException> {
+            ark.parse()
+        }.message
+            .shouldNotBeNull()
+            .shouldContain(name)
+            .shouldContain("config")
+            .also(::println)
     }
 
     @Nested
@@ -99,8 +106,8 @@ class PropertyFeatureTests {
 
         @Test fun `customize via cli`() {
             verify(
-                "cp.properties", 4545, "custom nested classpath config",
-                args = arrayOf("--arkenv-property-location", "custom/path")
+                "cp.properties", 4545, "custom nested classpath config", listOf(),
+                "--arkenv-property-location", "custom/path"
             )
         }
 

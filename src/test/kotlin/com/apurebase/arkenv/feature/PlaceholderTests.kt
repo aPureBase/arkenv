@@ -1,6 +1,10 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
+import com.apurebase.arkenv.test.MockSystem
+import com.apurebase.arkenv.test.expectThat
+import com.apurebase.arkenv.test.getTestResourcePath
+import com.apurebase.arkenv.test.parse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
@@ -9,21 +13,22 @@ import strikt.assertions.isEqualTo
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PlaceholderTests {
 
-    private class Ark : Arkenv() {
+    private class Ark(config: ArkenvBuilder.() -> Unit = {}) : Arkenv(configuration = config) {
         val name: String by argument("--app-name")
         val description: String by argument("--app-description")
     }
 
     @Test fun `can refer to previously defined arg in properties`() {
-        val ark = Ark()
-        ark.install(PropertyFeature("placeholders.properties"))
-        ark.parse(arrayOf())
+        val ark = Ark {
+            install(PropertyFeature("placeholders.properties"))
+        }
+        ark.parse()
             .verify()
     }
 
     @Test fun `can refer in cli arg`() {
         Ark()
-            .parse(arrayOf("--app-name", "MyApp", "--app-description", "\${app_name} is a Arkenv application"))
+            .parse("--app-name", "MyApp", "--app-description", "\${app_name} is a Arkenv application")
             .verify()
     }
 
@@ -33,12 +38,12 @@ class PlaceholderTests {
             "APP_DESCRIPTION" to "\${app_name} is a Arkenv application"
         )
         Ark()
-            .parse(arrayOf())
+            .parse()
             .verify()
     }
 
     @Test fun `should allow ${ expression`() {
-        Ark().parse(arrayOf("--app-name", "\${", "--app-description", "test"))
+        Ark().parse("--app-name", "\${", "--app-description", "test")
             .expectThat {
                 get { name }.isEqualTo("\${")
                 get { description }.isEqualTo("test")
@@ -48,7 +53,7 @@ class PlaceholderTests {
     @Test fun `multiple replacements`() {
         val name = "LongTextForTheName"
         Ark()
-            .parse(arrayOf("--app-name", name, "--app-description", "\${app_name} is \${app_name}"))
+            .parse("--app-name", name, "--app-description", "\${app_name} is \${app_name}")
             .expectThat {
                 get { description }.isEqualTo("$name is $name")
             }
@@ -58,7 +63,7 @@ class PlaceholderTests {
         val testValue = "hello this is a test value"
         val expected = "$testValue is not declared"
         Ark()
-            .parse(arrayOf("--app-name", "MyApp", "--test", testValue, "--app-description", "\${test} is not declared"))
+            .parse("--app-name", "MyApp", "--test", testValue, "--app-description", "\${test} is not declared")
             .expectThat {
                 get { description }.isEqualTo(expected)
             }
@@ -69,7 +74,7 @@ class PlaceholderTests {
         val expected = "$testValue is not declared"
         MockSystem("TEST" to testValue)
         Ark()
-            .parse(arrayOf("--app-name", "MyApp", "--app-description", "\${test} is not declared"))
+            .parse("--app-name", "MyApp", "--app-description", "\${test} is not declared")
             .expectThat {
                 get { description }.isEqualTo(expected)
             }
@@ -79,9 +84,10 @@ class PlaceholderTests {
         val testValue = "this_is_expected"
         val expected = "$testValue is not declared"
 
-        val ark = Ark()
-        ark.install(EnvironmentVariableFeature(dotEnvFilePath = getTestResourcePath(".env")))
-        ark.parse(arrayOf("--app-name", "MyApp", "--app-description", "\${mysql_password} is not declared"))
+        val ark = Ark {
+            install(EnvironmentVariableFeature(dotEnvFilePath = getTestResourcePath(".env")))
+        }
+        ark.parse("--app-name", "MyApp", "--app-description", "\${mysql_password} is not declared")
             .expectThat {
                 get { description }.isEqualTo(expected)
             }
@@ -90,7 +96,7 @@ class PlaceholderTests {
     @Test fun `should throw when placeholder is not found`() {
         val ark = Ark()
         assertThrows<IllegalArgumentException> {
-            ark.parse(arrayOf("--app-name", "MyApp", "--app-description", "\${app_missing} is a Arkenv application"))
+            ark.parse("--app-name", "MyApp", "--app-description", "\${app_missing} is a Arkenv application")
         }
     }
 

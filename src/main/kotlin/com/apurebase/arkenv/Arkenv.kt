@@ -1,52 +1,50 @@
 package com.apurebase.arkenv
 
-import com.apurebase.arkenv.feature.ArkenvFeature
 import com.apurebase.arkenv.feature.CliFeature
 import com.apurebase.arkenv.feature.EnvironmentVariableFeature
 
 /**
  * The base class that provides the argument parsing capabilities.
  * Extend this to define your own arguments.
+ * @param programName
+ * @param configuration
  */
-abstract class Arkenv {
+abstract class Arkenv(
+    val programName: String = "Arkenv",
+    configuration: (ArkenvBuilder.() -> Unit)? = null
+) {
 
-    var programName: String = "Arkenv"
-    internal val features: MutableMap<String, ArkenvFeature> = mutableMapOf()
+    internal val builder = ArkenvBuilder()
     internal val argList = mutableListOf<String>()
+    internal val keyValue = mutableMapOf<String, String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
-    val keyValue = mutableMapOf<String, String>()
     val help: Boolean by ArkenvDelegateLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
 
     init {
-        install(CliFeature())
-        install(EnvironmentVariableFeature())
+        builder.install(CliFeature())
+        builder.install(EnvironmentVariableFeature())
+        configuration?.invoke(builder)
     }
 
-    /**
-     * Parses the [args] and resets all previously parsed state.
-     */
-    fun parseArguments(args: Array<String>) {
-        argList.clear()
+    internal fun parseArguments(args: Array<out String>) {
         argList.addAll(args)
         onParse(args)
-
-        keyValue.clear()
-        features.values.forEach { it.onLoad(this) }
+        builder.features.forEach { it.onLoad(this) }
         parse()
-        parseBooleanMerge()
+        argList.clear()
+        keyValue.clear()
     }
 
-    open fun onParse(args: Array<String>) {}
+    open fun onParse(args: Array<out String>) {}
 
     open fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {}
 
-    override fun toString(): String = StringBuilder().also { sb ->
+    override fun toString(): String = StringBuilder().apply {
         val indent = "    "
         val doubleIndent = indent + indent
-        sb.append("$programName: \n")
+        append("$programName: \n")
         delegates.forEach { delegate ->
-            sb
-                .append(indent)
+            append(indent)
                 .append(delegate.argument.names)
                 .append(doubleIndent)
                 .append(delegate.argument.description)
@@ -59,13 +57,19 @@ abstract class Arkenv {
         }
     }.toString()
 
-    private fun parse() = delegates
-        .sortedBy { it.argument.isMainArg }
-        .forEach {
-            it.reset()
-            val value = it.getValue(isParse = true)
-            onParseArgument(it.property.name, it.argument, value)
-        }
+    private fun parse() {
+        delegates
+            .sortedBy { it.argument.isMainArg }
+            .forEach {
+                builder.features.forEach { feature ->
+                    feature.configure(it.argument)
+                }
+                it.reset()
+                val value = it.getValue(isParse = true)
+                onParseArgument(it.property.name, it.argument, value)
+            }
+        parseBooleanMerge()
+    }
 
     private fun parseBooleanMerge() =
         checkRemaining(delegates, argList).forEach { (arg, delegates) ->

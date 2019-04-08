@@ -12,17 +12,14 @@ class ArkenvDelegateLoader<T : Any>(
     private val arkenv: Arkenv
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, T> = when {
-        names.isEmpty() && !isMainArg -> throw IllegalArgumentException("No argument names provided")
-        else -> createDelegate(prop)
+        names.isEmpty()  -> createDelegate(prop, listOf("--${prop.name.toSnakeCase()}"))
+        else -> createDelegate(prop, names)
     }
 
-    private fun createDelegate(prop: KProperty<*>): ArgumentDelegate<T> {
-        val argumentConfig = Argument<T>(names).also {
+    private fun createDelegate(prop: KProperty<*>, names: List<String>): ArgumentDelegate<T> {
+        val argumentConfig = Argument<T>(processNames(names)).also {
             it.isMainArg = isMainArg
         }.apply(block)
-        arkenv.features.values.forEach {
-            it.configure(argumentConfig)
-        }
         return ArgumentDelegate(
             arkenv,
             argumentConfig,
@@ -30,6 +27,11 @@ class ArkenvDelegateLoader<T : Any>(
             kClass == Boolean::class,
             argumentConfig.mapping ?: getMapping(prop)
         ).also { arkenv.delegates.add(it) }
+    }
+
+    private fun processNames(names: List<String>) = names.map {
+        if (!it.startsWith("-")) "--$it".mapRelaxed()
+        else it.mapRelaxed()
     }
 
     @Suppress("UNCHECKED_CAST")

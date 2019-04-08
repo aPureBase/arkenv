@@ -1,6 +1,7 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.ArkenvFeature
+import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldEqualTo
 import org.junit.jupiter.api.Test
 
@@ -13,15 +14,13 @@ class ParserTest {
     }
 
     @Test fun `custom parser`() {
-        val ark = object : Arkenv() {
-            init {
-                install(customFeature)
-            }
-
+        val ark = object : Arkenv(configuration = {
+            install(customFeature)
+        }) {
             val port: Int by argument("--port")
         }
 
-        ark.parse(arrayOf())
+        ark.parse()
 
         ark.port shouldEqualTo 9000
     }
