@@ -12,10 +12,10 @@ Arkenv supports the properties file format.
 Install the `PropertyFeature` and specify the file to load from. 
 
 ```kotlin
-class PropertiesArk(propertiesFile: String) : Arkenv() {
-    init {
-        install(PropertyFeature(propertiesFile))
-    }
+class PropertiesArk(propertiesFile: String) : Arkenv(configuration = {
+    install(PropertyFeature(propertiesFile))
+}) {
+    
     val mysqlPassword: String by argument("--mysql-password")
 }
 ```

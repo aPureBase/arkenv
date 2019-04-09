@@ -10,11 +10,10 @@ To enable Spring-like profile functionality, install the `ProfileFeature`.
 ### Usage
 
 ```kotlin
-class Ark : Arkenv() {
-    init {
-        install(ProfileFeature())
-    }
-
+class Ark : Arkenv(configuration = {
+    install(ProfileFeature())
+}) {
+    
     val port: Int by argument("--port")
     val name: String by argument("--name")
 }

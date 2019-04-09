@@ -4,7 +4,7 @@ title: Arkenv
 nav_order: 1
 ---
 
-<img src="/docs/arkenv_logo.png?raw=true" width="200">
+<img src="{{ site.url }}{{ site.baseurl }}arkenv_logo.png/arkenv_logo.png?raw=true" width="200">
 
 
 Type-safe Kotlin configuration parser `by` delegates. 
@@ -19,7 +19,7 @@ Supports the most common external configuration sources, including:
 ## 🔨 Usage
 * [Basic example usage]({{site.baseurl}}guides/example)
 
-## [✨ Features]({{site.baseurl}}features)
+## [✨ Features]({{site.baseurl}}features/features)
 * [Command Line]({{site.baseurl}}features/command-line)
 * [Environment Variables]({{site.baseurl}}features/environment-variables)
 * [Properties]({{site.baseurl}}features/properties)
@@ -33,7 +33,8 @@ Supports the most common external configuration sources, including:
 
 ### 🤝 Contributing [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) 
 ##### Issues
-This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). 
+This repository is hosted on Gitlab: [https://gitlab.com/apurebase/arkenv](https://gitlab.com/apurebase/arkenv). 
+
 Please report issues and open pull requests there.
 
 ##### Slack

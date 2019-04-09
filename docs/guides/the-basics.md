@@ -1,9 +1,10 @@
 ---
 layout: default
-title: Command Line Guide
+title: The Basics
 parent: Guides
 nav_order: 1
 ---
 
 # The Basics
 
+Coming soon ...
