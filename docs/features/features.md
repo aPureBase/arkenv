@@ -28,7 +28,7 @@ In the constructor of Arkenv, specify a configuration lambda and call `install` 
 In the above example, we first add support for reading arguments from
 a property file, and then remove the command line support. 
 
-By default, the [CliFeature](({{site.baseurl}}features/command-line)) and 
+By default, the [CliFeature]({{site.baseurl}}features/command-line) and 
 [EnvironmentVariableFeature]({{site.baseurl}}features/environment-variables) are enabled.
 
 ### Order
