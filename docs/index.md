@@ -4,7 +4,7 @@ title: Arkenv
 nav_order: 1
 ---
 
-<img src="{{ site.url }}{{ site.baseurl }}arkenv_logo.png/arkenv_logo.png?raw=true" width="200">
+<img src="https://gitlab.com/apurebase/arkenv/raw/master/docs/arkenv_logo.png?raw=true" width="200">
 
 
 Type-safe Kotlin configuration parser `by` delegates. 
