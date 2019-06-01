@@ -1,6 +1,8 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.mainArgument
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
@@ -12,8 +14,8 @@ import strikt.assertions.isEqualTo
 internal class MainArgumentTest {
 
     private class Ark : Arkenv() {
-        val main: String by mainArgument { }
-        val extra: String by argument("-e", "--extra") { }
+        val main: String by mainArgument()
+        val extra: String by argument("-e", "--extra")
     }
 
     @Test fun `mixed main and normal`() {
@@ -34,7 +36,7 @@ internal class MainArgumentTest {
 
     @Test fun `env before main`() {
         val ark = object : Arkenv() {
-            val extra: String by argument("-e", "--extra") { }
+            val extra: String by argument("-e", "--extra")
             val main: String by mainArgument {
                 defaultValue = { "default" }
             }
