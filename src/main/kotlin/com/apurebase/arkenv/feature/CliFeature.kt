@@ -6,64 +6,63 @@ import kotlin.collections.set
 
 class CliFeature : ArkenvFeature {
 
-    private val args = mutableListOf<String>()
+    private var args = mutableListOf<String>()
 
     override fun onLoad(arkenv: Arkenv) {
-        arkenv.argList.replaceAll(String::mapRelaxed)
-        loadCliAssignments(arkenv)
+        args = arkenv.argList
+        args.replaceAll(String::mapRelaxed)
+        loadCliAssignments(arkenv.delegates, arkenv.keyValue)
+        val parsed = parseArguments(args)
         args.clear()
-        args.addAll(parseArguments(arkenv))
+        args.addAll(parsed)
     }
 
-    override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? {
-        return findIndex(delegate.argument, args)?.let {
+    override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? =
+        findIndex(delegate.argument, arkenv.argList)?.let {
             val value = parseCli(it) ?: if (delegate.isBoolean) parseCli(it - 1) else null
             removeArgumentFromList(delegate, it, value)
             value
         }
-    }
 
     /**
      * Responsible for loading arguments that use the assignment syntax, e.g. key=value
      */
-    private fun loadCliAssignments(arkenv: Arkenv) {
-        val names = arkenv.delegates.flatMap { it.argument.names }.map { it.trimStart('-') }
+    private fun loadCliAssignments(delegates: Iterable<ArgumentDelegate<*>>, keyValue: MutableMap<String, String>) {
+        val names = delegates.flatMap { it.argument.names }.map { it.trimStart('-') }
         var i = 0
-        while (i < arkenv.argList.size) {
-            val value = arkenv.argList[i]
-            val spl = value.split('=')
-            val key = spl.first().toSnakeCase()
-            if (spl.size == 2 && names.contains(key)) {
-                arkenv.argList.removeAt(i)
-                arkenv.keyValue[key] = spl.getOrNull(1) ?: ""
-            } else if (spl.size == 1 && i < arkenv.argList.size - 1) {
-                val nextValue = arkenv.argList[i + 1]
+        while (i < args.size) {
+            val value = args[i]
+            val split = value.split('=')
+            val key = split.first().toSnakeCase()
+            if (split.size == 2 && names.contains(key)) {
+                args.removeAt(i)
+                keyValue[key] = split.getOrNull(1) ?: ""
+            } else if (split.size == 1 && i < args.size - 1) {
+                val nextValue = args[i + 1]
                 if (!nextValue.startsWith('-')) {
-                    arkenv.keyValue[key] = arkenv.argList[i + 1]
-                    //arkenv.argList.removeAt(i)
-                    //arkenv.argList.removeAt(i)
-                    i++
-                } else i++
+                    keyValue[key] = args[i + 1] //args.removeAt(i)
+                }
+                i++
             } else i++
         }
     }
 
     private fun parseCli(index: Int): String? = args.getOrNull(index + 1)
 
-    private fun parseArguments(arkenv: Arkenv): List<String> {
+    private fun parseArguments(arguments: List<String>): List<String> {
         val list = mutableListOf<String>()
         var isReading = false
-        arkenv.argList.forEach {
+        arguments.forEach { value ->
             when {
-                isReading -> list[list.lastIndex] = "${list.last()} $it"
-                else -> list.add(it)
+                isReading -> list[list.lastIndex] = "${list.last()} $value"
+                else -> list.add(value)
             }
             when {
-                isReading && it.endsWith(allowedSurroundings) -> {
+                isReading && value.endsWith(allowedSurroundings) -> {
                     list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
                     isReading = false
                 }
-                !isReading && it.startsWith(allowedSurroundings) -> isReading = true
+                !isReading && value.startsWith(allowedSurroundings) -> isReading = true
             }
         }
         return list

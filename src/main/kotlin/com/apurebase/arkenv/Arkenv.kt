@@ -76,8 +76,8 @@ abstract class Arkenv(
         parseBooleanMerge()
     }
 
-    private fun parseBooleanMerge() = checkRemaining(delegates, argList).forEach { (arg, delegates) ->
+    private fun parseBooleanMerge() = checkRemaining(delegates, argList).forEach { (arg, boolDelegates) ->
         argList.remove("-$arg")
-        delegates.forEach { it.setTrue() }
+        boolDelegates.forEach { it.setTrue() }
     }
 }

@@ -49,7 +49,8 @@ private fun findReplacementInArgs(args: List<String>, placeholder: String): Stri
     return null
 }
 
-operator fun Arkenv.get(key: String): String = keyValue[key.toSnakeCase()]!!
+operator fun Arkenv.get(key: String): String =
+    keyValue[key.toSnakeCase()] ?: throw IllegalArgumentException("Arkenv does not contain a value for key '$key'")
 
 internal fun <T> checkValidation(validation: List<Argument.Validation<T>>, value: T, property: KProperty<*>) =
     validation
