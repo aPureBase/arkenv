@@ -18,7 +18,7 @@ class CliFeature : ArkenvFeature {
     override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? {
         return findIndex(delegate.argument, args)?.let {
             val value = parseCli(it) ?: if (delegate.isBoolean) parseCli(it - 1) else null
-            delegate.removeArgumentFromList(it, value)
+            removeArgumentFromList(delegate, it, value)
             value
         }
     }
@@ -36,6 +36,14 @@ class CliFeature : ArkenvFeature {
             if (spl.size == 2 && names.contains(key)) {
                 arkenv.argList.removeAt(i)
                 arkenv.keyValue[key] = spl.getOrNull(1) ?: ""
+            } else if (spl.size == 1 && i < arkenv.argList.size - 1) {
+                val nextValue = arkenv.argList[i + 1]
+                if (!nextValue.startsWith('-')) {
+                    arkenv.keyValue[key] = arkenv.argList[i + 1]
+                    //arkenv.argList.removeAt(i)
+                    //arkenv.argList.removeAt(i)
+                    i++
+                } else i++
             } else i++
         }
     }
@@ -69,9 +77,9 @@ class CliFeature : ArkenvFeature {
             .find { it >= 0 }
     }
 
-    private fun ArgumentDelegate<*>.removeArgumentFromList(index: Int, value: Any?) {
-        removeValueArgument(index, isBoolean, value, isDefault)
-        removeNameArgument(index, argument.isMainArg)
+    private fun removeArgumentFromList(delegate: ArgumentDelegate<*>, index: Int, value: Any?) {
+        removeValueArgument(index, delegate.isBoolean, value, delegate.isDefault)
+        removeNameArgument(index, delegate.argument.isMainArg)
     }
 
     private fun removeNameArgument(index: Int, isMainArg: Boolean) {

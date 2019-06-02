@@ -27,10 +27,15 @@ abstract class Arkenv(
     }
 
     internal fun parseArguments(args: Array<out String>) {
+        if (builder.clearInputBeforeParse) clearInput()
         argList.addAll(args)
         onParse(args)
         builder.features.forEach { it.onLoad(this) }
         parse()
+        if (builder.clearInputAfterParse) clearInput()
+    }
+
+    private fun clearInput() {
         argList.clear()
         keyValue.clear()
     }
