@@ -30,7 +30,7 @@ private fun findEndAndReplace(i: Int, final: String, arkenv: Arkenv): String {
 private fun findPlaceholderReplacement(arkenv: Arkenv, placeholder: String): String =
     findReplacementInDelegates(arkenv.delegates, placeholder)
             ?: findReplacementInArgs(arkenv.argList, placeholder)
-            ?: arkenv.keyValue[placeholder]
+            ?: arkenv.getOrNull(placeholder)
             ?: getEnv(placeholder, false)
             ?: throw IllegalArgumentException("Cannot find value for placeholder $placeholder")
 
@@ -50,7 +50,9 @@ private fun findReplacementInArgs(args: List<String>, placeholder: String): Stri
 }
 
 operator fun Arkenv.get(key: String): String =
-    keyValue[key.toSnakeCase()] ?: throw IllegalArgumentException("Arkenv does not contain a value for key '$key'")
+    getOrNull(key) ?: throw IllegalArgumentException("Arkenv does not contain a value for key '$key'")
+
+fun Arkenv.getOrNull(key: String): String? = keyValue[key.toSnakeCase()]
 
 internal fun <T> checkValidation(validation: List<Argument.Validation<T>>, value: T, property: KProperty<*>) =
     validation
