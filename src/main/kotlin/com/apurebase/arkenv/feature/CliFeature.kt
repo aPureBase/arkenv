@@ -4,6 +4,10 @@ import com.apurebase.arkenv.*
 import com.apurebase.arkenv.mapRelaxed
 import kotlin.collections.set
 
+/**
+ * Provides command line argument support.
+ * Loads and parses the arguments that were passed to Arkenv via the parse function.
+ */
 class CliFeature : ArkenvFeature {
 
     private var args = mutableListOf<String>()

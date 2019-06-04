@@ -1,6 +1,7 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.PropertyFeature
+import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldBeEqualTo
@@ -28,6 +29,14 @@ class LookupTests {
     @Test fun `should resolve unused cli args`() {
         val ark = Ark().parse("--left-over", "expected")
         ark["left-over"] shouldBeEqualTo "expected"
+    }
+
+    @Test fun `should resolve environment variables`() {
+        val key = "key"
+        val value = "value"
+        MockSystem(key to value)
+        val ark = Ark().parse()
+        ark[key] shouldBeEqualTo value
     }
 
     @Test fun `should throw when argument does not exist`() {

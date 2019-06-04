@@ -49,10 +49,23 @@ private fun findReplacementInArgs(args: List<String>, placeholder: String): Stri
     return null
 }
 
+/**
+ * Retrieves the parsed value for the given [key].
+ * All parsed but not declared arguments are available.
+ * @param key the non-case-sensitive name of the argument
+ * @return The value for the [key]
+ * @throws IllegalArgumentException when the key can not be found
+ */
 operator fun Arkenv.get(key: String): String =
     getOrNull(key) ?: throw IllegalArgumentException("Arkenv does not contain a value for key '$key'")
 
-fun Arkenv.getOrNull(key: String): String? = keyValue[key.toSnakeCase()]
+/**
+ * Retrieves the parsed value for the given [key] or null if not found.
+ * All parsed but not declared arguments are available.
+ * @param key the non-case-sensitive name of the argument
+ * @return The value for the [key] or null if not found
+ */
+fun Arkenv.getOrNull(key: String): String? = keyValue[key.toSnakeCase()] ?: getEnv(key, false)
 
 internal fun <T> checkValidation(validation: List<Argument.Validation<T>>, value: T, property: KProperty<*>) =
     validation

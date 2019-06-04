@@ -4,6 +4,8 @@ import com.apurebase.arkenv.*
 import java.io.File
 
 /**
+ * Provides environment variable support.
+ * Loads and parses environment variables that are declared by arguments.
  * @property envPrefix a common prefix for all environment variables
  * @property enableEnvSecrets whether to enable docker secrets parsing. Will attempt to parse any environment variable
  * @property dotEnvFilePath location of the dot env file to read variables from
