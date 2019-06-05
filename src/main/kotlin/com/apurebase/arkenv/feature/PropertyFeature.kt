@@ -1,6 +1,9 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.parse
+import com.apurebase.arkenv.toSnakeCase
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -23,17 +26,12 @@ class PropertyFeature(
         loadProperties(file, arkenv.keyValue)
     }
 
-    private fun loadProperties(file: String, keyValue: MutableMap<String, String>) {
-        parseProperties(file).let(keyValue::putAll)
-    }
+    private fun loadProperties(file: String, keyValue: MutableMap<String, String>) =
+        getStream(file)
+            .use(::parseProperties)
+            .let(keyValue::putAll)
 
-    private fun parseProperties(propertiesFile: String): Map<String, String> =
-        Properties()
-            .apply { getStream(propertiesFile).use(::load) }
-            .map { (key, value) -> key.toString().toSnakeCase() to value.toString() }
-            .toMap()
-
-    private fun getStream(name: String): InputStream? {
+    private fun getStream(name: String): InputStream {
         locations
             .map { fixLocation(it) + name }
             .forEach {
@@ -52,4 +50,12 @@ class PropertyFeature(
 
     private fun getResourceStream(name: String): InputStream? =
         Arkenv::class.java.classLoader.getResourceAsStream(name)
+
+    companion object {
+        fun parseProperties(stream: InputStream): Map<String, String> =
+            Properties()
+                .apply { load(stream) }
+                .map { (key, value) -> key.toString().toSnakeCase() to value.toString() }
+                .toMap()
+    }
 }
