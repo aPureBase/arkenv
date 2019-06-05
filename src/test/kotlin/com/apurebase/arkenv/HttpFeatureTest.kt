@@ -10,8 +10,8 @@ import java.io.InputStream
 
 class HttpFeatureTest {
 
-    private class Ark(url: String, response: String) : Arkenv("Arkenv-Client", {
-        install(HttpFeature(url, null, MockClient(response)))
+    private class Ark(url: String) : Arkenv("Arkenv-Client", {
+        install(HttpFeature(url, null, MockClient()))
     }) {
         val message: String by argument()
 
@@ -21,22 +21,22 @@ class HttpFeatureTest {
     }
 
     @Test fun test() {
-        val ark = Ark(
-            "http://localhost:8888",
-            """ message: Hello world
+        Ark("http://localhost:8888")
+            .parse()
+            .expectThat {
+                get { message }.isEqualTo("Hello world")
+                get { status }.isEqualTo(100)
+                get { nested }.isEqualTo(1)
+            }
+    }
+
+    private class MockClient : HttpClient {
+        private val response = """
+                message: Hello world
                 nested.item: 1
                 status: 100
             """.trimIndent()
-        ).parse()
 
-        ark.expectThat {
-            get { message }.isEqualTo("Hello world")
-            get { status }.isEqualTo(100)
-            get { nested }.isEqualTo(1)
-        }
-    }
-
-    private class MockClient(private val response: String) : HttpClient {
         override fun get(url: String): InputStream = response.byteInputStream()
     }
 }
