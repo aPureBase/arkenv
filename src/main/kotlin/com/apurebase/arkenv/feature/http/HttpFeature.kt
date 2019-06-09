@@ -1,7 +1,8 @@
-package com.apurebase.arkenv.feature
+package com.apurebase.arkenv.feature.http
 
 import com.apurebase.arkenv.Arkenv
-import java.io.InputStream
+import com.apurebase.arkenv.feature.ArkenvFeature
+import com.apurebase.arkenv.feature.PropertyFeature
 import java.net.URL
 import javax.crypto.Cipher
 import javax.xml.bind.DatatypeConverter
@@ -16,15 +17,15 @@ class HttpFeature(
     private val keyword: String = "{cipher}"
 ) : ArkenvFeature {
 
-    private val suffix = "properties"
-
-    override fun onLoad(arkenv: Arkenv) {
+    override fun onLoad(arkenv: Arkenv) =
         httpClient
-            .get(makeUrl(arkenv.programName))
-            .use(PropertyFeature.Companion::parseProperties)
+            .resolveUrls(rootUrl, applicationName ?: arkenv.programName, profile, label)
+            .map(::parse)
+            .reduce { acc, map -> acc + map }
             .let(::decryptData)
             .let(arkenv.keyValue::putAll)
-    }
+
+    private fun parse(url: URL) = httpClient.get(url).use(PropertyFeature.Companion::parseProperties)
 
     private fun decryptData(data: Map<String, String>): Map<String, String> =
         cipher?.let {
@@ -39,18 +40,4 @@ class HttpFeature(
             .let { DatatypeConverter.parseHexBinary(it) }
             .let(::doFinal)
             .let { String(it) }
-
-    private fun makeUrl(programName: String): String {
-        val root = rootUrl.removeSuffix("/")
-        val name = applicationName ?: programName
-        return "$root/$name.$suffix"
-    }
-}
-
-interface HttpClient {
-    fun get(url: String): InputStream
-}
-
-class HttpClientImpl : HttpClient {
-    override fun get(url: String): InputStream = URL(url).openStream()
 }
