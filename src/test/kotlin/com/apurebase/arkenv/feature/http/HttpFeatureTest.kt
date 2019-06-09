@@ -1,7 +1,7 @@
 package com.apurebase.arkenv.feature.http
 
-import com.apurebase.arkenv.feature.http.HttpClientImpl
-import com.apurebase.arkenv.feature.http.HttpFeature
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
 import org.junit.jupiter.api.Test
@@ -16,7 +16,7 @@ import javax.xml.bind.DatatypeConverter
 
 class HttpFeatureTest {
 
-    private inner class Ark(url: String) : com.apurebase.arkenv.Arkenv("Arkenv-Client", {
+    private inner class Ark(url: String) : Arkenv("Arkenv-Client", {
         install(HttpFeature(url, httpClient = MockClient(), cipher = decryptCipher))
     }) {
         val message: String by argument()
