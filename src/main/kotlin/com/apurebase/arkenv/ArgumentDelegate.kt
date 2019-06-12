@@ -36,46 +36,10 @@ class ArgumentDelegate<T : Any?>(
         else -> throw IllegalStateException("Attempted to set value to true but ${property.name} is not boolean")
     }
 
-    /**
-     * Points to the index in [parsedArgs] where [Argument.names] is placed.
-     */
-    internal var index: Int? = null
-        private set
-
-    internal var parsedArgs: List<String> = listOf()
-
-    private fun parseArguments() {
-        val list = mutableListOf<String>()
-        var isReading = false
-        arkenv.argList.forEach {
-            when {
-                isReading -> list[list.lastIndex] = "${list.last()} $it"
-                else -> list.add(it)
-            }
-            when {
-                isReading && it.endsWith(allowedSurroundings) -> {
-                    list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
-                    isReading = false
-                }
-                !isReading && it.startsWith(allowedSurroundings) -> isReading = true
-            }
-        }
-        parsedArgs = list
-    }
-
-    private fun findIndex() {
-        index = if (argument.isMainArg) parsedArgs.size - 2
-        else argument
-            .names
-            .asSequence()
-            .map(parsedArgs::indexOf)
-            .find { it >= 0 }
-    }
+    fun getValue(): Any? = getValue(this, property)
 
     override operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         if (!isSet) {
-            parseArguments()
-            findIndex()
             value = setValue(property)
             checkNullable(property)
             if (value != null) checkValidation(argument.validation, value, property)
@@ -87,7 +51,7 @@ class ArgumentDelegate<T : Any?>(
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
         val values = arkenv.builder.features.mapNotNull { it.onParse(arkenv, this) } +
-                argument.names.mapNotNull { arkenv[it.toSnakeCase()] }
+                argument.names.mapNotNull(arkenv::getOrNull)
         return when {
             isBoolean -> mapBoolean(values)
             values.isEmpty() -> {
@@ -104,9 +68,9 @@ class ArgumentDelegate<T : Any?>(
     private fun mapBoolean(values: Collection<String>): T {
         val isValuesNotEmpty = values.isNotEmpty()
         return when {
-            isValuesNotEmpty && values.first() == "false" -> false as T
-            else -> (index != null || isValuesNotEmpty || defaultValue == true) as T
-        }
+            isValuesNotEmpty && values.first() == "false" -> false
+            else -> isValuesNotEmpty || defaultValue == true
+        } as T
     }
 
     private fun checkNullable(property: KProperty<*>) {
@@ -115,8 +79,6 @@ class ArgumentDelegate<T : Any?>(
             throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
         }
     }
-
-    private val allowedSurroundings = listOf("'", "\"")
 
     private val isHelp get() = argument.isHelp || arkenv.isHelp()
 
