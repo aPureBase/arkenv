@@ -10,8 +10,8 @@ open class HttpClientImpl : HttpClient {
 
     override fun get(url: URL): InputStream = url.openStream()
 
-    open fun makeUrl(rootUrl: String, name: String, profile: String?, label: String?): URL {
-        val root = rootUrl.removeSuffix("/")
-        return URL("$root/$name/$profile")
-    }
+    open fun makeUrl(rootUrl: String, name: String, profile: String?, label: String?): URL =
+        listOfNotNull(rootUrl, name, profile, label)
+            .joinToString("/")
+            .let(::URL)
 }

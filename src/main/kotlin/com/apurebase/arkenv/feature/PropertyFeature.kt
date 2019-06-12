@@ -28,17 +28,18 @@ class PropertyFeature(
 
     private fun loadProperties(file: String, keyValue: MutableMap<String, String>) =
         getStream(file)
-            .use(::parseProperties)
-            .let(keyValue::putAll)
+            ?.use(::parseProperties)
+            ?.let(keyValue::putAll)
 
-    private fun getStream(name: String): InputStream {
+    private fun getStream(name: String): InputStream? {
         locations
             .map { fixLocation(it) + name }
             .forEach {
                 val stream = getFileStream(it) ?: getResourceStream(it)
                 if (stream != null) return stream
             }
-        throw IllegalArgumentException("Could not find property file for $name. Locations: $locations")
+        //throw IllegalArgumentException("Could not find property file for $name. Locations: $locations")
+        return null
     }
 
     private fun fixLocation(location: String) = // TODO test this
