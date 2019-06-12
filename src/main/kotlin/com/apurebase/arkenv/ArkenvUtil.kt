@@ -41,10 +41,10 @@ inline fun <reified T : Any> Arkenv.argument(
 ): ArkenvDelegateLoader<T> = argument(names.toList(), false, configuration)
 
 /**
- * Main argument is used for the last argument,
- * which doesn't have a named property to it
- *
- * Main argument can't be passed through environment variables
+ * The main argument is used for the last argument,
+ * which doesn't have a named property to it.
+ * The main argument can't be passed through environment variables.
+ * @param block the configuration that will be applied to the Argument
  */
 inline fun <reified T : Any> Arkenv.mainArgument(noinline block: Argument<T>.() -> Unit = {}): ArkenvDelegateLoader<T> =
     argument(listOf(), true, block)

@@ -4,6 +4,8 @@ import com.apurebase.arkenv.feature.ArkenvFeature
 
 class ArkenvBuilder {
 
+    var clearInputBeforeParse = false
+    var clearInputAfterParse = true
     internal val features: MutableList<ArkenvFeature> = mutableListOf()
 
     fun install(feature: ArkenvFeature) {

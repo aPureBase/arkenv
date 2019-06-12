@@ -27,10 +27,15 @@ abstract class Arkenv(
     }
 
     internal fun parseArguments(args: Array<out String>) {
+        if (builder.clearInputBeforeParse) clearInput()
         argList.addAll(args)
         onParse(args)
         builder.features.forEach { it.onLoad(this) }
         parse()
+        if (builder.clearInputAfterParse) clearInput()
+    }
+
+    private fun clearInput() {
         argList.clear()
         keyValue.clear()
     }
@@ -52,7 +57,7 @@ abstract class Arkenv(
                 .append(doubleIndent)
                 .append(delegate.property.name)
                 .append(doubleIndent)
-                .append(delegate.getValue(isParse = false))
+                .append(delegate.getValue())
                 .appendln()
         }
     }.toString()
@@ -65,35 +70,14 @@ abstract class Arkenv(
                     feature.configure(it.argument)
                 }
                 it.reset()
-                val value = it.getValue(isParse = true)
+                val value = it.getValue()
                 onParseArgument(it.property.name, it.argument, value)
             }
         parseBooleanMerge()
     }
 
-    private fun parseBooleanMerge() =
-        checkRemaining(delegates, argList).forEach { (arg, delegates) ->
-            argList.remove("-$arg")
-            delegates.forEach { it.setTrue() }
-        }
-
-    private fun ArgumentDelegate<*>.getValue(isParse: Boolean): Any? =
-        getValue(this, property).also { value ->
-            if (isParse && index != null) removeArgumentFromList(index!!, value)
-        }
-
-    private fun ArgumentDelegate<*>.removeArgumentFromList(index: Int, value: Any?) {
-        removeValueArgument(index, isBoolean, value, isDefault)
-        removeNameArgument(index, argument.isMainArg)
-    }
-
-    private fun removeNameArgument(index: Int, isMainArg: Boolean) {
-        if (index > -1 && !isMainArg) argList.removeAt(index)
-    }
-
-    private fun removeValueArgument(
-        index: Int, isBoolean: Boolean, value: Any?, default: Boolean
-    ) {
-        if (!isBoolean && !default && value != null) argList.removeAt(index + 1)
+    private fun parseBooleanMerge() = checkRemaining(delegates, argList).forEach { (arg, boolDelegates) ->
+        argList.remove("-$arg")
+        boolDelegates.forEach { it.setTrue() }
     }
 }

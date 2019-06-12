@@ -34,8 +34,7 @@ class EnvTest : ArkenvTest() {
     @Test fun `only parse -- arguments`() {
         MockSystem(
             "COUNTRY" to "DK",
-            "NI" to "5",
-            "-ni" to "5"
+            "NI" to "5"
         )
         TestArgs().parse("Hello World").let {
             it.mainString shouldEqual "Hello World"
