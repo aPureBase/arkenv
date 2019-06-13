@@ -5,23 +5,24 @@ import com.apurebase.arkenv.feature.ArkenvFeature
 import com.apurebase.arkenv.feature.ProfileFeature
 import com.apurebase.arkenv.feature.PropertyFeature
 import com.apurebase.arkenv.findFeature
+import com.apurebase.arkenv.get
 import java.net.URL
 import javax.crypto.Cipher
 import javax.xml.bind.DatatypeConverter
 
 class HttpFeature(
     private val rootUrl: String,
-    private val applicationName: String? = null,
-    private val label: String? = null,
     private val httpClient: HttpClient = HttpClientImpl(),
     private val cipher: Cipher? = null,
     private val keyword: String = "{cipher}"
-) : ArkenvFeature {
+) : ArkenvFeature, Arkenv("HttpFeature") {
 
     override fun onLoad(arkenv: Arkenv) {
-        val appProfile = arkenv.findFeature<ProfileFeature>()?.profile
+        val label = arkenv["ARKENV_LABEL"]
+        val profileFeature = arkenv.findFeature<ProfileFeature>()
+        val appProfile = profileFeature?.profile
         httpClient
-            .resolveUrls(rootUrl, applicationName ?: arkenv.programName, appProfile, label)
+            .resolveUrls(rootUrl, arkenv.programName, appProfile, label)
             .map(::parse)
             .reduce { acc, map -> acc + map }
             .let(::decryptData)

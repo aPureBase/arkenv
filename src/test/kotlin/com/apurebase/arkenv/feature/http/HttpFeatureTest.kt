@@ -31,9 +31,11 @@ class HttpFeatureTest {
     }
 
     @Test fun `simple http request`() {
-        val profile = "test"
-        Ark(rootUrl, mapOf(URL("$rootUrl/$appName/$profile") to response))
-            .parse("ARKENV_PROFILE", profile)
+        val profile = "production"
+        val label = "myLabel"
+        val responseMap = mapOf(URL("$rootUrl/$appName/$profile/$label") to response)
+        Ark(rootUrl, responseMap)
+            .parse("ARKENV_PROFILE", profile, "ARKENV_LABEL", label)
             .expectThat {
                 get { message }.isEqualTo("Hello world")
                 get { status }.isEqualTo(100)

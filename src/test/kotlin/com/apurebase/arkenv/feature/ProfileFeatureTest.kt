@@ -1,6 +1,7 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
+import com.apurebase.arkenv.test.DEPRECATED
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
@@ -43,7 +44,7 @@ internal class ProfileFeatureTest {
             .expectThat { isDevelopment("test") }
     }
 
-    @Disabled @Test fun `should throw when profile cannot be found`() {
+    @Disabled(DEPRECATED) @Test fun `should throw when profile cannot be found`() {
         assertThrows<IllegalArgumentException> {
             Ark().parse("--arkenv-profile", "wrong")
         }.message.shouldNotBeNull()

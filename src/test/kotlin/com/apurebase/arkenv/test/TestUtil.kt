@@ -9,3 +9,5 @@ fun <T> T.expectThat(block: Assertion.Builder<T>.() -> Unit) = strikt.api.expect
 fun getTestResourcePath(name: String): String = File("src/test/resources/$name").absolutePath
 
 fun <T : Arkenv> T.parse(vararg arguments: String) = apply { parseArguments(arguments) }
+
+const val DEPRECATED = "Property files are no longer required, can be null."

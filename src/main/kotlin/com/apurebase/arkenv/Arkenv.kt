@@ -10,7 +10,7 @@ import com.apurebase.arkenv.feature.EnvironmentVariableFeature
  * @param configuration
  */
 abstract class Arkenv(
-    val programName: String = "Arkenv",
+    programName: String = "Arkenv",
     configuration: (ArkenvBuilder.() -> Unit)? = null
 ) {
 
@@ -18,7 +18,12 @@ abstract class Arkenv(
     internal val argList = mutableListOf<String>()
     internal val keyValue = mutableMapOf<String, String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
-    val help: Boolean by ArkenvDelegateLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
+
+    val help: Boolean by argument("-h", "--help") { isHelp = true }
+
+    val programName: String by argument("--arkenv-application-name") {
+        defaultValue = { programName }
+    }
 
     init {
         builder.install(CliFeature())
