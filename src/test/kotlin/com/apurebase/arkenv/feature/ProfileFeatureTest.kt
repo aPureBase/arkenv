@@ -1,10 +1,12 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
+import com.apurebase.arkenv.test.DEPRECATED
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldNotBeNull
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.api.Assertion
@@ -42,7 +44,7 @@ internal class ProfileFeatureTest {
             .expectThat { isDevelopment("test") }
     }
 
-    @Test fun `should throw when profile cannot be found`() {
+    @Disabled(DEPRECATED) @Test fun `should throw when profile cannot be found`() {
         assertThrows<IllegalArgumentException> {
             Ark().parse("--arkenv-profile", "wrong")
         }.message.shouldNotBeNull()

@@ -2,15 +2,18 @@ package com.apurebase.arkenv
 
 import com.apurebase.arkenv.test.*
 import org.amshove.kluent.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
 
 class GeneralTest {
 
-    @Test fun help() {
+    /**
+     * The help argument needs to be the first one declared in the [Arkenv] class.
+     */
+    @Test fun `should ignore validation when help is true`() {
         class HelpArgs(name: String) : Arkenv(name) {
             val required: String by argument("-r") {
                 description = "This arg is required but can be null if help is true"
@@ -19,24 +22,15 @@ class GeneralTest {
 
         val expectedName = "TestProgram"
         val ark = HelpArgs(expectedName).parse("-h")
-        val helpInfo = ark.toString()
-        helpInfo shouldContain expectedName
-        helpInfo shouldContain HelpArgs::required.name
-        helpInfo shouldContain "This arg is required but can be null if help is true"
+        ark.toString().expectThat {
+            contains(expectedName)
+            contains(HelpArgs::required.name)
+            contains("This arg is required but can be null if help is true")
+        }
 
         HelpArgs("Test").let {
             it::required shouldThrow IllegalArgumentException::class
         }
-    }
-
-    @Disabled("It is possible but dangerous to allow overriding help") @Test fun `custom help should parse`() {
-//        class CustomHelp : Arkenv() {
-//            override val help: Boolean by argument("-ca") {
-//                isHelp = true // current limitation
-//            }
-//            val nullProp: Int by argument("-np")
-//        }
-//        CustomHelp().parse("-ca").also(::println)
     }
 
     @Test fun `repeatedly accessing a prop should not throw`() {

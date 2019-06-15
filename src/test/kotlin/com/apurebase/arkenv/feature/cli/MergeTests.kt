@@ -1,4 +1,4 @@
-package com.apurebase.arkenv.feature
+package com.apurebase.arkenv.feature.cli
 
 import com.apurebase.arkenv.*
 import com.apurebase.arkenv.test.expectThat
@@ -48,16 +48,16 @@ class MergeTests {
         Ark.verify("-3ba")
         Ark.verify("-c21")
         Ark.parse("-bcda").expectThat {
-            get { Ark.a }.isTrue()
-            get { Ark.b }.isFalse()
-            get { Ark.c }.isFalse()
-            get { Ark.d }.isTrue()
+            get { a }.isTrue()
+            get { b }.isFalse()
+            get { c }.isFalse()
+            get { d }.isTrue()
         }
         Ark.parse("-bcdax").expectThat {
-            get { Ark.a }.isFalse()
-            get { Ark.b }.isFalse()
-            get { Ark.c }.isFalse()
-            get { Ark.d }.isFalse()
+            get { a }.isFalse()
+            get { b }.isFalse()
+            get { c }.isFalse()
+            get { d }.isFalse()
         }
     }
 

@@ -17,4 +17,8 @@ interface ArkenvFeature {
     fun configure(argument: Argument<*>) {
 
     }
+
+    fun finally(arkenv: Arkenv) {
+
+    }
 }

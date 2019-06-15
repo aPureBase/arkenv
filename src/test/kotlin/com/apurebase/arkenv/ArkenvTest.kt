@@ -2,42 +2,42 @@ package com.apurebase.arkenv
 
 import com.apurebase.arkenv.test.Arkuments
 import com.apurebase.arkenv.test.Nullable
-import org.amshove.kluent.shouldBe
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldEqual
+import com.apurebase.arkenv.test.expectThat
 import org.junit.jupiter.api.Test
+import strikt.assertions.isEqualTo
+import strikt.assertions.isNull
+import strikt.assertions.isTrue
 
 abstract class ArkenvTest {
 
     @Test fun `nullables should be parseable`() {
-        testNullable().apply {
-            int shouldEqual expectedInt
-            str shouldEqual expectedStr
+        testNullable().expectThat {
+            get { int }.isEqualTo(expectedInt)
+            get { str }.isEqualTo(expectedStr)
         }
     }
 
     @Test fun `nullable should be null`() {
-        Nullable().apply {
-            int shouldBe null
-            str shouldBe null
+        Nullable().expectThat {
+            get { int }.isNull()
+            get { str }.isNull()
         }
     }
 
     @Test fun `args should parse`() {
-        testArkuments().apply {
-            configPath shouldBeEqualTo expectedConfigPath
-            manualAuth shouldBe true
-            doRefresh shouldBe true
-            help shouldBe true
+        testArkuments().expectThat {
+            get { configPath }.isEqualTo(expectedConfigPath)
+            get { manualAuth }.isTrue()
+            get { doRefresh }.isTrue()
+            get { help }.isTrue()
         }
     }
 
-    val expectedConfigPath = "config.yml"
-    val expectedInt = 5
-    val expectedStr = "test"
+    protected val expectedConfigPath = "config.yml"
+    protected val expectedInt = 5
+    protected val expectedStr = "test"
 
     abstract fun testNullable(): Nullable
 
     abstract fun testArkuments(): Arkuments
-
 }

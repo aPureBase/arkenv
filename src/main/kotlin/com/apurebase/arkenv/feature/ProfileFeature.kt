@@ -10,7 +10,7 @@ open class ProfileFeature(
     locations: Collection<String> = listOf()
 ) : ArkenvFeature, Arkenv("ProfileFeature") {
 
-    protected open val profile: String? by argument(name)
+    internal open val profile: String? by argument(name)
 
     protected open val prefix: String by argument("--arkenv-profile-prefix") {
         defaultValue = { prefix }

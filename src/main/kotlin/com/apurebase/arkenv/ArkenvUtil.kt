@@ -55,3 +55,7 @@ internal fun Arkenv.isHelp(): Boolean = when {
     argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false
     else -> help
 }
+
+internal inline fun <reified T : ArkenvFeature> Arkenv.findFeature(): T? {
+    return builder.features.find { it is T } as T?
+}

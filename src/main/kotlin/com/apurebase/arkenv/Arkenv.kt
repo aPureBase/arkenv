@@ -1,8 +1,5 @@
 package com.apurebase.arkenv
 
-import com.apurebase.arkenv.feature.CliFeature
-import com.apurebase.arkenv.feature.EnvironmentVariableFeature
-
 /**
  * The base class that provides the argument parsing capabilities.
  * Extend this to define your own arguments.
@@ -10,20 +7,19 @@ import com.apurebase.arkenv.feature.EnvironmentVariableFeature
  * @param configuration
  */
 abstract class Arkenv(
-    val programName: String = "Arkenv",
+    programName: String = "Arkenv",
     configuration: (ArkenvBuilder.() -> Unit)? = null
 ) {
 
-    internal val builder = ArkenvBuilder()
+    internal val builder = ArkenvBuilder(configuration)
     internal val argList = mutableListOf<String>()
     internal val keyValue = mutableMapOf<String, String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
-    val help: Boolean by ArkenvDelegateLoader(listOf("-h", "--help"), false, { isHelp = true }, Boolean::class, this)
 
-    init {
-        builder.install(CliFeature())
-        builder.install(EnvironmentVariableFeature())
-        configuration?.invoke(builder)
+    val help: Boolean by argument("-h", "--help") { isHelp = true }
+
+    val programName: String by argument("--arkenv-application-name") {
+        defaultValue = { programName }
     }
 
     internal fun parseArguments(args: Array<out String>) {
@@ -73,11 +69,6 @@ abstract class Arkenv(
                 val value = it.getValue()
                 onParseArgument(it.property.name, it.argument, value)
             }
-        parseBooleanMerge()
-    }
-
-    private fun parseBooleanMerge() = checkRemaining(delegates, argList).forEach { (arg, boolDelegates) ->
-        argList.remove("-$arg")
-        boolDelegates.forEach { it.setTrue() }
+        builder.features.forEach { it.finally(this) }
     }
 }
