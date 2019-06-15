@@ -1,6 +1,6 @@
 package com.apurebase.arkenv
 
-import com.apurebase.arkenv.feature.CliFeature
+import com.apurebase.arkenv.feature.cli.CliFeature
 import com.apurebase.arkenv.feature.EnvironmentVariableFeature
 
 /**
@@ -78,11 +78,6 @@ abstract class Arkenv(
                 val value = it.getValue()
                 onParseArgument(it.property.name, it.argument, value)
             }
-        parseBooleanMerge()
-    }
-
-    private fun parseBooleanMerge() = checkRemaining(delegates, argList).forEach { (arg, boolDelegates) ->
-        argList.remove("-$arg")
-        boolDelegates.forEach { it.setTrue() }
+        builder.features.forEach { it.finally(this) }
     }
 }

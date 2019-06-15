@@ -1,6 +1,7 @@
-package com.apurebase.arkenv.feature
+package com.apurebase.arkenv.feature.cli
 
 import com.apurebase.arkenv.*
+import com.apurebase.arkenv.feature.ArkenvFeature
 import com.apurebase.arkenv.mapRelaxed
 import kotlin.collections.set
 
@@ -27,6 +28,13 @@ class CliFeature : ArkenvFeature {
             removeArgumentFromList(delegate, it, value)
             value
         }
+
+    override fun finally(arkenv: Arkenv) {
+        BooleanMergeParser().checkRemaining(arkenv, args).forEach { (arg, boolDelegates) ->
+            args.remove("-$arg")
+            boolDelegates.forEach { it.setTrue() }
+        }
+    }
 
     /**
      * Responsible for loading arguments that use the assignment syntax, e.g. key=value
