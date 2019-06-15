@@ -1,8 +1,5 @@
 package com.apurebase.arkenv
 
-import com.apurebase.arkenv.feature.cli.CliFeature
-import com.apurebase.arkenv.feature.EnvironmentVariableFeature
-
 /**
  * The base class that provides the argument parsing capabilities.
  * Extend this to define your own arguments.
@@ -26,8 +23,6 @@ abstract class Arkenv(
     }
 
     init {
-        builder.install(CliFeature())
-        builder.install(EnvironmentVariableFeature())
         configuration?.invoke(builder)
     }
 

@@ -1,6 +1,8 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.ArkenvFeature
+import com.apurebase.arkenv.feature.EnvironmentVariableFeature
+import com.apurebase.arkenv.feature.cli.CliFeature
 
 class ArkenvBuilder {
 
@@ -16,5 +18,10 @@ class ArkenvBuilder {
         features.removeIf {
             feature.getKeyValPair().first == it.getKeyValPair().first
         }
+    }
+
+    init {
+        install(CliFeature())
+        install(EnvironmentVariableFeature())
     }
 }
