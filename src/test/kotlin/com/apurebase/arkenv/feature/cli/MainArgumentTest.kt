@@ -1,4 +1,4 @@
-package com.apurebase.arkenv.feature
+package com.apurebase.arkenv.feature.cli
 
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument

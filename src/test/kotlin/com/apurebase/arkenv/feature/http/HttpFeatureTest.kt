@@ -22,7 +22,7 @@ class HttpFeatureTest {
 
     private inner class Ark(url: String, responseMap: Map<URL, String>) : Arkenv(appName, {
         install(ProfileFeature())
-        install(HttpFeature(url, httpClient = MockClient(responseMap), cipher = decryptCipher))
+        install(HttpFeature(url, MockClient(responseMap), decryptCipher))
     }) {
         val message: String by argument()
         val status: Int by argument()
