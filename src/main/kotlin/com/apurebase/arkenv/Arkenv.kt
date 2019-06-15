@@ -11,7 +11,7 @@ abstract class Arkenv(
     configuration: (ArkenvBuilder.() -> Unit)? = null
 ) {
 
-    internal val builder = ArkenvBuilder()
+    internal val builder = ArkenvBuilder(configuration)
     internal val argList = mutableListOf<String>()
     internal val keyValue = mutableMapOf<String, String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
@@ -20,10 +20,6 @@ abstract class Arkenv(
 
     val programName: String by argument("--arkenv-application-name") {
         defaultValue = { programName }
-    }
-
-    init {
-        configuration?.invoke(builder)
     }
 
     internal fun parseArguments(args: Array<out String>) {

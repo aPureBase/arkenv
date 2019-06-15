@@ -4,7 +4,7 @@ import com.apurebase.arkenv.feature.ArkenvFeature
 import com.apurebase.arkenv.feature.EnvironmentVariableFeature
 import com.apurebase.arkenv.feature.cli.CliFeature
 
-class ArkenvBuilder {
+class ArkenvBuilder(configuration: (ArkenvBuilder.() -> Unit)?) {
 
     var clearInputBeforeParse = false
     var clearInputAfterParse = true
@@ -23,5 +23,6 @@ class ArkenvBuilder {
     init {
         install(CliFeature())
         install(EnvironmentVariableFeature())
+        configuration?.invoke(this)
     }
 }
