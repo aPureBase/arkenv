@@ -9,8 +9,8 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.util.*
 
-class PropertyFeature(
-    private val file: String = "application.properties",
+open class PropertyFeature(
+    protected val file: String = "application.properties",
     locations: Collection<String> = listOf()
 ) : ArkenvFeature, Arkenv("PropertyFeature") {
 
@@ -28,8 +28,10 @@ class PropertyFeature(
 
     private fun loadProperties(file: String, keyValue: MutableMap<String, String>) =
         getStream(file)
-            ?.use(::parseProperties)
+            ?.use(::parse)
             ?.let(keyValue::putAll)
+
+    protected open fun parse(stream: InputStream): Map<String, String> = parseProperties(stream)
 
     private fun getStream(name: String): InputStream? {
         locations
@@ -38,7 +40,6 @@ class PropertyFeature(
                 val stream = getFileStream(it) ?: getResourceStream(it)
                 if (stream != null) return stream
             }
-        //throw IllegalArgumentException("Could not find property file for $name. Locations: $locations")
         return null
     }
 

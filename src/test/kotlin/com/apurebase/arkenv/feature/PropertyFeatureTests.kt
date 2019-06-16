@@ -1,26 +1,20 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.argument
-import com.apurebase.arkenv.test.DEPRECATED
+import com.apurebase.arkenv.ArkenvBuilder
+import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.MockSystem
-import com.apurebase.arkenv.test.expectThat
-import com.apurebase.arkenv.test.parse
-import org.amshove.kluent.shouldContain
-import org.amshove.kluent.shouldNotBeNull
-import org.junit.jupiter.api.*
-import strikt.assertions.isEqualTo
+import com.apurebase.arkenv.test.getTestResource
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import java.io.File
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class PropertyFeatureTests {
+class PropertyFeatureTests : FileBasedTests {
 
-    private class PropertiesArk(propertiesFile: String, locations: List<String>) : Arkenv(configuration = {
+    override fun configure(propertiesFile: String, locations: List<String>): ArkenvBuilder = configureArkenv {
         install(PropertyFeature(propertiesFile, locations))
-    }) {
-        val mysqlPassword: String by argument("--mysql-password")
-        val port: Int by argument("--database-port")
-        val multiLine: String by argument("--multi-string")
     }
 
     @Test fun `should load properties file`() {
@@ -31,35 +25,10 @@ class PropertyFeatureTests {
         verify("app_lower.properties")
     }
 
-    private val defaultPort = 5050
-    private fun verify(
-        path: String,
-        port: Int = defaultPort,
-        pw: String = "this_is_expected",
-        locations: List<String> = listOf(),
-        vararg args: String = arrayOf()
-    ) = PropertiesArk(path, locations).parse(*args).expectThat {
-        get { this.mysqlPassword }.isEqualTo(pw)
-        get { this.port }.isEqualTo(port)
-        get { this.multiLine }.isEqualTo("this stretches lines")
-    }
-
-    @Disabled(DEPRECATED) @Test fun `should throw when file can not be found`() {
-        val name = "does_not_exist.env"
-        val ark = PropertiesArk(name, listOf())
-        assertThrows<IllegalArgumentException> {
-            ark.parse()
-        }.message
-            .shouldNotBeNull()
-            .shouldContain(name)
-            .shouldContain("config")
-            .also(::println)
-    }
-
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     inner class Customization {
-        private val content = this::class.java.classLoader.getResource("app.properties").readText()
+        private val content = getTestResource("app.properties")
         private val name = "file_based_props.properties"
         private val dir = File("config")
         private val files: MutableList<File> = mutableListOf()

@@ -57,5 +57,5 @@ internal fun Arkenv.isHelp(): Boolean = when {
 }
 
 internal inline fun <reified T : ArkenvFeature> Arkenv.findFeature(): T? {
-    return builder.features.find { it is T } as T?
+    return configuration.features.find { it is T } as T?
 }

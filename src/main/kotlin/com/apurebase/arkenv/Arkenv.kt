@@ -8,10 +8,13 @@ package com.apurebase.arkenv
  */
 abstract class Arkenv(
     programName: String = "Arkenv",
-    configuration: (ArkenvBuilder.() -> Unit)? = null
+    internal val configuration: ArkenvBuilder = ArkenvBuilder()
 ) {
 
-    internal val builder = ArkenvBuilder(configuration)
+    @Deprecated("Will be removed in future major version")
+    constructor(programName: String = "Arkenv", configuration: (ArkenvBuilder.() -> Unit))
+            : this(programName, configureArkenv(configuration))
+
     internal val argList = mutableListOf<String>()
     internal val keyValue = mutableMapOf<String, String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
@@ -23,15 +26,15 @@ abstract class Arkenv(
     }
 
     internal fun parseArguments(args: Array<out String>) {
-        if (builder.clearInputBeforeParse) clearInput()
+        if (configuration.clearInputBeforeParse) clearInput()
         argList.addAll(args)
         onParse(args)
-        builder.features.forEach { it.onLoad(this) }
+        configuration.features.forEach { it.onLoad(this) }
         parse()
-        if (builder.clearInputAfterParse) clearInput()
+        if (configuration.clearInputAfterParse) clearInput()
     }
 
-    private fun clearInput() {
+    internal fun clearInput() {
         argList.clear()
         keyValue.clear()
     }
@@ -62,13 +65,13 @@ abstract class Arkenv(
         delegates
             .sortedBy { it.argument.isMainArg }
             .forEach {
-                builder.features.forEach { feature ->
+                configuration.features.forEach { feature ->
                     feature.configure(it.argument)
                 }
                 it.reset()
                 val value = it.getValue()
                 onParseArgument(it.property.name, it.argument, value)
             }
-        builder.features.forEach { it.finally(this) }
+        configuration.features.forEach { it.finally(this) }
     }
 }
