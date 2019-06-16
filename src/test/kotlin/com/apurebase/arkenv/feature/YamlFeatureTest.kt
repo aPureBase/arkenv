@@ -16,7 +16,7 @@ internal class YamlFeatureTest : FileBasedTests {
 
     @Test fun `should load properties file`() {
         verify("app.yml").expectThat {
-            get { this["THIS_IS_A_NESTED"] }.isEqualTo("value")
+            get { this["this.is.a.nested"] }.isEqualTo("value")
         }
     }
 

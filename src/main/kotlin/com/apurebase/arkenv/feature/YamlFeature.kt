@@ -12,7 +12,6 @@ class YamlFeature(
 
     override fun parse(stream: InputStream): Map<String, String> {
         Yaml().load<Map<String, Any?>>(stream)?.map { (key, value) -> parse(key, value) }
-        println(keyValue)
         return keyValue
     }
 
