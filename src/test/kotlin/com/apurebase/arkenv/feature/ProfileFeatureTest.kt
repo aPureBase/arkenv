@@ -1,6 +1,7 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.test.DEPRECATED
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
@@ -57,15 +58,26 @@ internal class ProfileFeatureTest {
 
     @Test fun `should be able to override properties`() {
         Ark().parse("arkenv-profile=dev", "--port", "6000").expectThat {
-            expect(6000, "profile-test")
+            expect(6000, defaultName)
         }
     }
 
-    private fun Assertion.Builder<Ark>.isDefault() = expect(80, "profile-test", null)
+    @Test fun `should parse multiple comma-separated profiles`() {
+        Ark().parse("ARKENV_PROFILE", "prod,dev").expectThat {
+            expect(devPort, prodName)
+        }
+    }
 
-    private fun Assertion.Builder<Ark>.isDevelopment(other: String? = null) = expect(5000, "profile-test", other)
+    private val prodPort = 443
+    private val devPort = 5000
+    private val prodName = "production"
+    private val defaultName = "profile-test"
 
-    private fun Assertion.Builder<Ark>.isProduction() = expect(443, "production", null)
+    private fun Assertion.Builder<Ark>.isDefault() = expect(80, defaultName, null)
+
+    private fun Assertion.Builder<Ark>.isDevelopment(other: String? = null) = expect(devPort, defaultName, other)
+
+    private fun Assertion.Builder<Ark>.isProduction() = expect(prodPort, prodName, null)
 
     private fun Assertion.Builder<Ark>.expect(port: Int, name: String, other: String? = null) {
         get { this.port }.isEqualTo(port)

@@ -37,9 +37,9 @@ class HttpFeature(
         val encryptedPrefix = arkenv.getOrNull("ARKENV_HTTP_ENCRYPTION_PREFIX") ?: "{cipher}"
         val label = arkenv["ARKENV_LABEL"]
         val profileFeature = arkenv.findFeature<ProfileFeature>()
-        val appProfile = profileFeature?.profile
+        val profile = profileFeature?.profiles?.joinToString()
         httpClient
-            .resolveUrls(rootUrl, arkenv.programName, appProfile, label)
+            .resolveUrls(rootUrl, arkenv.programName, profile, label)
             .map(::parse)
             .reduce { acc, map -> acc + map }
             .let { decryptData(it, encryptedPrefix) }
