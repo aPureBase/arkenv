@@ -64,7 +64,7 @@ abstract class Arkenv(
                 .append(doubleIndent)
                 .append(delegate.property.name)
                 .append(doubleIndent)
-                .append(delegate.getValue())
+                .append(delegate.getValue(this, delegate.property))
                 .appendln()
         }
     }.toString()
@@ -112,7 +112,7 @@ abstract class Arkenv(
                 feature.configure(it.argument)
             }
             it.reset()
-            val value = it.getValue()
+            val value = it.getValue(this, it.property)
             onParseArgument(it.property.name, it.argument, value)
         }
 }
