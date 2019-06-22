@@ -6,7 +6,7 @@ import com.apurebase.arkenv.feature.ProfileFeature
 import com.apurebase.arkenv.feature.PropertyFeature
 import com.apurebase.arkenv.findFeature
 import com.apurebase.arkenv.get
-import com.apurebase.arkenv.getOrNull
+import com.apurebase.arkenv.putAll
 import java.net.URL
 import javax.crypto.Cipher
 import javax.xml.bind.DatatypeConverter
@@ -43,7 +43,7 @@ class HttpFeature(
             .map(::parse)
             .reduce { acc, map -> acc + map }
             .let { decryptData(it, encryptedPrefix) }
-            .let(arkenv.keyValue::putAll)
+            .let(arkenv::putAll)
     }
 
     private fun parse(url: URL) = httpClient.get(url).use(PropertyFeature.Companion::parseProperties)

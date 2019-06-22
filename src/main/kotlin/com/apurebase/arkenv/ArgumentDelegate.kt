@@ -48,10 +48,19 @@ class ArgumentDelegate<T : Any?>(
         return value
     }
 
+    private fun <T> checkValidation(validation: List<Argument.Validation<T>>, value: T, property: KProperty<*>) =
+        validation
+            .filterNot { it.assertion(value) }
+            .map { it.message }
+            .let {
+                if (it.isNotEmpty()) it
+                    .reduce { acc, s -> "$acc. $s" }
+                    .run { throw ValidationException(property, value, this) }
+            }
+
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
-        val values = arkenv.configuration.features.mapNotNull { it.onParse(arkenv, this) } +
-                argument.names.mapNotNull(arkenv::getOrNull)
+        val values = arkenv.parseDelegate(this, argument.names)
         return when {
             isBoolean -> mapBoolean(values)
             values.isEmpty() -> {
@@ -62,7 +71,14 @@ class ArgumentDelegate<T : Any?>(
         }
     }
 
-    private fun map(value: String): T = mapping(parsePlaceholders(value, arkenv))
+    private fun <T> readInput(mapping: (String) -> T): T? {
+        println("Accepting input for ${property.name}: ")
+        val input = readLine()
+        return if (input == null) null
+        else mapping(input)
+    }
+
+    private fun map(value: String): T = mapping(value)
 
     @Suppress("UNCHECKED_CAST")
     private fun mapBoolean(values: Collection<String>): T {
@@ -74,13 +90,15 @@ class ArgumentDelegate<T : Any?>(
     }
 
     private fun checkNullable(property: KProperty<*>) {
-        if (!isHelp && !property.returnType.isMarkedNullable && valuesAreNull()) {
+        if (!isHelp() && !property.returnType.isMarkedNullable && valuesAreNull()) {
             val nameInfo = if (argument.isMainArg) "Main argument" else argument.names.joinToString()
             throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
         }
     }
 
-    private val isHelp get() = argument.isHelp || arkenv.isHelp()
+    private fun isHelp(): Boolean {
+        return argument.isHelp || arkenv.isHelp()
+    }
 
     private fun valuesAreNull(): Boolean = value == null && defaultValue == null
 }

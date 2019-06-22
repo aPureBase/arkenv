@@ -12,5 +12,10 @@ MULTI_STRING: >
 this:
   is:
     some: other
+    an:
+      array:
+        - a
+        - b
+        - c
     a:
       nested: value

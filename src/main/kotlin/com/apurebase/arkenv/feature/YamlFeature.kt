@@ -4,6 +4,11 @@ import com.apurebase.arkenv.Arkenv
 import org.yaml.snakeyaml.Yaml
 import java.io.InputStream
 
+/**
+ * Adds support for loading configuration from yaml files.
+ * Nested keys will be concatenated using an underscore (_).
+ * Arrays will be parsed as a comma-separated string.
+ */
 class YamlFeature(
     file: String = "application.yml",
     locations: Collection<String> = listOf()
@@ -21,10 +26,7 @@ class YamlFeature(
         when (value) {
             is Map<*, *> -> (value as? Map<String, Any?>)?.forEach { (k, v) -> parse("${key}_$k", v) }
             is ArrayList<*> -> this[key] = value.joinToString()
-            else -> {
-                println(value!!::class)
-                this[key] = value.toString()
-            }
+            else -> this[key] = value.toString()
         }
     }
 }
