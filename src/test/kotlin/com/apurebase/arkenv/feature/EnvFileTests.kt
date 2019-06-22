@@ -11,7 +11,7 @@ import java.io.FileNotFoundException
 
 class EnvFileTests {
 
-    private class EnvFileArk(dotEnvFilePath: String?) : Arkenv(configuration = {
+    private class EnvFileArk(dotEnvFilePath: String?) : Arkenv("Test", configureArkenv {
         install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvFilePath))
     }) {
         val mysqlPassword: String by argument("--mysql-password")

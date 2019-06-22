@@ -1,7 +1,6 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.EnvironmentVariableFeature
-import com.apurebase.arkenv.feature.PlaceholderParser
 
 /**
  * The base class that provides the argument parsing capabilities.
@@ -74,16 +73,16 @@ abstract class Arkenv(
         keyValue[key.toSnakeCase()] = value
     }
 
-    private fun process() = keyValue.replaceAll { key, value ->
-        processValue(key, value)
+    private fun process() {
+        configuration.processorFeatures.forEach { it.arkenv = this }
+        keyValue.replaceAll { key, value ->
+            processValue(key, value)
+        }
     }
 
     private fun processValue(key: String, value: String): String = configuration
         .processorFeatures
-        .fold(value) { acc, feature ->
-            feature.arkenv = this
-            feature.process(key, acc)
-        }
+        .fold(value) { acc, feature -> feature.process(key, acc) }
 
     /**
      * Retrieves the parsed value for the given [key] or null if not found.
