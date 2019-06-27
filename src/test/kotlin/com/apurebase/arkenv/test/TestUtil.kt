@@ -10,4 +10,6 @@ fun getTestResourcePath(name: String): String = File("src/test/resources/$name")
 
 fun <T : Arkenv> T.parse(vararg arguments: String) = apply { parseArguments(arguments) }
 
+fun getTestResource(name: String) = MockSystem::class.java.classLoader.getResource(name).readText()
+
 const val DEPRECATED = "Property files are no longer required, can be null."

@@ -1,6 +1,9 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.ArkenvBuilder
+import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
@@ -11,13 +14,13 @@ import strikt.assertions.isEqualTo
 
 class ProfileFeatureCustomizationTest {
 
-    private open class Ark(config: ArkenvBuilder.() -> Unit = {}) : Arkenv(configuration = config) {
+    private open class Ark(config: ArkenvBuilder = ArkenvBuilder()) : Arkenv("Test", config) {
         val port: Int by argument("--port")
         val name: String by argument("--name")
         val other: String? by argument("-o", "--other")
     }
 
-    private class PrefixArk(prefix: String, vararg arguments: String) : Ark(config = {
+    private class PrefixArk(prefix: String, vararg arguments: String) : Ark(configureArkenv {
         install(ProfileFeature(prefix = prefix))
     }) {
         init {
@@ -42,7 +45,7 @@ class ProfileFeatureCustomizationTest {
         }
     }
 
-    private class LocationArk(locations: Collection<String>, vararg arguments: String) : Ark(config = {
+    private class LocationArk(locations: Collection<String>, vararg arguments: String) : Ark(configureArkenv {
         install(ProfileFeature(locations = locations))
     }) {
         init {

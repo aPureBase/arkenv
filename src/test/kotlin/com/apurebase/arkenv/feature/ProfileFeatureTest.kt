@@ -2,6 +2,7 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.DEPRECATED
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
@@ -15,7 +16,7 @@ import strikt.assertions.isEqualTo
 
 internal class ProfileFeatureTest {
 
-    private class Ark : Arkenv("Test", {
+    private class Ark : Arkenv("Test", configureArkenv {
         install(ProfileFeature())
     }) {
         val port: Int by argument("--port")

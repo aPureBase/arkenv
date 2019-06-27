@@ -1,0 +1,21 @@
+# Comments are allowed
+mysql:
+  password: this_is_expected
+database:
+  host: localhost
+  port: 5050
+MULTI_STRING: >
+  this
+  stretches
+  lines
+
+this:
+  is:
+    some: other
+    an:
+      array:
+        - a
+        - b
+        - c
+    a:
+      nested: value

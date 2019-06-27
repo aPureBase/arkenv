@@ -1,16 +1,14 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.argument
-import com.apurebase.arkenv.parse
+import com.apurebase.arkenv.*
 import com.apurebase.arkenv.toSnakeCase
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 import java.util.*
 
-class PropertyFeature(
-    private val file: String = "application.properties",
+open class PropertyFeature(
+    protected val file: String = "application.properties",
     locations: Collection<String> = listOf()
 ) : ArkenvFeature, Arkenv("PropertyFeature") {
 
@@ -23,13 +21,12 @@ class PropertyFeature(
 
     override fun onLoad(arkenv: Arkenv) {
         parse(arkenv.argList.toTypedArray())
-        loadProperties(file, arkenv.keyValue)
+        loadProperties(file)?.let(arkenv::putAll)
     }
 
-    private fun loadProperties(file: String, keyValue: MutableMap<String, String>) =
-        getStream(file)
-            ?.use(::parseProperties)
-            ?.let(keyValue::putAll)
+    private fun loadProperties(file: String): Map<String, String>? = getStream(file)?.use(::parse)
+
+    protected open fun parse(stream: InputStream): Map<String, String> = parseProperties(stream)
 
     private fun getStream(name: String): InputStream? {
         locations
@@ -38,7 +35,6 @@ class PropertyFeature(
                 val stream = getFileStream(it) ?: getResourceStream(it)
                 if (stream != null) return stream
             }
-        //throw IllegalArgumentException("Could not find property file for $name. Locations: $locations")
         return null
     }
 
@@ -46,11 +42,9 @@ class PropertyFeature(
         if (location.isNotBlank() && !location.endsWith('/')) "$location/"
         else location
 
-    private fun getFileStream(name: String): FileInputStream? =
-        File(name).takeIf(File::exists)?.inputStream()
+    private fun getFileStream(name: String): FileInputStream? = File(name).takeIf(File::exists)?.inputStream()
 
-    private fun getResourceStream(name: String): InputStream? =
-        Arkenv::class.java.classLoader.getResourceAsStream(name)
+    private fun getResourceStream(name: String): InputStream? = Arkenv::class.java.classLoader.getResourceAsStream(name)
 
     companion object {
         fun parseProperties(stream: InputStream): Map<String, String> =

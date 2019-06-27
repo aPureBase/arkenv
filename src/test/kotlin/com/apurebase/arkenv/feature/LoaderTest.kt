@@ -2,6 +2,8 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.configureArkenv
+import com.apurebase.arkenv.putAll
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldEqualTo
@@ -11,11 +13,10 @@ import org.yaml.snakeyaml.Yaml
 import strikt.assertions.isEqualTo
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.set
 
 class LoaderTest {
 
-    private open class Ark(feature: ArkenvFeature) : Arkenv(configuration = {
+    private open class Ark(feature: ArkenvFeature) : Arkenv("Test", configureArkenv {
         install(feature)
     }) {
         val port: Int by argument("--port")
@@ -24,7 +25,7 @@ class LoaderTest {
     @Test fun `custom loader`() {
         val feature = object : ArkenvFeature {
             override fun onLoad(arkenv: Arkenv) {
-                arkenv.keyValue["PORT"] = "99"
+                arkenv["PORT"] = "99"
             }
         }
 
@@ -38,7 +39,8 @@ class LoaderTest {
             override fun onLoad(arkenv: Arkenv) {
                 val map = (Yaml().load(yaml) as Map<String, Any>)
                     .map { (key, value) -> key.toUpperCase() to value.toString() }
-                arkenv.keyValue.putAll(map)
+                    .toMap()
+                arkenv.putAll(map)
             }
         }
 

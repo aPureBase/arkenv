@@ -5,6 +5,7 @@ import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.getTestResourcePath
 import com.apurebase.arkenv.test.parse
+import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
@@ -13,7 +14,7 @@ import strikt.assertions.isEqualTo
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PlaceholderTests {
 
-    private class Ark(config: ArkenvBuilder.() -> Unit = {}) : Arkenv(configuration = config) {
+    private class Ark(config: ArkenvBuilder.() -> Unit = {}) : Arkenv("Test", configureArkenv(config)) {
         val name: String by argument("--app-name")
         val description: String by argument("--app-description")
     }
@@ -23,6 +24,10 @@ class PlaceholderTests {
             install(PropertyFeature("placeholders.properties"))
         }
         ark.parse()
+//            .also {
+//                it.getAll().let { println(it) }
+//                it["APP_NAME"] `should be equal to` "MYAPP"
+//            }
             .verify()
     }
 

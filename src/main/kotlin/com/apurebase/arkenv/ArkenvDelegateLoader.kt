@@ -12,7 +12,7 @@ class ArkenvDelegateLoader<T : Any>(
     private val arkenv: Arkenv
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, T> = when {
-        names.isEmpty()  -> createDelegate(prop, listOf("--${prop.name.toSnakeCase()}"))
+        names.isEmpty() -> createDelegate(prop, listOf("--${prop.name.toSnakeCase()}"))
         else -> createDelegate(prop, names)
     }
 
@@ -37,10 +37,10 @@ class ArkenvDelegateLoader<T : Any>(
     @Suppress("UNCHECKED_CAST")
     private fun getMapping(prop: KProperty<*>): (String) -> T = { value ->
         when (kClass) {
-            Int::class -> value.toIntOrNull() as T
-            Long::class -> value.toLongOrNull() as T
-            String::class -> value as T
+            Int::class -> value.toIntOrNull()
+            Long::class -> value.toLongOrNull()
+            String::class -> value
             else -> throw IllegalArgumentException("${prop.name} ($kClass) is not supported")
-        }
+        } as T
     }
 }

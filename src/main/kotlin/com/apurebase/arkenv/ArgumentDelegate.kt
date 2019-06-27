@@ -1,5 +1,6 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.Argument.Validation
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -36,8 +37,6 @@ class ArgumentDelegate<T : Any?>(
         else -> throw IllegalStateException("Attempted to set value to true but ${property.name} is not boolean")
     }
 
-    fun getValue(): Any? = getValue(this, property)
-
     override operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
         if (!isSet) {
             value = setValue(property)
@@ -48,21 +47,32 @@ class ArgumentDelegate<T : Any?>(
         return value
     }
 
+    private fun <T> checkValidation(validation: List<Validation<T>>, value: T, property: KProperty<*>) = validation
+        .filterNot { it.assertion(value) }
+        .map { it.message }
+        .let {
+            if (it.isNotEmpty()) it
+                .reduce { acc, s -> "$acc. $s" }
+                .run { throw ValidationException(property, value, this) }
+        }
+
     @Suppress("UNCHECKED_CAST")
     private fun setValue(property: KProperty<*>): T {
-        val values = arkenv.builder.features.mapNotNull { it.onParse(arkenv, this) } +
-                argument.names.mapNotNull(arkenv::getOrNull)
+        val values = arkenv.parseDelegate(this, argument.names)
         return when {
             isBoolean -> mapBoolean(values)
-            values.isEmpty() -> {
-                if (argument.acceptsManualInput) readInput(::map) ?: defaultValue as T
-                else defaultValue as T
-            }
+            values.isEmpty() -> (if (argument.acceptsManualInput) readInput() else defaultValue) as T
             else -> map(values.first())
         }
     }
 
-    private fun map(value: String): T = mapping(parsePlaceholders(value, arkenv))
+    private fun readInput(): T? {
+        println("Accepting input for ${property.name}: ")
+        val input = readLine() ?: return defaultValue
+        return map(input)
+    }
+
+    private fun map(value: String): T = mapping(value)
 
     @Suppress("UNCHECKED_CAST")
     private fun mapBoolean(values: Collection<String>): T {
@@ -74,13 +84,12 @@ class ArgumentDelegate<T : Any?>(
     }
 
     private fun checkNullable(property: KProperty<*>) {
-        if (!isHelp && !property.returnType.isMarkedNullable && valuesAreNull()) {
+        val valuesAreNull = value == null && defaultValue == null
+        if (valuesAreNull && !isHelp() && !property.returnType.isMarkedNullable) {
             val nameInfo = if (argument.isMainArg) "Main argument" else argument.names.joinToString()
             throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
         }
     }
 
-    private val isHelp get() = argument.isHelp || arkenv.isHelp()
-
-    private fun valuesAreNull(): Boolean = value == null && defaultValue == null
+    private fun isHelp(): Boolean = argument.isHelp || arkenv.isHelp()
 }

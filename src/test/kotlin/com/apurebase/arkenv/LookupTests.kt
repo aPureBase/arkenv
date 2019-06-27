@@ -15,7 +15,7 @@ import strikt.assertions.isNotNull
 
 class LookupTests {
 
-    private class Ark : Arkenv("Test", {
+    private class Ark : Arkenv("Test", configureArkenv {
         clearInputAfterParse = false
         install(PropertyFeature())
     })

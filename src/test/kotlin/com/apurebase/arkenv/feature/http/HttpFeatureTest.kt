@@ -2,6 +2,7 @@ package com.apurebase.arkenv.feature.http
 
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.feature.ProfileFeature
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
@@ -20,7 +21,7 @@ class HttpFeatureTest {
     private val appName = "Arkenv-Client"
     private val rootUrl = "http://localhost:8888"
 
-    private inner class Ark(url: String, responseMap: Map<URL, String>) : Arkenv(appName, {
+    private inner class Ark(url: String, responseMap: Map<URL, String>) : Arkenv(appName, configureArkenv {
         install(ProfileFeature())
         install(HttpFeature(url, MockClient(responseMap), decryptCipher))
     }) {

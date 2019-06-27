@@ -1,6 +1,9 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.ArkenvBuilder
+import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
@@ -11,7 +14,7 @@ import strikt.assertions.isEqualTo
 
 internal class EnvironmentVariableFeatureTest {
 
-    private class EnvArgs(withEnv: Boolean, config: ArkenvBuilder.() -> Unit = {}) : Arkenv("Test", {
+    private class EnvArgs(withEnv: Boolean, config: ArkenvBuilder.() -> Unit = {}) : Arkenv("Test", configureArkenv {
         if (withEnv) install(EnvironmentVariableFeature())
         else uninstall(EnvironmentVariableFeature())
         config()
