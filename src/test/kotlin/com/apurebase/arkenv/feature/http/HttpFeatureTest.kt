@@ -4,6 +4,7 @@ import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.feature.Encryption
+import com.apurebase.arkenv.feature.EncryptionTest
 import com.apurebase.arkenv.feature.ProfileFeature
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
@@ -11,11 +12,6 @@ import org.junit.jupiter.api.Test
 import strikt.assertions.isEqualTo
 import java.io.InputStream
 import java.net.URL
-import java.security.Key
-import java.security.KeyPair
-import java.security.KeyPairGenerator
-import javax.crypto.Cipher
-import javax.xml.bind.DatatypeConverter
 
 class HttpFeatureTest {
 
@@ -25,7 +21,7 @@ class HttpFeatureTest {
     private inner class Ark(url: String, responseMap: Map<URL, String>) : Arkenv(appName, configureArkenv {
         install(ProfileFeature())
         install(HttpFeature(url, MockClient(responseMap)))
-        install(Encryption(decryptCipher))
+        install(Encryption(EncryptionTest.decryptCipher))
     }) {
         val message: String by argument()
         val status: Int by argument()
@@ -47,27 +43,12 @@ class HttpFeatureTest {
             }
     }
 
-    private fun generateKey(): KeyPair =
-        KeyPairGenerator
-            .getInstance("RSA")
-            .apply { initialize(512) }
-            .genKeyPair()
-
-    private fun Key.makeCipher(mode: Int): Cipher = Cipher.getInstance("RSA").also { it.init(mode, this) }
-
-    private fun encrypt(input: String) = encryptCipher
-        .doFinal(input.toByteArray())
-        .let { DatatypeConverter.printHexBinary(it) }
-
-    private val keyPair = generateKey()
-    private val encryptCipher = keyPair.public.makeCipher(Cipher.ENCRYPT_MODE)
-    private val decryptCipher = keyPair.private.makeCipher(Cipher.DECRYPT_MODE)
     private val password = "mysecret"
     private val response = """
                 message: Hello world
                 nested.item: 1
                 status: 100
-                spring.datasource.password: {cipher}${encrypt(password)}
+                spring.datasource.password: {cipher}${EncryptionTest.encrypt(password)}
             """.trimIndent()
 
     private inner class MockClient(private val responseMap: Map<URL, String>) : HttpClientImpl() {

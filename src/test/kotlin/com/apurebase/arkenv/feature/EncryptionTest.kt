@@ -36,19 +36,19 @@ internal class EncryptionTest {
             }
     }
 
-    private fun generateKey(): KeyPair = KeyPairGenerator
-        .getInstance("RSA")
-        .apply { initialize(512) }
-        .genKeyPair()
+    companion object {
+        private fun generateKey(): KeyPair = KeyPairGenerator
+            .getInstance("RSA")
+            .apply { initialize(512) }
+            .genKeyPair()
 
-    private fun Key.makeCipher(mode: Int): Cipher = Cipher.getInstance("RSA").also { it.init(mode, this) }
+        private fun Key.makeCipher(mode: Int): Cipher = Cipher.getInstance("RSA").also { it.init(mode, this) }
+        private val keyPair = generateKey()
+        private val encryptCipher = keyPair.public.makeCipher(Cipher.ENCRYPT_MODE)
+        val decryptCipher = keyPair.private.makeCipher(Cipher.DECRYPT_MODE)
 
-    private fun encrypt(input: String) = encryptCipher
-        .doFinal(input.toByteArray())
-        .let { DatatypeConverter.printHexBinary(it) }
-
-    private val keyPair = generateKey()
-    private val encryptCipher = keyPair.public.makeCipher(Cipher.ENCRYPT_MODE)
-    private val decryptCipher = keyPair.private.makeCipher(Cipher.DECRYPT_MODE)
-
+        fun encrypt(input: String): String = encryptCipher
+            .doFinal(input.toByteArray())
+            .let { DatatypeConverter.printHexBinary(it) }
+    }
 }
