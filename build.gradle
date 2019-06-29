@@ -88,7 +88,7 @@ allprojects {
         configurations = ['archives']
         pkg {
             repo = 'apurebase'
-            name = 'arkenv'
+            name = project.name
             licenses = ['Apache-2.0']
             vcsUrl = 'git@gitlab.com:apurebase/arkenv.git'
             websiteUrl = 'https://gitlab.com/apurebase/arkenv'
@@ -104,7 +104,7 @@ allprojects {
                 MyPublication(MavenPublication) {
                     from components.java
                     groupId 'com.apurebase'
-                    artifactId 'arkenv'
+                    artifactId project.name
                     artifact sourcesJar
                     version version
                 }
@@ -117,7 +117,7 @@ allprojects {
     tasks.test.finalizedBy jacocoTestReport
 
     jacoco {
-        toolVersion = "0.8.1"
+        toolVersion = "0.8.4"
         reportsDir = file("$buildDir/reports")
     }
 
