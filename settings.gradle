@@ -1,2 +1,3 @@
-rootProject.name = 'arkenv'
-
+rootProject.name = 'core'
+include 'arkenv'
+include 'arkenv-yaml'

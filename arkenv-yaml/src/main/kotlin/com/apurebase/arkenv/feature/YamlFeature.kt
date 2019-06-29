@@ -19,7 +19,7 @@ class YamlFeature(
         return getAll()
     }
 
-    override fun finally(arkenv: Arkenv) = clearInput()
+    override fun finally(arkenv: Arkenv) = clear()
 
     @Suppress("UNCHECKED_CAST")
     private fun parse(key: String, value: Any?) {
