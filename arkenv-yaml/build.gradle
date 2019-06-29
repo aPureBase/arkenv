@@ -1,0 +1,8 @@
+dependencies {
+    compile project(':arkenv')
+    compile 'org.yaml:snakeyaml:1.24'
+
+    testCompile project(':arkenv').sourceSets.test.output
+}
+
+
