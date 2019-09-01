@@ -38,6 +38,9 @@ abstract class Arkenv(
         if (configuration.clearInputAfterParse) clear()
     }
 
+    /**
+     * Clears all loaded data from memory.
+     */
     fun clear() {
         argList.clear()
         keyValue.clear()

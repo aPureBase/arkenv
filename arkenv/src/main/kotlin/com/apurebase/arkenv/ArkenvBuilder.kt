@@ -11,19 +11,36 @@ import com.apurebase.arkenv.feature.cli.CliFeature
  */
 class ArkenvBuilder {
 
+    /**
+     * Whether data should be cleared before parsing.
+     */
     var clearInputBeforeParse = false
+
+    /**
+     * Whether data should be cleared after parsing
+     */
     var clearInputAfterParse = true
+
     internal val features: MutableList<ArkenvFeature> = mutableListOf()
     internal val processorFeatures: MutableList<ProcessorFeature> = mutableListOf()
 
+    /**
+     * Installs the [feature] into [Arkenv].
+     */
     fun install(feature: ArkenvFeature) {
         features.add(feature)
     }
 
+    /**
+     * Installs the [feature] for processing.
+     */
     fun install(feature: ProcessorFeature) {
         processorFeatures.add(feature)
     }
 
+    /**
+     * Uninstalls the [feature] from [Arkenv] if installed.
+     */
     fun uninstall(feature: ArkenvFeature) {
         features.removeIf {
             feature.getKeyValPair().first == it.getKeyValPair().first
