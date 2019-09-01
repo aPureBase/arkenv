@@ -30,3 +30,6 @@ internal fun String.ensureEndsWith(char: Char): String =
 internal fun String.mapRelaxed(): String =
     if (isAdvancedName()) "--" + toSnakeCase()
     else this
+
+internal const val DEPRECATED_GENERAL = "Will be removed in future major version"
+internal const val DEPRECATED_USE_FEATURE = "Will be removed in future major version. Use Features instead."

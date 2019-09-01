@@ -21,6 +21,7 @@ import java.net.URL
  *
  * @param rootUrl the root url of the endpoint to query
  * @param httpClient handler for resolving urls
+ * @since 2.1.0
  */
 class HttpFeature(
     private val rootUrl: String,

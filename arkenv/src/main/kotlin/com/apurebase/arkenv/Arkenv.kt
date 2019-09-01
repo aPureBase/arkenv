@@ -13,7 +13,7 @@ abstract class Arkenv(
     internal val configuration: ArkenvBuilder = ArkenvBuilder()
 ) {
 
-    @Deprecated("Will be removed in future major version")
+    @Deprecated(DEPRECATED_GENERAL)
     constructor(programName: String = "Arkenv", configuration: (ArkenvBuilder.() -> Unit))
             : this(programName, configureArkenv(configuration))
 
@@ -43,11 +43,11 @@ abstract class Arkenv(
         keyValue.clear()
     }
 
-    @Deprecated("Will be removed in future major version. Use Features instead.")
+    @Deprecated(DEPRECATED_USE_FEATURE)
     open fun onParse(args: Array<out String>) {
     }
 
-    @Deprecated("Will be removed in future major version. Use Features instead.")
+    @Deprecated(DEPRECATED_USE_FEATURE)
     open fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {
     }
 
@@ -95,6 +95,9 @@ abstract class Arkenv(
         return result ?: EnvironmentVariableFeature.getEnv(key, false)
     }
 
+    /**
+     * Retrieves all parsed data as a Map.
+     */
     fun getAll(): Map<String, String> = keyValue
 
     internal fun parseDelegate(delegate: ArgumentDelegate<*>, names: List<String>): List<String> {

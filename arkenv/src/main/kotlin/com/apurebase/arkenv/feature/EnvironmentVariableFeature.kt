@@ -69,7 +69,7 @@ class EnvironmentVariableFeature(
         private fun getKebabCase(name: String) = System.getenv(name.replace('_', '-').toLowerCase())
 
         private fun getCamelCase(name: String): String? = System.getenv(
-            name.toLowerCase().split('_').joinToString("") { it.capitalize() }.decapitalize()
+            name.toLowerCase().split('_').joinToString("", transform = String::capitalize).decapitalize()
         )
 
         private fun getEnvSecret(lookup: String, enableEnvSecrets: Boolean): String? = when {

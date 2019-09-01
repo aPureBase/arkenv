@@ -8,6 +8,9 @@ import java.io.InputStream
  * Adds support for loading configuration from yaml files.
  * Nested keys will be concatenated using an underscore (_).
  * Arrays will be parsed as a comma-separated string.
+ * @param file
+ * @param locations
+ * @since 2.1.0
  */
 class YamlFeature(
     file: String = "application.yml",
@@ -25,7 +28,7 @@ class YamlFeature(
     private fun parse(key: String, value: Any?) {
         when (value) {
             is Map<*, *> -> (value as? Map<String, Any?>)?.forEach { (k, v) -> parse("${key}_$k", v) }
-            is ArrayList<*> -> this[key] = value.joinToString()
+            is ArrayList<*> -> this[key] = value.joinToString(",")
             else -> this[key] = value.toString()
         }
     }

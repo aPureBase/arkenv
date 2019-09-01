@@ -4,7 +4,7 @@ import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-class ArkenvDelegateLoader<T : Any>(
+class ArkenvDelegateLoader<T : Any> internal constructor(
     private val names: List<String>,
     private val isMainArg: Boolean = false,
     private val block: Argument<T>.() -> Unit = {},
@@ -34,7 +34,7 @@ class ArkenvDelegateLoader<T : Any>(
         else it.mapRelaxed()
     }
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
     private fun getMapping(prop: KProperty<*>): (String) -> T = { value ->
         when (kClass) {
             Int::class -> value.toIntOrNull()

@@ -6,6 +6,9 @@ import com.apurebase.arkenv.feature.PlaceholderParser
 import com.apurebase.arkenv.feature.ProcessorFeature
 import com.apurebase.arkenv.feature.cli.CliFeature
 
+/**
+ * [Arkenv] configuration builder which controls features and other settings.
+ */
 class ArkenvBuilder {
 
     var clearInputBeforeParse = false
@@ -34,4 +37,7 @@ class ArkenvBuilder {
     }
 }
 
+/**
+ * Configure [Arkenv] settings.
+ */
 inline fun configureArkenv(block: (ArkenvBuilder.() -> Unit)) = ArkenvBuilder().apply(block)

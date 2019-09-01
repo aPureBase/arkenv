@@ -3,6 +3,9 @@ package com.apurebase.arkenv.feature.http
 import java.io.InputStream
 import java.net.URL
 
+/**
+ * The default [HttpClient] implementation.
+ */
 open class HttpClientImpl : HttpClient {
 
     override fun resolveUrls(rootUrl: String, name: String, profile: String?, label: String?): Iterable<URL> =

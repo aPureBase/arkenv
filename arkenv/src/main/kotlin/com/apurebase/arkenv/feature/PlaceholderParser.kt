@@ -5,7 +5,11 @@ import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.feature.EnvironmentVariableFeature.Companion.getEnv
 import com.apurebase.arkenv.toSnakeCase
 
-internal class PlaceholderParser: ProcessorFeature {
+/**
+ * Evaluates placeholders in parsed configuration data.
+ * @since 2.1.0
+ */
+internal class PlaceholderParser : ProcessorFeature {
 
     override lateinit var arkenv: Arkenv
 

@@ -1,12 +1,14 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
-import com.apurebase.arkenv.toSnakeCase
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 import java.util.*
 
+/**
+ * Loads configuration from property files.
+ */
 open class PropertyFeature(
     protected val file: String = "application.properties",
     locations: Collection<String> = listOf()
@@ -47,7 +49,7 @@ open class PropertyFeature(
     private fun getResourceStream(name: String): InputStream? = Arkenv::class.java.classLoader.getResourceAsStream(name)
 
     companion object {
-        fun parseProperties(stream: InputStream): Map<String, String> =
+        internal fun parseProperties(stream: InputStream): Map<String, String> =
             Properties()
                 .apply { load(stream) }
                 .map { (key, value) -> key.toString().toSnakeCase() to value.toString() }

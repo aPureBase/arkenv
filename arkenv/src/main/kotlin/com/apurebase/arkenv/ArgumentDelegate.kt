@@ -4,7 +4,10 @@ import com.apurebase.arkenv.Argument.Validation
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-class ArgumentDelegate<T : Any?>(
+/**
+ * Delegate class for parsing arguments.
+ */
+class ArgumentDelegate<T : Any?> internal constructor(
     private val arkenv: Arkenv,
     val argument: Argument<T>,
     val property: KProperty<*>,

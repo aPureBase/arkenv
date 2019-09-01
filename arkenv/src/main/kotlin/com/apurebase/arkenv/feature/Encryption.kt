@@ -11,6 +11,7 @@ import javax.xml.bind.DatatypeConverter
  * By default, the prefix is *{cipher}*
  *
  * @param cipher The cipher used to decrypt the values
+ * @since 2.1.0
  */
 class Encryption(private val cipher: Cipher) : ProcessorFeature {
 
