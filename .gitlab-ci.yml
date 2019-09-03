@@ -24,7 +24,7 @@ build:
     - chmod +x ./gradlew
   script:
     - ./gradlew --build-cache assemble --no-daemon
-  
+
 
 test:
   stage: test
@@ -34,7 +34,7 @@ test:
       - .gradle
   artifacts:
     reports:
-      junit: build/test-results/test/TEST-*.xml
+      junit: ./*/build/test-results/test/TEST-*.xml
   before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - chmod +x ./gradlew
