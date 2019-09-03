@@ -23,6 +23,7 @@ class ArkenvBuilder {
 
     internal val features: MutableList<ArkenvFeature> = mutableListOf()
     internal val processorFeatures: MutableList<ProcessorFeature> = mutableListOf()
+    private val positionAtEnd = -1
 
     /**
      * Installs the [feature] into [Arkenv].
@@ -33,9 +34,13 @@ class ArkenvBuilder {
 
     /**
      * Installs the [feature] for processing.
+     * By default, the feature is put after already installed features.
+     * @param feature the functionality to install
+     * @param index the position of the [feature]
      */
-    fun install(feature: ProcessorFeature) {
-        processorFeatures.add(feature)
+    fun install(feature: ProcessorFeature, index: Int = positionAtEnd) {
+        if (index == positionAtEnd) processorFeatures.add(feature)
+        else processorFeatures.add(index, feature)
     }
 
     /**
