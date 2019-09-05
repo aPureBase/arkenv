@@ -43,7 +43,7 @@ class Arguments : Arkenv() {
         description = "A nullable Int, which doesn't have to be declared"
     }
 
-    val mapped: List<String> by argument("-m") {
+    val mapped: List<String> by argument {
         description = "Complex types can be achieved with a mapping"
         mapping = { it.split("|") }
     }

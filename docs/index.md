@@ -23,6 +23,7 @@ Supports the most common external configuration sources, including:
 * [Command Line]({{site.baseurl}}features/command-line)
 * [Environment Variables]({{site.baseurl}}features/environment-variables)
 * [Properties]({{site.baseurl}}features/properties)
+* [Yaml Support]({{site.baseurl}}features/yaml)
 * [Profiles]({{site.baseurl}}features/profiles)
 * [Boolean Merge]({{site.baseurl}}features/boolean-merge)
 * [Validation]({{site.baseurl}}features/validation)

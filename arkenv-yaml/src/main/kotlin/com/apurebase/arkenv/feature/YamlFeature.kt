@@ -8,14 +8,16 @@ import java.io.InputStream
  * Adds support for loading configuration from yaml files.
  * Nested keys will be concatenated using an underscore (_).
  * Arrays will be parsed as a comma-separated string.
- * @param file
- * @param locations
+ * @param file the name of the file to load from
+ * @param locations a collection of locations in which to look for the file
  * @since 2.1.0
  */
 class YamlFeature(
-    file: String = "application.yml",
+    file: String = "application",
     locations: Collection<String> = listOf()
 ) : PropertyFeature(file, locations) {
+
+    override val extensions: List<String> = listOf("yml", "yaml")
 
     override fun parse(stream: InputStream): Map<String, String> {
         Yaml().load<Map<String, Any?>>(stream)?.map { (key, value) -> parse(key, value) }
