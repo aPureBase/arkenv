@@ -13,15 +13,25 @@ class DockerSecretTests {
 
     private val pathToDockerSecretFile = "src/test/resources/file_containing_secret.txt"
 
-    @Test fun `should correctly load value from file`() {
-        val ark = object : Arkenv("Test", configureArkenv {
-            install(EnvironmentVariableFeature(enableEnvSecrets = true))
-        }) {
-            val apiKey: String by argument("--api-key")
-        }
-        MockSystem("API_KEY_FILE" to pathToDockerSecretFile)
-        ark.parse().expectThat {
-            get { apiKey }.isEqualTo("EXPECTED_CONTENT")
-        }
+    private class Ark(envSecrets: Boolean = true) : Arkenv("Test", configureArkenv {
+        install(EnvironmentVariableFeature(enableEnvSecrets = envSecrets))
+    }) {
+        val apiKey: String by argument("--api-key")
     }
+
+    @Test fun `should correctly load value from file`() {
+        val ark = Ark()
+        MockSystem("API_KEY_FILE" to pathToDockerSecretFile)
+        ark.parse()
+            .assertEnvSecretLoaded()
+    }
+
+    @Test fun `env secrects can be enabled via argument`() {
+        MockSystem("API_KEY_FILE" to pathToDockerSecretFile)
+        Ark(false)
+            .parse("ARKENV_ENV_SECRETS", "1")
+            .assertEnvSecretLoaded()
+    }
+
+    private fun Ark.assertEnvSecretLoaded() = expectThat { get { apiKey }.isEqualTo("EXPECTED_CONTENT") }
 }

@@ -6,9 +6,11 @@ import java.io.File
 /**
  * Provides environment variable support.
  * Loads and parses environment variables that are declared by arguments.
- * @property envPrefix a common prefix for all environment variables
- * @property enableEnvSecrets whether to enable docker secrets parsing. Will attempt to parse any environment variable
- * @property dotEnvFilePath location of the dot env file to read variables from
+ * @param envPrefix a common prefix for all environment variables
+ * @param enableEnvSecrets whether to enable docker secrets parsing. Will attempt to parse any environment variable.
+ * Can be set via the *ARKENV_ENV_SECRETS* argument.
+ * @param dotEnvFilePath location of the dot env file to read variables from. Defaults to *.env*
+ * Can be set via the *ARKENV_DOT_ENV_FILE* argument.
  */
 class EnvironmentVariableFeature(
     private val envPrefix: String? = null,
@@ -17,25 +19,25 @@ class EnvironmentVariableFeature(
 ) : ArkenvFeature {
 
     override fun onLoad(arkenv: Arkenv) {
-        loadEnvironmentVariables()?.let(arkenv::putAll)
+        loadEnvironmentVariables(arkenv.getOrNull("ARKENV_DOT_ENV_FILE"))
+            ?.let(arkenv::putAll)
     }
 
-    override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? =
-        parseEnvironmentVariables(delegate, enableEnvSecrets)
+    override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? = with(delegate) {
+        val envSecrets = enableEnvSecrets || arkenv.getOrNull("ARKENV_ENV_SECRETS") != null
+        if (argument.withEnv) {
+            val setEnvPrefix = argument.envPrefix ?: envPrefix ?: arkenv.getOrNull("ARKENV_ENV_PREFIX") ?: ""
+            getEnvValue(argument, envSecrets, setEnvPrefix)
+        } else null
+    }
 
+    @Deprecated(DEPRECATED_GENERAL)
     override fun configure(argument: Argument<*>) {
         argument.withEnv = true
         argument.envPrefix = envPrefix
     }
 
-    private fun parseEnvironmentVariables(
-        delegate: ArgumentDelegate<*>,
-        enableEnvSecrets: Boolean
-    ): String? = with(delegate) {
-        if (argument.withEnv) getEnvValue(argument, enableEnvSecrets) else null
-    }
-
-    private fun getEnvValue(argument: Argument<*>, enableEnvSecrets: Boolean): String? {
+    private fun getEnvValue(argument: Argument<*>, enableEnvSecrets: Boolean, prefix: String): String? {
         // If an envVariable is defined we'll pick this as highest order value
         argument.envVariable?.let {
             val definedEnvValue = getEnv(it, enableEnvSecrets)
@@ -46,18 +48,24 @@ class EnvironmentVariableFeature(
         return argument.names
             .asSequence()
             .filter(String::isAdvancedName)
-            .map { parseArgumentName(argument, it) }
+            .map { parseArgumentName(it, prefix) }
             .mapNotNull { getEnv(it, enableEnvSecrets) }
             .firstOrNull()
     }
 
-    private fun parseArgumentName(argument: Argument<*>, name: String): String =
-        (argument.envPrefix?.toSnakeCase()?.ensureEndsWith('_') ?: "") + name.toSnakeCase()
+    private fun parseArgumentName(name: String, prefix: String): String =
+        prefix.toSnakeCase().ensureEndsWith('_') + name.toSnakeCase()
 
-    private fun loadEnvironmentVariables(): Map<String, String>? = when {
-        dotEnvFilePath != null -> parseDotEnv(dotEnvFilePath)
-        else -> null
-    }
+    private fun loadEnvironmentVariables(parsedDotEnvFilePath: String?): Map<String, String>? =
+        (parsedDotEnvFilePath ?: dotEnvFilePath)?.let(::parseDotEnv)
+
+    private fun parseDotEnv(path: String): Map<String, String>? =
+        File(path).useLines { lines ->
+            lines.map(String::trimStart)
+                .filterNot { it.isBlank() || it.startsWith("#") }
+                .map { it.split("=") }
+                .associate { it[0].trimEnd() to it[1].substringBefore('#').trim() }
+        }
 
     companion object {
         internal fun getEnv(name: String, enableEnvSecrets: Boolean): String? =
@@ -75,13 +83,6 @@ class EnvironmentVariableFeature(
         private fun getEnvSecret(lookup: String, enableEnvSecrets: Boolean): String? = when {
             enableEnvSecrets -> System.getenv("${lookup}_FILE")?.let(::File)?.readText()
             else -> null
-        }
-
-        private fun parseDotEnv(path: String): Map<String, String> = File(path).useLines { lines ->
-            lines.map(String::trimStart)
-                .filterNot { it.isBlank() || it.startsWith("#") }
-                .map { it.split("=") }
-                .associate { it[0].trimEnd() to it[1].substringBefore('#').trim() }
         }
     }
 }

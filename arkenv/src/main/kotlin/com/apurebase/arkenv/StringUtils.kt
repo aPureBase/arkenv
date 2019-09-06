@@ -24,8 +24,11 @@ internal fun String.isAdvancedName() = startsWith("--")
 
 internal fun String.isSimpleName() = startsWith("-") && !isAdvancedName()
 
+/**
+ * Append [char] to the end of this, unless it already ends with [char] or is empty.
+ */
 internal fun String.ensureEndsWith(char: Char): String =
-    if (endsWith(char)) this else this + char
+    if (endsWith(char) || isBlank()) this else this + char
 
 internal fun String.mapRelaxed(): String =
     if (isAdvancedName()) "--" + toSnakeCase()
