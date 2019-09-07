@@ -37,12 +37,13 @@ internal class EncryptionTest {
     }
 
     companion object {
+        private const val algorithm = "RSA"
         private fun generateKey(): KeyPair = KeyPairGenerator
-            .getInstance("RSA")
+            .getInstance(algorithm)
             .apply { initialize(512) }
             .genKeyPair()
 
-        private fun Key.makeCipher(mode: Int): Cipher = Cipher.getInstance("RSA").also { it.init(mode, this) }
+        private fun Key.makeCipher(mode: Int): Cipher = Cipher.getInstance(algorithm).also { it.init(mode, this) }
         private val keyPair = generateKey()
         private val encryptCipher = keyPair.public.makeCipher(Cipher.ENCRYPT_MODE)
         val decryptCipher = keyPair.private.makeCipher(Cipher.DECRYPT_MODE)

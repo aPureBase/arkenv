@@ -10,7 +10,7 @@ import strikt.assertions.isEqualTo
 interface FileBasedTests {
 
     class PropertiesArk(config: ArkenvBuilder) : Arkenv("Test", config) {
-        val mysqlPassword: String by argument("--mysql-password")
+        val mysqlPassword: String by argument()
         val port: Int by argument("--database-port")
         val multiLine: String by argument("--multi-string")
     }

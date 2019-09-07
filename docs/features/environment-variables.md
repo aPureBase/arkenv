@@ -21,15 +21,12 @@ Either rely on the default name that is derived from the property name,
 or specify names in the argument call. 
 
 #### Additional names
-Put a double hyphen (`--`) in front of your argument name.
-Arkenv distinguishes between single-hyphen names for command line
- and double-hyphen names for both cli and environment variables.
+Provide additional names for the argument as shown below. 
+Arkenv accepts a variety of different formats. 
  
  ```kotlin
-val port: Int by argument("--additional-name")
+val port: Int by argument("--additional-name", "additionalName", "ADDITIONAL_NAME")
 ``` 
-
-When passing a hyphen-separated name like `--host-url` it will be parsed as `HOST_URL`.
 
 ##### Explicit env variable name
 ⚠️*Deprecated*

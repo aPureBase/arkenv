@@ -16,17 +16,17 @@ class ValidationTests {
 
     @Test fun `parsing should throw when validation returns false`() {
         val ark = object : Arkenv() {
-            val failingProp: Int by argument("-f") {
+            val failingProp: Int by argument {
                 validate("number should be positive") { it > 0 }
                 validate("this should also fail") { it != 0 }
             }
         }
 
-        ark.parse("-f", "5")
+        ark.parse("--failing-prop", "5")
 
         val actualValue = "0"
         val message =
-            assertThrows<ValidationException> { ark.parse("-f", actualValue) }.message.shouldNotBeNull()
+            assertThrows<ValidationException> { ark.parse("--failing-prop", actualValue) }.message.shouldNotBeNull()
         println(message)
         message shouldContain "did not pass validation"
         message shouldContain "failingProp"
@@ -37,12 +37,12 @@ class ValidationTests {
 
     @Test fun `should only validate nullable if not null`() {
         val ark = object : Arkenv() {
-            val nullable: Int? by argument("-n") {
+            val nullable: Int? by argument {
                 validate("only if not null") { it > 100 }
             }
         }
 
-        ark.parse("-n", "101").expectThat {
+        ark.parse("-nullable", "101").expectThat {
             get { nullable }.isEqualTo(101)
         }
 
@@ -51,7 +51,7 @@ class ValidationTests {
         }
 
         assertThrows<ValidationException> {
-            ark.parse("-n", "99")
+            ark.parse("-nullable", "99")
         }
     }
 }

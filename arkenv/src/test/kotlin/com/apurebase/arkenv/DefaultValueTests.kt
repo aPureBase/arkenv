@@ -47,7 +47,7 @@ class DefaultValueTests {
 
     @Test fun `default should be lazily evaluated`() {
         class Ark : Arkenv() {
-            val refreshToken: String by argument("--refresh_token") {
+            val refreshToken: String by argument {
                 defaultValue = { File("does-not-exist").readText().trim() }
             }
         }

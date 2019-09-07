@@ -16,7 +16,7 @@ class EnvFileTests {
         install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvFilePath))
     }) {
         val mysqlPassword: String by argument()
-        val port: Int by argument("--database-port")
+        val port: Int by argument("--databasePort")
     }
 
     @Test fun `should throw when dot env file can not be found`() {

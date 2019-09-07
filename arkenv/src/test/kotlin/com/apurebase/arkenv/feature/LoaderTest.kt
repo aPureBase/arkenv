@@ -19,7 +19,7 @@ class LoaderTest {
     private open class Ark(feature: ArkenvFeature) : Arkenv("Test", configureArkenv {
         install(feature)
     }) {
-        val port: Int by argument("--port")
+        val port: Int by argument()
     }
 
     @Test fun `custom loader`() {
@@ -51,14 +51,14 @@ class LoaderTest {
         """.trimIndent()
 
         class YamlArk(yaml: String) : Ark(YamlFeature(yaml)) {
-            val name: String by argument("--name")
+            val name: String by argument()
         }
 
-        val ark = YamlArk(yaml)
-
-        ark.parse().expectThat {
-            get { port }.isEqualTo(99)
-            get { name }.isEqualTo("hello world")
-        }
+        YamlArk(yaml)
+            .parse()
+            .expectThat {
+                get { port }.isEqualTo(99)
+                get { name }.isEqualTo("hello world")
+            }
     }
 }
