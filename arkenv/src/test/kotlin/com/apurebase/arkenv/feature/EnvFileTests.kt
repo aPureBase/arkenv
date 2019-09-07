@@ -1,6 +1,8 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.getTestResourcePath
 import com.apurebase.arkenv.test.parse
@@ -16,6 +18,7 @@ class EnvFileTests {
     }) {
         val mysqlPassword: String by argument("--mysql-password")
         val port: Int by argument("--database-port")
+        val connectionString: String by argument()
     }
 
     @Test fun `should throw when dot env file can not be found`() {
@@ -30,6 +33,7 @@ class EnvFileTests {
         EnvFileArk(path).parse().expectThat {
             get { mysqlPassword }.isEqualTo("this_is_expected")
             get { port }.isEqualTo(5050)
+            get { connectionString }.isEqualTo("localhost:5050;database=testdb;user=testuser;")
         }
     }
 }
