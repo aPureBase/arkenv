@@ -15,7 +15,7 @@ class EnvFileTests {
         uninstall(EnvironmentVariableFeature())
         install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvFilePath))
     }) {
-        val mysqlPassword: String by argument("--mysql-password")
+        val mysqlPassword: String by argument()
         val port: Int by argument("--database-port")
     }
 

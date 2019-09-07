@@ -6,7 +6,8 @@ import java.io.File
 /**
  * Provides environment variable support.
  * Loads and parses environment variables that are declared by arguments.
- * @param envPrefix a common prefix for all environment variables
+ * @param envPrefix a common prefix for all environment variables.
+ * Can be set via the *ARKENV_ENV_PREFIX* argument.
  * @param enableEnvSecrets whether to enable docker secrets parsing. Will attempt to parse any environment variable.
  * Can be set via the *ARKENV_ENV_SECRETS* argument.
  * @param dotEnvFilePath location of the dot env file to read variables from. Defaults to *.env*
