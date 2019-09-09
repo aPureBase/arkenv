@@ -11,12 +11,20 @@ import com.apurebase.arkenv.parse
  * @param prefix the default prefix for any profile configuration files, can be set via *ARKENV_PROFILE_PREFIX*
  * @param locations defines the default list of locations in which to look for profile configuration files,
  * can be set via *ARKENV_PROFILE_LOCATION*
+ * @param parsers additional providers for profile file parsing. By default supports the property format.
  */
 class ProfileFeature(
     name: String = "--arkenv-profile",
     prefix: String = "application",
-    locations: Collection<String> = listOf()
+    locations: Collection<String> = listOf(),
+    parsers: Collection<PropertyParser> = listOf()
 ) : ArkenvFeature, Arkenv("ProfileFeature") {
+
+    private val parsers: MutableList<PropertyParser> = mutableListOf(::PropertyFeature)
+
+    init {
+        this.parsers.addAll(parsers)
+    }
 
     internal val profiles: List<String> by argument(name) {
         defaultValue = ::emptyList
@@ -26,8 +34,6 @@ class ProfileFeature(
     private val prefix: String by argument("--arkenv-profile-prefix") {
         defaultValue = { prefix }
     }
-
-    private val extension = "properties"
 
     private val location: Collection<String> by argument("--arkenv-profile-location") {
         mapping = { it.split(",").map(String::trim) }
@@ -40,9 +46,13 @@ class ProfileFeature(
         profiles.forEach { load(arkenv, it) }
     }
 
-    private fun load(arkenv: Arkenv, file: String?) = PropertyFeature(makeFileName(file), location).onLoad(arkenv)
+    private fun load(arkenv: Arkenv, file: String?) = parsers
+        .map { it(makeFileName(file), location) }
+        .forEach { it.onLoad(arkenv) }
 
     private fun makeFileName(profile: String?) =
-        if (profile != null) "$prefix-$profile.$extension"
-        else "$prefix.$extension"
+        if (profile != null) "$prefix-$profile"
+        else prefix
 }
+
+typealias PropertyParser = (String, Collection<String>) -> PropertyFeature

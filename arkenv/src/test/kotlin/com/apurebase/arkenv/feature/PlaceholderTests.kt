@@ -22,8 +22,8 @@ class PlaceholderTests {
     }
 
     @Test fun `can refer to previously defined arg in properties`() {
-        Ark { install(PropertyFeature("placeholders.properties")) }
-            .parse()
+        val ark = Ark { install(PropertyFeature("placeholders.properties")) }
+        ark.parse()
             .verify()
     }
 

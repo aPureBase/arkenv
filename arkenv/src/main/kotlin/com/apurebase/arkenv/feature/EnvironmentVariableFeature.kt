@@ -60,13 +60,10 @@ class EnvironmentVariableFeature(
     private fun loadEnvironmentVariables(parsedDotEnvFilePath: String?): Map<String, String>? =
         (parsedDotEnvFilePath ?: dotEnvFilePath)?.let(::parseDotEnv)
 
-    private fun parseDotEnv(path: String): Map<String, String>? =
-        File(path).useLines { lines ->
-            lines.map(String::trimStart)
-                .filterNot { it.isBlank() || it.startsWith("#") }
-                .map { it.split("=") }
-                .associate { it[0].trimEnd() to it[1].substringBefore('#').trim() }
-        }
+    private fun parseDotEnv(path: String): Map<String, String> =
+        File(path)
+            .inputStream()
+            .use(PropertyFeature.Companion::parseProperties)
 
     companion object {
         internal fun getEnv(name: String, enableEnvSecrets: Boolean): String? =

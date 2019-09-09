@@ -10,12 +10,11 @@ To enable Spring-like profile functionality, install the `ProfileFeature`.
 ### Usage
 
 ```kotlin
-class Ark : Arkenv(configuration = {
-    install(ProfileFeature())
-}) {
-    
-    val port: Int by argument("--port")
-    val name: String by argument("--name")
+class Ark : Arkenv("Example", configureArkenv { 
+    install(ProfileFeature()) }
+) { 
+    val port: Int by argument()
+    val name: String by argument()
 }
 ```
 
@@ -32,11 +31,12 @@ Ark().parse(args)
 
 Or via env vars: 
 ```bash
-$ export ARKENV_PROFILE=prod
+$ export ARKENV_PROFILE=prod,dev
 ```
 
 Arkenv will load the base profile `application.properties`, 
-and extend it with the active dev or production profile. 
+and extend it with the specified active profiles. 
+Multiple active profiles can be set as a comma-separated list. 
 
 ### Customization
 
@@ -60,3 +60,22 @@ which accepts a comma-separated list of directory locations or file paths.
 * Argument: `--arkenv-profile-location`
 * Env var: `ARKENV_PROFILE_LOCATION`
 * Code: `ProfileFeature(locations = listOf("some/dir"))`
+
+##### Parsers
+
+By default, the ProfileFeature supports property files, but can be 
+extended to support other file formats. 
+Specify additional parsers in the constructor. 
+
+For example, yaml support can be added as follows:
+
+```kotlin
+class Ark : Arkenv("Example", configureArkenv {
+    install(ProfileFeature(parsers = listOf(::YamlFeature)))
+}) {
+    ...
+}
+
+```
+
+For further information see [YamlFeature]({{site.baseurl}}features/yaml).

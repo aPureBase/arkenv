@@ -22,7 +22,7 @@ internal class EncryptionTest {
         val int: Int by argument()
     }
 
-    @Test fun test() {
+    @Test fun `encrypted input should be decrypted`() {
         val prefix = "{cipher_test}"
         val stringValue = "input"
         val intValue = 56

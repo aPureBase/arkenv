@@ -8,12 +8,15 @@ import java.util.*
 
 /**
  * Loads configuration from property files.
+ * @param file the name of the file to load from
+ * @param locations a collection of locations in which to look for the file
  */
 open class PropertyFeature(
-    protected val file: String = "application.properties",
+    private val file: String = "application",
     locations: Collection<String> = listOf()
 ) : ArkenvFeature, Arkenv("PropertyFeature") {
 
+    protected open val extensions = listOf("properties")
     private val defaultLocations = listOf("", "config/")
     private val locations: Collection<String> by argument("--arkenv-property-location") {
         val combined = locations + defaultLocations
@@ -23,8 +26,16 @@ open class PropertyFeature(
 
     override fun onLoad(arkenv: Arkenv) {
         parse(arkenv.argList.toTypedArray())
-        loadProperties(file)?.let(arkenv::putAll)
+        val fileNames = if (extensions.any { file.endsWith(".$it") }) listOf(file)
+        else extensions.map(::makeFileName)
+
+        fileNames
+            .mapNotNull(::loadProperties)
+            .firstOrNull()
+            ?.let(arkenv::putAll)
     }
+
+    private fun makeFileName(extension: String): String = "$file.$extension"
 
     private fun loadProperties(file: String): Map<String, String>? = getStream(file)?.use(::parse)
 
