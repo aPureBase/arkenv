@@ -1,11 +1,13 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.ArkenvBuilder
+import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.getTestResourcePath
 import com.apurebase.arkenv.test.parse
-import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
@@ -20,14 +22,8 @@ class PlaceholderTests {
     }
 
     @Test fun `can refer to previously defined arg in properties`() {
-        val ark = Ark {
-            install(PropertyFeature("placeholders.properties"))
-        }
+        val ark = Ark { install(PropertyFeature("placeholders.properties")) }
         ark.parse()
-//            .also {
-//                it.getAll().let { println(it) }
-//                it["APP_NAME"] `should be equal to` "MYAPP"
-//            }
             .verify()
     }
 

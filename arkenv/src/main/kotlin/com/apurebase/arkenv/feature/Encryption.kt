@@ -18,10 +18,11 @@ class Encryption(private val cipher: Cipher) : ProcessorFeature {
     override lateinit var arkenv: Arkenv
 
     private val prefixKey = "ARKENV_HTTP_ENCRYPTION_PREFIX"
+    private val defaultPrefix = "{cipher}"
 
     override fun process(key: String, value: String): String {
         if (key == prefixKey) return value
-        val prefix = arkenv.getOrNull(prefixKey) ?: "{cipher}"
+        val prefix = arkenv.getOrNull(prefixKey) ?: defaultPrefix
         return when {
             value.startsWith(prefix) -> cipher.decrypt(value.removePrefix(prefix))
             else -> value
