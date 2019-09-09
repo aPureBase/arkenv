@@ -65,13 +65,6 @@ class Mixed : Arkenv() {
     val someArg: Int by argument("-sa", "--some-arg")
 
     val other = "val"
-
-    fun someFun() {
-
-    }
-
-    val getter get() = 1
-
 }
 
 class CustomEnv : Arkenv() {

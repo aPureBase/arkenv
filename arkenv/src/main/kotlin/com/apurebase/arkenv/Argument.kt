@@ -1,7 +1,7 @@
 package com.apurebase.arkenv
 
 /**
- * The configuration for this argument
+ * The configuration for this argument.
  * @param names a list of names that will be considered when parsing
  */
 class Argument<T : Any?>(val names: List<String>) {
@@ -11,7 +11,7 @@ class Argument<T : Any?>(val names: List<String>) {
     var description = ""
 
     /**
-     * Determines whether this [Argument] is a help argument, that will trigger the help output when parsed.
+     * Determines whether this [Argument] is a help argument that will trigger the help output when parsed.
      */
     var isHelp: Boolean = false
 
@@ -23,16 +23,19 @@ class Argument<T : Any?>(val names: List<String>) {
     /**
      * Whether this [Argument] should consider environment variables when parsing
      */
+    @Deprecated(DEPRECATED_GENERAL)
     var withEnv: Boolean = true
 
     /**
      * A prefix that is applied to the environment variable names when parsing
      */
+    @Deprecated(DEPRECATED_USE_FEATURE)
     var envPrefix: String? = null
 
     /**
      * A custom name for the environment variable parsing
      */
+    @Deprecated(DEPRECATED_GENERAL)
     var envVariable: String? = null
 
     /**

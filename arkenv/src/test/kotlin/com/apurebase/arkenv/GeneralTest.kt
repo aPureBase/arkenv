@@ -15,7 +15,7 @@ class GeneralTest {
      */
     @Test fun `should ignore validation when help is true`() {
         class HelpArgs(name: String) : Arkenv(name) {
-            val required: String by argument("-r") {
+            val required: String by argument {
                 description = "This arg is required but can be null if help is true"
             }
         }
@@ -46,10 +46,10 @@ class GeneralTest {
         val expected = 5000L
 
         class LongArg : Arkenv() {
-            val long: Long by argument("-l")
+            val long: Long by argument()
         }
 
-        LongArg().parse("-l", "5000").long shouldEqualTo expected
+        LongArg().parse("-long", "5000").long shouldEqualTo expected
     }
 
     @Test fun `custom mapping`() {
@@ -181,7 +181,7 @@ class GeneralTest {
 
     @Test fun `parse should fail`() {
         val ark = object : Arkenv() {
-            val arg: Int by argument("-a")
+            val arg: Int by argument()
         }
         assertThrows<IllegalArgumentException> { ark.parse() }
     }

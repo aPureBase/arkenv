@@ -13,10 +13,11 @@ import java.io.FileNotFoundException
 
 class EnvFileTests {
 
-    private class EnvFileArk(dotEnvFilePath: String?) : Arkenv("Test", configureArkenv {
+    private class EnvFileArk(dotEnvFilePath: String? = null) : Arkenv("Test", configureArkenv {
+        uninstall(EnvironmentVariableFeature())
         install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvFilePath))
     }) {
-        val mysqlPassword: String by argument("--mysql-password")
+        val mysqlPassword: String by argument()
         val port: Int by argument("--database-port")
         val connectionString: String by argument()
     }
@@ -35,5 +36,16 @@ class EnvFileTests {
             get { port }.isEqualTo(5050)
             get { connectionString }.isEqualTo("localhost:5050;database=testdb;user=testuser;")
         }
+    }
+
+    @Test fun `dot env file can be specified via argument`() {
+        val path = getTestResourcePath(".env-alt")
+        EnvFileArk()
+            .parse("ARKENV_DOT_ENV_FILE", path)
+            .expectThat {
+                get { mysqlPassword }.isEqualTo("alternative")
+                get { port }.isEqualTo(8080)
+                get { connectionString }.isEqualTo("localhost")
+            }
     }
 }

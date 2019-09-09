@@ -10,17 +10,18 @@ import strikt.assertions.isEqualTo
 class ManualTests {
 
     private class SystemInArk : Arkenv() {
-        val name: String by argument("-n") {
+        val name: String by argument {
             acceptsManualInput = true
         }
     }
 
     @Test fun `parsing system in should work`() {
-        val ark = SystemInArk()
         val expected = "this is a test"
         System.setIn(expected.toByteArray().inputStream())
-        ark.parse().expectThat {
-            get { name }.isEqualTo(expected)
-        }
+        SystemInArk()
+            .parse()
+            .expectThat {
+                get { name }.isEqualTo(expected)
+            }
     }
 }

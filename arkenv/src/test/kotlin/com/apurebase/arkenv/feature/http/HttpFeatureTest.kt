@@ -39,7 +39,7 @@ class HttpFeatureTest {
                 get { message }.isEqualTo("Hello world")
                 get { status }.isEqualTo(100)
                 get { nested }.isEqualTo(1)
-                get { password }.isEqualTo("mysecret")
+                get { password }.isEqualTo(password)
             }
     }
 
