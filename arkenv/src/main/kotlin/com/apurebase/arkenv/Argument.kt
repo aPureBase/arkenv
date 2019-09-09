@@ -4,7 +4,7 @@ package com.apurebase.arkenv
  * The configuration for this argument.
  * @param names a list of names that will be considered when parsing
  */
-class Argument<T : Any?>(val names: List<String>) {
+class Argument<T : Any?>(var names: List<String>) {
     /**
      * A general description of the purpose of this [Argument] that will be displayed on help
      */

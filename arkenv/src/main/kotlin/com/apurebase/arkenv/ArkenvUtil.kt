@@ -26,9 +26,12 @@ fun <T : Arkenv> T.parse(args: Array<String>) = apply { parseArguments(args) }
 inline fun <reified T : Any> Arkenv.argument(
     names: List<String>,
     isMainArg: Boolean = false,
-    noinline configuration: Argument<T>.() -> Unit = {}
-) = ArkenvDelegateLoader(names, isMainArg, configuration, T::class, this)
-
+    configuration: Argument<T>.() -> Unit = {}
+): ArkenvDelegateLoader<T> {
+    val argument = Argument<T>(names).apply(configuration)
+    argument.isMainArg = isMainArg
+    return ArkenvDelegateLoader(argument, T::class, this)
+}
 
 /**
  * Defines an argument that can be parsed.
@@ -37,7 +40,7 @@ inline fun <reified T : Any> Arkenv.argument(
  */
 inline fun <reified T : Any> Arkenv.argument(
     vararg names: String,
-    noinline configuration: Argument<T>.() -> Unit = {}
+    configuration: Argument<T>.() -> Unit = {}
 ): ArkenvDelegateLoader<T> = argument(names.toList(), false, configuration)
 
 /**
@@ -46,7 +49,7 @@ inline fun <reified T : Any> Arkenv.argument(
  * The main argument can't be passed through environment variables.
  * @param block the configuration that will be applied to the Argument
  */
-inline fun <reified T : Any> Arkenv.mainArgument(noinline block: Argument<T>.() -> Unit = {}): ArkenvDelegateLoader<T> =
+inline fun <reified T : Any> Arkenv.mainArgument(block: Argument<T>.() -> Unit = {}): ArkenvDelegateLoader<T> =
     argument(listOf(), true, block)
 
 internal fun ArkenvFeature.getKeyValPair() = this::class.jvmName to this

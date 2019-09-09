@@ -41,7 +41,7 @@ abstract class Arkenv(
     /**
      * Clears all loaded data from memory.
      */
-    fun clear() {
+    protected fun clear() {
         argList.clear()
         keyValue.clear()
     }
