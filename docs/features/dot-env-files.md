@@ -30,6 +30,8 @@ class Ark : Arkenv("Example", configureArkenv {
 The parsing rules are the same as for [Environment Variables](#environment-variables), 
 meaning it accepts the snake case version of double-hyphen arguments. 
 
+⚠️ In-line comments are not supported.
+
 ### Customization
 
 To enable the use and specify a dot env file to load, use one of the 

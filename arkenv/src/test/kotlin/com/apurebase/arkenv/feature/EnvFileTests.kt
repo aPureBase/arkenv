@@ -45,6 +45,7 @@ class EnvFileTests {
             .expectThat {
                 get { mysqlPassword }.isEqualTo("alternative")
                 get { port }.isEqualTo(8080)
+                get { connectionString }.isEqualTo("localhost")
             }
     }
 }
