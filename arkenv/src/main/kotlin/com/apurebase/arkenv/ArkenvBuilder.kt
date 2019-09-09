@@ -14,16 +14,15 @@ class ArkenvBuilder {
     /**
      * Whether data should be cleared before parsing.
      */
-    var clearInputBeforeParse = false
+    var clearInputBeforeParse = true
 
     /**
-     * Whether data should be cleared after parsing
+     * Whether data should be cleared after parsing.
      */
-    var clearInputAfterParse = true
+    var clearInputAfterParse = false
 
     internal val features: MutableList<ArkenvFeature> = mutableListOf()
     internal val processorFeatures: MutableList<ProcessorFeature> = mutableListOf()
-    private val positionAtEnd = -1
 
     /**
      * Installs the [feature] into [Arkenv].
@@ -36,11 +35,12 @@ class ArkenvBuilder {
      * Installs the [feature] for processing.
      * By default, the feature is put after already installed features.
      * @param feature the functionality to install
-     * @param index the position of the [feature]
+     * @param positionInFront if the feature should be installed before existing ones, so that its logic will be called
+     * first.
      */
-    fun install(feature: ProcessorFeature, index: Int = positionAtEnd) {
-        if (index == positionAtEnd) processorFeatures.add(feature)
-        else processorFeatures.add(index, feature)
+    fun install(feature: ProcessorFeature, positionInFront: Boolean = true) {
+        if (positionInFront) processorFeatures.add(0, feature)
+        else processorFeatures.add(feature)
     }
 
     /**

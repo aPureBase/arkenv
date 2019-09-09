@@ -10,7 +10,7 @@ import strikt.assertions.isEqualTo
 internal class FeatureOrderTest {
 
     private inner class Ark : Arkenv("FeatureOrderTest", configureArkenv {
-        install(Encryption(EncryptionTest.decryptCipher), 0)
+        install(Encryption(EncryptionTest.decryptCipher))
     }) {
         val string: String by argument()
     }
@@ -23,7 +23,7 @@ internal class FeatureOrderTest {
         val encryptedString = prefix + EncryptionTest.encrypt(stringValue)
         val encryptedInt = prefix + EncryptionTest.encrypt(intValue.toString())
 
-        Ark().parse("ARKENV_HTTP_ENCRYPTION_PREFIX", prefix, "--STRING", encryptedString, "--INT", encryptedInt)
+        Ark().parse("ARKENV_ENCRYPTION_PREFIX", prefix, "--STRING", encryptedString, "--INT", encryptedInt)
             .expectThat { get { string }.isEqualTo(expectedValue) }
     }
 }

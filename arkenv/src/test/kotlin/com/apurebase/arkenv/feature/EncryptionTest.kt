@@ -29,7 +29,7 @@ internal class EncryptionTest {
         val encryptedString = prefix + encrypt(stringValue)
         val encryptedInt = prefix + encrypt(intValue.toString())
 
-        Ark().parse("ARKENV_HTTP_ENCRYPTION_PREFIX", prefix, "--STRING", encryptedString, "--INT", encryptedInt)
+        Ark().parse("ARKENV_ENCRYPTION_PREFIX", prefix, "--STRING", encryptedString, "--INT", encryptedInt)
             .expectThat {
                 get { string }.isEqualTo(stringValue)
                 get { int }.isEqualTo(intValue)

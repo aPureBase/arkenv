@@ -7,7 +7,7 @@ import javax.xml.bind.DatatypeConverter
 /**
  * Supports decryption of encrypted values during the processing phase.
  * Values will be decrypted if they start with a certain prefix
- * The encryption prefix can be configured via the *ARKENV_HTTP_ENCRYPTION_PREFIX* argument.
+ * The encryption prefix can be configured via the *ARKENV_ENCRYPTION_PREFIX* argument.
  * By default, the prefix is *{cipher}*
  *
  * @param cipher The cipher used to decrypt the values
@@ -17,7 +17,7 @@ class Encryption(private val cipher: Cipher) : ProcessorFeature {
 
     override lateinit var arkenv: Arkenv
 
-    private val prefixKey = "ARKENV_HTTP_ENCRYPTION_PREFIX"
+    private val prefixKey = "ARKENV_ENCRYPTION_PREFIX"
     private val defaultPrefix = "{cipher}"
 
     override fun process(key: String, value: String): String {

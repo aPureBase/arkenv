@@ -3,6 +3,7 @@ package com.apurebase.arkenv.feature
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.ValidationException
 import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldContain
@@ -36,7 +37,9 @@ class ValidationTests {
     }
 
     @Test fun `should only validate nullable if not null`() {
-        val ark = object : Arkenv() {
+        val ark = object : Arkenv("Test", configureArkenv {
+            clearInputBeforeParse = true
+        }) {
             val nullable: Int? by argument {
                 validate("only if not null") { it > 100 }
             }
