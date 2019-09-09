@@ -9,7 +9,7 @@ nav_order: 2
 
 ```kotlin
 class Arguments : Arkenv() {
-    val port: Int by argument("-p") {
+    val port: Int by argument {
         description = "An Int with a default value"
         defaultValue = { 5000 }
     }
@@ -22,5 +22,5 @@ fun main(args: Array<String>) {
 ```
 
 ```bash
-java -jar app.jar -p 80 # Prints "Port: 80"
+java -jar app.jar --port 80 # Prints "Port: 80"
 ```

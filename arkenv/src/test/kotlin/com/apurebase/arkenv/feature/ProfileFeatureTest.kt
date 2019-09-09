@@ -10,15 +10,17 @@ import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import strikt.api.Assertion
 import strikt.assertions.isEqualTo
 
-internal class ProfileFeatureTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+open class ProfileFeatureTest {
 
-    private class Ark : Arkenv("Test", configureArkenv {
-        install(ProfileFeature())
-    }) {
+    open fun getInstance(): ProfileFeature = ProfileFeature()
+
+    private inner class Ark : Arkenv("Test", configureArkenv { install(getInstance()) }) {
         val port: Int by argument("--port")
 
         val name: String by argument("--name")
@@ -53,7 +55,7 @@ internal class ProfileFeatureTest {
     }
 
     @Test fun `set profile via env`() {
-        MockSystem("ARKENV_PROFILE" to "prod")
+        MockSystem(arkenvProfile to "prod")
         Ark().parse().expectThat { isProduction() }
     }
 
@@ -64,11 +66,12 @@ internal class ProfileFeatureTest {
     }
 
     @Test fun `should parse multiple comma-separated profiles`() {
-        Ark().parse("ARKENV_PROFILE", "prod,dev").expectThat {
+        Ark().parse(arkenvProfile, "prod,dev").expectThat {
             expect(devPort, prodName)
         }
     }
 
+    protected val arkenvProfile = "ARKENV_PROFILE"
     private val prodPort = 443
     private val devPort = 5000
     private val prodName = "production"

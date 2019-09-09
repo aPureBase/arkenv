@@ -10,7 +10,7 @@ nav_order: 7
 An argument can be specified at runtime via the command line. 
 
 ```kotlin
-val name: String by argument("-n") {
+val name: String by argument() {
     acceptsManualInput = true
 }
 ```
