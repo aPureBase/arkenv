@@ -79,3 +79,15 @@ class CustomFeature : ArkenvFeature {
     }
 }
 ```
+
+
+### Processor features
+
+**Since v2.1.0**
+
+Processor features describe transformations that are applied to all values
+that are loaded through Arkenv, no matter what feature they originate from. 
+
+By default, this is used to resolve [placeholders]({{site.baseurl}}features/placeholders).
+
+There is also support for decrypting values using the [EncryptionFeature]({{site.baseurl}}features/encryption).

@@ -12,8 +12,10 @@ In some cases we don't want to directly expose the arguments to the program.
 An alternative is to use secret files, which can be loaded via environment variables. 
 
 ```kotlin
-val ark = object : Arkenv(enableEnvSecrets = true) {
-    val apiKey: String by argument("--api-key")
+class Ark : Arkenv("Example", configureArkenv {
+    install(EnvironmentVariableFeature(enableEnvSecrets = true))
+}) {
+    val apiKey: String by argument()
 }
 ```
 
@@ -26,3 +28,9 @@ $ export API_KEY_FILE=file_including_api_key.txt
 ```
 
 Arkenv loads the file and reads the entire content. 
+
+### Customization
+
+* Argument: `--arkenv-env-secrets`
+* Env var: `ARKENV_ENV_SECRETS`
+* Code: `EnvironmentVariableFeature(enableEnvSecrets = true)`

@@ -24,9 +24,10 @@ Supports the most common external configuration sources, including:
 * [Environment Variables]({{site.baseurl}}features/environment-variables)
 * [Properties]({{site.baseurl}}features/properties)
 * [Profiles]({{site.baseurl}}features/profiles)
-* [Boolean Merge]({{site.baseurl}}features/boolean-merge)
+* [Yaml Support]({{site.baseurl}}features/yaml)
 * [Validation]({{site.baseurl}}features/validation)
 * [Manual Input]({{site.baseurl}}features/manual-input)
+* [Placeholders]({{site.baseurl}}features/placeholders)
 * [Docker Secrets]({{site.baseurl}}features/docker-secrets)
 * [Dot Env Files]({{site.baseurl}}features/dot-env-files)
 
