@@ -47,9 +47,7 @@ class ArkenvBuilder {
      * Uninstalls the [feature] from [Arkenv] if installed.
      */
     fun uninstall(feature: ArkenvFeature) {
-        features.removeIf {
-            feature.getKeyValPair().first == it.getKeyValPair().first
-        }
+        features.removeIf { feature.key == it.key }
     }
 
     init {

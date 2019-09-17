@@ -1,6 +1,7 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.ArkenvFeature
+import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
 /**
@@ -23,14 +24,14 @@ fun <T : Arkenv> T.parse(args: Array<String>) = apply { parseArguments(args) }
  * but the last supplied argument
  * @param configuration optional configuration of the argument's properties
  */
-inline fun <reified T : Any> Arkenv.argument(
+inline fun <T : Any> Arkenv.argument(
     names: List<String>,
     isMainArg: Boolean = false,
     configuration: Argument<T>.() -> Unit = {}
 ): ArkenvDelegateLoader<T> {
     val argument = Argument<T>(names).apply(configuration)
     argument.isMainArg = isMainArg
-    return ArkenvDelegateLoader(argument, T::class, this)
+    return ArkenvDelegateLoader(argument, this)
 }
 
 /**
@@ -38,7 +39,7 @@ inline fun <reified T : Any> Arkenv.argument(
  * @param names the names that the argument can be called with
  * @param configuration optional configuration of the argument's properties
  */
-inline fun <reified T : Any> Arkenv.argument(
+inline fun <T : Any> Arkenv.argument(
     vararg names: String,
     configuration: Argument<T>.() -> Unit = {}
 ): ArkenvDelegateLoader<T> = argument(names.toList(), false, configuration)
@@ -49,10 +50,10 @@ inline fun <reified T : Any> Arkenv.argument(
  * The main argument can't be passed through environment variables.
  * @param block the configuration that will be applied to the Argument
  */
-inline fun <reified T : Any> Arkenv.mainArgument(block: Argument<T>.() -> Unit = {}): ArkenvDelegateLoader<T> =
+inline fun <T : Any> Arkenv.mainArgument(block: Argument<T>.() -> Unit = {}): ArkenvDelegateLoader<T> =
     argument(listOf(), true, block)
 
-internal fun ArkenvFeature.getKeyValPair() = this::class.jvmName to this
+internal val ArkenvFeature.key get() = this::class.jvmName
 
 internal fun Arkenv.isHelp(): Boolean = when {
     argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false
@@ -78,3 +79,29 @@ fun Arkenv.putAll(from: Map<out String, String>) = from.forEach { (k, v) -> set(
  */
 operator fun Arkenv.get(key: String): String =
     getOrNull(key) ?: throw IllegalArgumentException("Arkenv does not contain a value for key '$key'")
+
+/**
+ * Maps the input [value] to an instance of [T] using [clazz] as a reference.
+ * @throws IllegalArgumentException if the mapping is not supported or didn't succeed
+ */
+@Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY", "ComplexMethod", "LongMethod", "TooGenericExceptionCaught")
+internal fun <T> mapDefault(key: String, value: String, clazz: KClass<*>): T = try {
+    with(value) {
+        when (clazz) {
+            Int::class -> toIntOrNull()
+            Long::class -> toLongOrNull()
+            String::class -> value
+            IntArray::class -> split().map(String::toInt).toIntArray()
+            ShortArray::class -> split().map(String::toShort).toShortArray()
+            CharArray::class -> toCharArray()
+            LongArray::class -> split().map(String::toLong).toLongArray()
+            FloatArray::class -> split().map(String::toFloat).toFloatArray()
+            DoubleArray::class -> split().map(String::toDouble).toDoubleArray()
+            BooleanArray::class -> split().map(String::toBoolean).toBooleanArray()
+            ByteArray::class -> split().map(String::toByte).toByteArray()
+            else -> throw IllegalArgumentException("$key ($clazz) is not supported. Define a custom mapping.")
+        } as T
+    }
+} catch (ex: RuntimeException) {
+    throw IllegalArgumentException("Could not parse $key - $value as $clazz", ex)
+}
