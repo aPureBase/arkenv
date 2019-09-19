@@ -91,6 +91,7 @@ internal fun <T> mapDefault(key: String, value: String, clazz: KClass<*>): T = t
             Int::class -> toIntOrNull()
             Long::class -> toLongOrNull()
             String::class -> value
+            Char::class -> firstOrNull()
             IntArray::class -> split().map(String::toInt).toIntArray()
             ShortArray::class -> split().map(String::toShort).toShortArray()
             CharArray::class -> toCharArray()

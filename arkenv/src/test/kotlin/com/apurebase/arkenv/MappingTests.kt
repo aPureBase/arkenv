@@ -9,6 +9,14 @@ import strikt.assertions.isEqualTo
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class MappingTests {
 
+    @Test fun `char should map`() {
+        object : Arkenv() {
+            val char: Char by argument()
+        }.parse("CHAR", "OnlyTheFirstChar").char.expectThat {
+            isEqualTo('O')
+        }
+    }
+
     @Test fun `IntArray should map`() {
         object : Arkenv() {
             val array: IntArray by argument()
