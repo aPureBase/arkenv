@@ -28,7 +28,6 @@ class ProfileFeature(
 
     internal val profiles: List<String> by argument(name) {
         defaultValue = ::emptyList
-        mapping = { it.split(',') }
     }
 
     private val prefix: String by argument("--arkenv-profile-prefix") {
@@ -36,7 +35,6 @@ class ProfileFeature(
     }
 
     private val location: Collection<String> by argument("--arkenv-profile-location") {
-        mapping = { it.split(",").map(String::trim) }
         defaultValue = { locations }
     }
 

@@ -9,6 +9,18 @@ import strikt.assertions.isEqualTo
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class MappingTests {
 
+    @Test fun `list should map to List of String`() {
+        val input = "by,default"
+        val output = listOf("by", "default")
+        object: Arkenv() {
+            val list: List<String> by argument()
+            val collection: Collection<String> by argument()
+        }.parse("LIST", input, "COLLECTION", input).expectThat {
+            get { list }.isEqualTo(output)
+            get { collection }.isEqualTo(output)
+        }
+    }
+
     @Test fun `char should map`() {
         object : Arkenv() {
             val char: Char by argument()

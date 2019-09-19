@@ -92,6 +92,7 @@ internal fun <T> mapDefault(key: String, value: String, clazz: KClass<*>): T = t
             Long::class -> toLongOrNull()
             String::class -> value
             Char::class -> firstOrNull()
+            List::class, Collection::class -> split()
             IntArray::class -> split().map(String::toInt).toIntArray()
             ShortArray::class -> split().map(String::toShort).toShortArray()
             CharArray::class -> toCharArray()
@@ -100,9 +101,9 @@ internal fun <T> mapDefault(key: String, value: String, clazz: KClass<*>): T = t
             DoubleArray::class -> split().map(String::toDouble).toDoubleArray()
             BooleanArray::class -> split().map(String::toBoolean).toBooleanArray()
             ByteArray::class -> split().map(String::toByte).toByteArray()
-            else -> throw IllegalArgumentException("$key ($clazz) is not supported. Define a custom mapping.")
+            else -> throw UnsupportedMappingException(key, clazz)
         } as T
     }
 } catch (ex: RuntimeException) {
-    throw IllegalArgumentException("Could not parse $key - $value as $clazz", ex)
+    throw MappingException(key, value, clazz, ex)
 }
