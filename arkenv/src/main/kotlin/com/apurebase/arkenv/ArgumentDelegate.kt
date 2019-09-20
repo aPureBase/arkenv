@@ -3,17 +3,17 @@ package com.apurebase.arkenv
 import com.apurebase.arkenv.Argument.Validation
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+import kotlin.reflect.jvm.jvmErasure
 
 /**
  * Delegate class for parsing arguments.
  */
 class ArgumentDelegate<T : Any?> internal constructor(
-    private val arkenv: Arkenv,
     val argument: Argument<T>,
-    val property: KProperty<*>,
-    val isBoolean: Boolean,
-    private val mapping: (String) -> T
-) : ReadOnlyProperty<Any?, T> {
+    val property: KProperty<*>
+) : ReadOnlyProperty<Arkenv, T> {
+
+    val isBoolean: Boolean = property.returnType.jvmErasure == Boolean::class
 
     @Suppress("UNCHECKED_CAST")
     internal var value: T = null as T
@@ -40,10 +40,10 @@ class ArgumentDelegate<T : Any?> internal constructor(
         else -> throw IllegalStateException("Attempted to set value to true but ${property.name} is not boolean")
     }
 
-    override operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
+    override operator fun getValue(thisRef: Arkenv, property: KProperty<*>): T {
         if (!isSet) {
-            value = setValue(property)
-            checkNullable(property)
+            value = setValue(thisRef, property)
+            checkNullable(thisRef, property)
             if (value != null) checkValidation(argument.validation, value, property)
             isSet = true
         }
@@ -60,7 +60,7 @@ class ArgumentDelegate<T : Any?> internal constructor(
         }
 
     @Suppress("UNCHECKED_CAST")
-    private fun setValue(property: KProperty<*>): T {
+    private fun setValue(arkenv: Arkenv, property: KProperty<*>): T {
         val values = arkenv.parseDelegate(this, argument.names)
         return when {
             isBoolean -> mapBoolean(values)
@@ -75,7 +75,9 @@ class ArgumentDelegate<T : Any?> internal constructor(
         return map(input)
     }
 
-    private fun map(value: String): T = mapping(value)
+    private fun map(value: String): T =
+        argument.mapping?.invoke(value)
+                ?: mapDefault(property.name, value, property.returnType.jvmErasure)
 
     @Suppress("UNCHECKED_CAST")
     private fun mapBoolean(values: Collection<String>): T {
@@ -86,13 +88,13 @@ class ArgumentDelegate<T : Any?> internal constructor(
         } as T
     }
 
-    private fun checkNullable(property: KProperty<*>) {
+    private fun checkNullable(arkenv: Arkenv, property: KProperty<*>) {
         val valuesAreNull = value == null && defaultValue == null
-        if (valuesAreNull && !isHelp() && !property.returnType.isMarkedNullable) {
+        if (valuesAreNull && !isHelp(arkenv) && !property.returnType.isMarkedNullable) {
             val nameInfo = if (argument.isMainArg) "Main argument" else argument.names.joinToString()
             throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
         }
     }
 
-    private fun isHelp(): Boolean = argument.isHelp || arkenv.isHelp()
+    private fun isHelp(arkenv: Arkenv): Boolean = argument.isHelp || arkenv.isHelp()
 }
