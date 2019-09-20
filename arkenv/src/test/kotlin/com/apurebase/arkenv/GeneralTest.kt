@@ -1,7 +1,10 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.test.*
-import org.amshove.kluent.*
+import org.amshove.kluent.shouldBe
+import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.assertions.contains
@@ -28,9 +31,7 @@ class GeneralTest {
             contains("This arg is required but can be null if help is true")
         }
 
-        HelpArgs("Test").let {
-            it::required shouldThrow IllegalArgumentException::class
-        }
+        assertThrows<MissingArgumentException> { HelpArgs("Test").required }
     }
 
     @Test fun `repeatedly accessing a prop should not throw`() {
@@ -69,7 +70,7 @@ class GeneralTest {
             val custom by mainArgument<CustomArg>()
         }
 
-        CustomArg()::custom shouldThrow IllegalArgumentException::class
+        assertThrows<MissingArgumentException> { CustomArg().custom }
     }
 
     @Test fun `value should accept spaces until next delimiter`() {
@@ -133,10 +134,10 @@ class GeneralTest {
 
     @Test fun `null mainArg should throw`() {
         val arkenv = object : Arkenv() {
-            val main: String by mainArgument { }
+            val main: String by mainArgument()
         }
 
-        arkenv::main shouldThrow IllegalArgumentException::class
+        assertThrows<MissingArgumentException> { arkenv.main }
     }
 
     @Test fun `reparsing should update the values`() {
@@ -183,7 +184,7 @@ class GeneralTest {
         val ark = object : Arkenv() {
             val arg: Int by argument()
         }
-        assertThrows<IllegalArgumentException> { ark.parse() }
+        assertThrows<MissingArgumentException> { ark.parse() }
     }
 
     @Test fun `version 2 naming`() {

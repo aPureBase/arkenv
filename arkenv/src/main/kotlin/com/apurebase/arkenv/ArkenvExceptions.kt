@@ -25,3 +25,7 @@ internal class UnsupportedMappingException(key: String, clazz: KClass<*>) : Arke
 internal class MappingException(key: String, value: String, clazz: KClass<*>, cause: Exception) : ArkenvException(
     "Could not parse property '$key' with value '$value' as class '$clazz'", cause
 )
+
+internal class MissingArgumentException(name: String, info: String): ArkenvException(
+    "No value passed for property $name ($info)"
+)

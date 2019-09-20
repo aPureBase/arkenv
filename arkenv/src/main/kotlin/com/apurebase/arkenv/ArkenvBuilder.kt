@@ -1,15 +1,12 @@
 package com.apurebase.arkenv
 
-import com.apurebase.arkenv.feature.ArkenvFeature
-import com.apurebase.arkenv.feature.EnvironmentVariableFeature
-import com.apurebase.arkenv.feature.PlaceholderParser
-import com.apurebase.arkenv.feature.ProcessorFeature
+import com.apurebase.arkenv.feature.*
 import com.apurebase.arkenv.feature.cli.CliFeature
 
 /**
  * [Arkenv] configuration builder which controls features and other settings.
  */
-class ArkenvBuilder {
+class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
 
     /**
      * Whether data should be cleared before parsing.
@@ -28,7 +25,14 @@ class ArkenvBuilder {
      * Installs the [feature] into [Arkenv].
      */
     fun install(feature: ArkenvFeature) {
-        features.add(feature)
+        var index: Int? = null
+        features.forEachIndexed { i, arkenvFeature ->
+            if (arkenvFeature.key == feature.key) index = i
+        }
+        index?.let { i ->
+            uninstall(feature)
+            features.add(i, feature)
+        } ?: features.add(feature)
     }
 
     /**
@@ -53,7 +57,10 @@ class ArkenvBuilder {
     init {
         install(CliFeature())
         install(EnvironmentVariableFeature())
-        install(PlaceholderParser())
+        if (installAdvancedFeatures) {
+            install(ProfileFeature())
+            install(PlaceholderParser())
+        }
     }
 }
 

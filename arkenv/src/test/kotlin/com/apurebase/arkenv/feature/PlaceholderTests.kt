@@ -1,9 +1,6 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.ArkenvBuilder
-import com.apurebase.arkenv.argument
-import com.apurebase.arkenv.configureArkenv
+import com.apurebase.arkenv.*
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.getTestResourcePath
@@ -96,7 +93,7 @@ class PlaceholderTests {
 
     @Test fun `should throw when placeholder is not found`() {
         val ark = Ark()
-        assertThrows<IllegalArgumentException> {
+        assertThrows<MissingArgumentException> {
             ark.parse(appNameArg, appName, appDescArg, "\${app_missing} is a Arkenv application")
         }
     }

@@ -10,7 +10,7 @@ import strikt.assertions.isEqualTo
 class ManualTests {
 
     private class SystemInArk : Arkenv() {
-        val name: String by argument {
+        val manualName: String by argument {
             acceptsManualInput = true
         }
     }
@@ -21,7 +21,7 @@ class ManualTests {
         SystemInArk()
             .parse()
             .expectThat {
-                get { name }.isEqualTo(expected)
+                get { manualName }.isEqualTo(expected)
             }
     }
 }
