@@ -23,7 +23,7 @@ Install the `YamlFeature` and specify the file to load from.
 ### Usage
 
 ```kotlin
-class Ark() : Arkenv(configuration = {
+class Ark : Arkenv(configuration = {
     install(YamlFeature("config"))
 }) {
     val mysqlPassword: String by argument()

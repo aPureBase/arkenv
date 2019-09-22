@@ -5,6 +5,7 @@ import com.apurebase.arkenv.feature.cli.CliFeature
 
 /**
  * [Arkenv] configuration builder which controls features and other settings.
+ * @param installAdvancedFeatures whether to install the profile and placeholder feature.
  */
 class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
 
@@ -23,6 +24,8 @@ class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
 
     /**
      * Installs the [feature] into [Arkenv].
+     * If the feature is already installed, it will be replaced, retaining its order.
+     * @param feature the feature to install.
      */
     fun install(feature: ArkenvFeature) {
         var index: Int? = null
@@ -49,6 +52,7 @@ class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
 
     /**
      * Uninstalls the [feature] from [Arkenv] if installed.
+     * @param feature the feature to uninstall.
      */
     fun uninstall(feature: ArkenvFeature) {
         features.removeIf { feature.key == it.key }
@@ -66,5 +70,6 @@ class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
 
 /**
  * Configure [Arkenv] settings.
+ * @param block Arkenv configuration logic.
  */
 inline fun configureArkenv(block: (ArkenvBuilder.() -> Unit)) = ArkenvBuilder().apply(block)
