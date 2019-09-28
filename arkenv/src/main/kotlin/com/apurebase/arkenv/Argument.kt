@@ -21,24 +21,6 @@ class Argument<T : Any?>(var names: List<String>) {
     var mapping: ((String) -> T)? = null
 
     /**
-     * Whether this [Argument] should consider environment variables when parsing
-     */
-    @Deprecated(DEPRECATED_GENERAL)
-    var withEnv: Boolean = true
-
-    /**
-     * A prefix that is applied to the environment variable names when parsing
-     */
-    @Deprecated(DEPRECATED_USE_FEATURE)
-    var envPrefix: String? = null
-
-    /**
-     * A custom name for the environment variable parsing
-     */
-    @Deprecated(DEPRECATED_GENERAL)
-    var envVariable: String? = null
-
-    /**
      * Whether this [Argument] is a main argument
      */
     var isMainArg: Boolean = false

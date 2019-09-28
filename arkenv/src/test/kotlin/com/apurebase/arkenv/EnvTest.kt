@@ -71,41 +71,14 @@ class EnvTest : ArkenvTest() {
         TestArgs().description shouldEqual "text"
     }
 
-    @Test fun `envVariable usage`() {
-        MockSystem("DESCRIPTION" to "text", "DESC" to "SOME MORE DESC")
-        TestArgs().description shouldEqual "SOME MORE DESC"
-    }
-
     @Test fun `everything and cli argument`() {
         val expected = "main desc"
         MockSystem("DESCRIPTION" to "text", "DESC" to "SOME MORE DESC")
         TestArgs().parse("-d", expected, "-c", "dk", "main").description shouldEqual expected
     }
 
-    @Test fun `custom env name should parse`() {
-        val envName = "ENV_NAME"
-        val expected = "result"
-
-        class CustomEnv : Arkenv() {
-            val arg: String by argument("-a") {
-                envVariable = envName
-            }
-        }
-
-        { CustomEnv().arg } shouldThrow IllegalArgumentException::class // nothing passed
-        CustomEnv().parse("-a", expected).arg shouldBeEqualTo expected // via arg
-
-        MockSystem(envName to expected)
-        CustomEnv().arg shouldBeEqualTo expected // via env
-    }
-
     @Test fun `should also accept -- double dash envs`() {
         MockSystem("ARG" to "x")
         CustomEnv().arg shouldBeEqualTo "x"
-    }
-
-    @Test fun `should accept custom env`() {
-        MockSystem("TEST" to "y")
-        CustomEnv().arg shouldBeEqualTo "y"
     }
 }
