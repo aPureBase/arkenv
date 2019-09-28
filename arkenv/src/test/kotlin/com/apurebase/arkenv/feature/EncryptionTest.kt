@@ -10,8 +10,8 @@ import strikt.assertions.isEqualTo
 import java.security.Key
 import java.security.KeyPair
 import java.security.KeyPairGenerator
+import java.util.*
 import javax.crypto.Cipher
-import javax.xml.bind.DatatypeConverter
 
 internal class EncryptionTest {
 
@@ -50,6 +50,6 @@ internal class EncryptionTest {
 
         fun encrypt(input: String): String = encryptCipher
             .doFinal(input.toByteArray())
-            .let { DatatypeConverter.printHexBinary(it) }
+            .let(Base64.getEncoder()::encodeToString)
     }
 }

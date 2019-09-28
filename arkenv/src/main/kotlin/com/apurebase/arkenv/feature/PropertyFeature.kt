@@ -17,11 +17,9 @@ open class PropertyFeature(
 ) : ArkenvFeature, Arkenv("PropertyFeature") {
 
     protected open val extensions = listOf("properties")
-    private val defaultLocations = listOf("", "config/")
-    private val locations: Collection<String> by argument("--arkenv-property-location") {
-        val combined = locations + defaultLocations
-        mapping = { it.split(',') + combined }
-        defaultValue = { combined }
+    private val defaultLocations = locations + listOf("", "config/")
+    private val extraLocations: List<String> by argument("--arkenv-property-location") {
+        defaultValue = ::emptyList
     }
 
     override fun onLoad(arkenv: Arkenv) {
@@ -42,7 +40,7 @@ open class PropertyFeature(
     protected open fun parse(stream: InputStream): Map<String, String> = parseProperties(stream)
 
     private fun getStream(name: String): InputStream? {
-        locations
+        (extraLocations + defaultLocations)
             .map { fixLocation(it) + name }
             .forEach {
                 val stream = getFileStream(it) ?: getResourceStream(it)
@@ -51,7 +49,7 @@ open class PropertyFeature(
         return null
     }
 
-    private fun fixLocation(location: String) = // TODO test this
+    private fun fixLocation(location: String) =
         if (location.isNotBlank() && !location.endsWith('/')) "$location/"
         else location
 

@@ -1,8 +1,8 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
+import java.util.*
 import javax.crypto.Cipher
-import javax.xml.bind.DatatypeConverter
 
 /**
  * Supports decryption of encrypted values during the processing phase.
@@ -29,8 +29,8 @@ class Encryption(private val cipher: Cipher) : ProcessorFeature {
         }
     }
 
-    private fun Cipher.decrypt(input: String): String = DatatypeConverter
-        .parseHexBinary(input)
+    private fun Cipher.decrypt(input: String): String = Base64.getDecoder()
+        .decode(input)
         .let(::doFinal)
         .let { String(it) }
 }

@@ -67,7 +67,7 @@ abstract class Arkenv(
                 .append(doubleIndent)
                 .append(delegate.property.name)
                 .append(doubleIndent)
-                .append(delegate.getValue(this, delegate.property))
+                .append(delegate.getValue(this@Arkenv, delegate.property))
                 .appendln()
         }
     }.toString()
