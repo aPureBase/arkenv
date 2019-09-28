@@ -1,22 +1,34 @@
 package com.apurebase.arkenv.feature
 
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.DEPRECATED_GENERAL
+import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.parse
 import com.apurebase.arkenv.*
 
 /**
  * Feature for loading profile-based configuration.
- * A list of active profiles can be configured via a custom [name] or the *ARKENV_PROFILE* argument.
+ * A list of active profiles can be configured via the *ARKENV_PROFILE* argument.
  * @param name overrides the default name of the profile argument, can be set via *ARKENV_PROFILE*
  * @param prefix the default prefix for any profile configuration files, can be set via *ARKENV_PROFILE_PREFIX*
  * @param locations defines the default list of locations in which to look for profile configuration files,
  * can be set via *ARKENV_PROFILE_LOCATION*
  * @param parsers additional providers for profile file parsing. By default supports the property format.
  */
-class ProfileFeature(
+class ProfileFeature
+@Deprecated(DEPRECATED_GENERAL)
+constructor(
     name: String = "--arkenv-profile",
     prefix: String = "application",
     locations: Collection<String> = listOf(),
     parsers: Collection<PropertyParser> = listOf()
 ) : ArkenvFeature, Arkenv("ProfileFeature", ArkenvBuilder(false)) {
+
+    constructor(
+        prefix: String = "application",
+        locations: Collection<String> = listOf(),
+        parsers: Collection<PropertyParser> = listOf()
+    ) : this("--arkenv-profile", prefix, locations, parsers)
 
     private val parsers: MutableList<PropertyParser> = mutableListOf(::PropertyFeature)
 
