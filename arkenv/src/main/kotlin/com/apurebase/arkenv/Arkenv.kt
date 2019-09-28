@@ -13,10 +13,6 @@ abstract class Arkenv(
     internal val configuration: ArkenvBuilder = ArkenvBuilder()
 ) {
 
-    @Deprecated(DEPRECATED_GENERAL)
-    constructor(programName: String = "Arkenv", configuration: (ArkenvBuilder.() -> Unit))
-            : this(programName, configureArkenv(configuration))
-
     internal val argList = mutableListOf<String>()
     private val keyValue = mutableMapOf<String, String>()
     internal val delegates = mutableListOf<ArgumentDelegate<*>>()
@@ -30,7 +26,6 @@ abstract class Arkenv(
     internal fun parseArguments(args: Array<out String>) {
         if (configuration.clearInputBeforeParse) clear()
         argList.addAll(args)
-        onParse(args)
         configuration.features.forEach { it.onLoad(this) }
         process()
         parse()
@@ -44,14 +39,6 @@ abstract class Arkenv(
     protected fun clear() {
         argList.clear()
         keyValue.clear()
-    }
-
-    @Deprecated(DEPRECATED_USE_FEATURE)
-    open fun onParse(args: Array<out String>) {
-    }
-
-    @Deprecated(DEPRECATED_USE_FEATURE)
-    open fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {
     }
 
     override fun toString(): String = StringBuilder().apply {
@@ -118,7 +105,6 @@ abstract class Arkenv(
                 feature.configure(it.argument)
             }
             it.reset()
-            val value = it.getValue(this, it.property)
-            onParseArgument(it.property.name, it.argument, value)
+            it.getValue(this, it.property)
         }
 }
