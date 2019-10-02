@@ -74,11 +74,6 @@ class EnvTest : ArkenvTest() {
         TestArgs().description expectIsEqual "text"
     }
 
-    @Test fun `envVariable usage`() {
-        MockSystem("DESCRIPTION" to "text", "DESC" to "SOME MORE DESC")
-        TestArgs().description expectIsEqual "SOME MORE DESC"
-    }
-
     @Test fun `everything and cli argument`() {
         val expected = "main desc"
         MockSystem("DESCRIPTION" to "text", "DESC" to "SOME MORE DESC")
@@ -88,10 +83,5 @@ class EnvTest : ArkenvTest() {
     @Test fun `should also accept -- double dash envs`() {
         MockSystem("ARG" to "x")
         CustomEnv().arg expectIsEqual "x"
-    }
-
-    @Test fun `should accept custom env`() {
-        MockSystem("TEST" to "y")
-        CustomEnv().arg expectIsEqual "y"
     }
 }
