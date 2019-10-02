@@ -85,23 +85,6 @@ class EnvTest : ArkenvTest() {
         TestArgs().parse("-d", expected, "-c", "dk", "main").description expectIsEqual expected
     }
 
-    @Test fun `custom env name should parse`() {
-        val envName = "ENV_NAME"
-        val expected = "result"
-
-        class CustomEnv : Arkenv() {
-            val arg: String by argument("-a") {
-                envVariable = envName
-            }
-        }
-
-        assertThrows<MissingArgumentException> { CustomEnv().arg }
-        CustomEnv().parse("-a", expected).arg expectIsEqual expected // via arg
-
-        MockSystem(envName to expected)
-        CustomEnv().arg expectIsEqual expected // via env
-    }
-
     @Test fun `should also accept -- double dash envs`() {
         MockSystem("ARG" to "x")
         CustomEnv().arg expectIsEqual "x"

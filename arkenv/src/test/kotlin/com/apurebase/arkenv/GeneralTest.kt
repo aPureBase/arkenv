@@ -152,29 +152,7 @@ class GeneralTest {
                 get { bool }.isTrue()
             }
     }
-
-    @Test fun `onParse callbacks should be called`() {
-        var globalCalled = false
-        var lastCalledArg = ""
-        val ark = object : Arkenv() {
-            val some: Int by argument("-s")
-            val last: String by argument("-l")
-
-            override fun onParseArgument(name: String, argument: Argument<*>, value: Any?) {
-                lastCalledArg = name
-            }
-
-            override fun onParse(args: Array<out String>) {
-                args.forEach(::println)
-                globalCalled = true
-            }
-        }
-
-        ark.parse("-s", "5", "-l", "test")
-        globalCalled.expectThat { isTrue() }
-        lastCalledArg.expectThat { isEqualTo("last") }
-    }
-
+    
     @Test fun `should pass when delegates are empty`() {
         val ark = object : Arkenv() {}
         ark.parse("-empty")

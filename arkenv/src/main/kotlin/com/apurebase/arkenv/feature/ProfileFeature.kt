@@ -4,15 +4,14 @@ import com.apurebase.arkenv.*
 
 /**
  * Feature for loading profile-based configuration.
- * A list of active profiles can be configured via a custom [name] or the *ARKENV_PROFILE* argument.
- * @param name overrides the default name of the profile argument, can be set via *ARKENV_PROFILE*
+ * A list of active profiles can be configured via the *ARKENV_PROFILE* argument.
  * @param prefix the default prefix for any profile configuration files, can be set via *ARKENV_PROFILE_PREFIX*
  * @param locations defines the default list of locations in which to look for profile configuration files,
  * can be set via *ARKENV_PROFILE_LOCATION*
  * @param parsers additional providers for profile file parsing. By default supports the property format.
  */
-class ProfileFeature(
-    name: String = "--arkenv-profile",
+class ProfileFeature
+constructor(
     prefix: String = "application",
     locations: Collection<String> = listOf(),
     parsers: Collection<PropertyParser> = listOf()
@@ -24,7 +23,7 @@ class ProfileFeature(
         this.parsers.addAll(parsers)
     }
 
-    internal val profiles: List<String> by argument(name) {
+    internal val profiles: List<String> by argument("--arkenv-profile") {
         defaultValue = ::emptyList
     }
 

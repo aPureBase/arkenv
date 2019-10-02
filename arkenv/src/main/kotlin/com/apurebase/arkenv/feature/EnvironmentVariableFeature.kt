@@ -26,33 +26,20 @@ class EnvironmentVariableFeature(
 
     override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? = with(delegate) {
         val envSecrets = enableEnvSecrets || arkenv.getOrNull("ARKENV_ENV_SECRETS") != null
-        if (argument.withEnv) {
-            val setEnvPrefix = argument.envPrefix ?: envPrefix ?: arkenv.getOrNull("ARKENV_ENV_PREFIX") ?: ""
-            getEnvValue(argument, envSecrets, setEnvPrefix)
-        } else null
+        val setEnvPrefix = envPrefix ?: arkenv.getOrNull("ARKENV_ENV_PREFIX") ?: ""
+        getEnvValue(argument, envSecrets, setEnvPrefix)
     }
 
-    @Deprecated(DEPRECATED_GENERAL)
-    override fun configure(argument: Argument<*>) {
-        argument.withEnv = true
-        argument.envPrefix = envPrefix
-    }
-
-    private fun getEnvValue(argument: Argument<*>, enableEnvSecrets: Boolean, prefix: String): String? {
-        // If an envVariable is defined we'll pick this as highest order value
-        argument.envVariable?.let {
-            val definedEnvValue = getEnv(it, enableEnvSecrets)
-            if (!definedEnvValue.isNullOrEmpty()) return definedEnvValue
-        }
-
-        // Loop over all argument names and pick the first one that matches
-        return argument.names
+    /**
+     * Loop over all argument names and pick the first one that matches
+     */
+    private fun getEnvValue(argument: Argument<*>, enableEnvSecrets: Boolean, prefix: String): String? =
+        argument.names
             .asSequence()
             .filter(String::isAdvancedName)
             .map { parseArgumentName(it, prefix) }
             .mapNotNull { getEnv(it, enableEnvSecrets) }
             .firstOrNull()
-    }
 
     private fun parseArgumentName(name: String, prefix: String): String =
         prefix.toSnakeCase().ensureEndsWith('_') + name.toSnakeCase()
