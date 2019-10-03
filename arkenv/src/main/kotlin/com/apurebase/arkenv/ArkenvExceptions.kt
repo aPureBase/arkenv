@@ -32,3 +32,10 @@ internal class MappingException(key: String, value: String, clazz: KClass<*>, ca
 internal class MissingArgumentException(name: String, info: String): ArkenvException(
     "No value passed for property $name ($info)"
 )
+
+/**
+ * Unchecked exception thrown when the requested feature could not be found.
+ */
+internal class FeatureNotFoundException(featureName: String?) : ArkenvException(
+    "Feature $featureName could not be found. Make sure it was installed correctly."
+)

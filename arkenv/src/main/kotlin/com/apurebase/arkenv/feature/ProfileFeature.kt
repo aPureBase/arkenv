@@ -1,9 +1,6 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.ArkenvBuilder
-import com.apurebase.arkenv.argument
-import com.apurebase.arkenv.parse
+import com.apurebase.arkenv.*
 
 /**
  * Feature for loading profile-based configuration.
@@ -25,7 +22,7 @@ class ProfileFeature(
         this.parsers.addAll(parsers)
     }
 
-    internal val profiles: List<String> by argument("--arkenv-profile") {
+    val active: List<String> by argument("--arkenv-profile") {
         defaultValue = ::emptyList
     }
 
@@ -40,7 +37,7 @@ class ProfileFeature(
     override fun onLoad(arkenv: Arkenv) {
         parse(arkenv.argList.toTypedArray())
         load(arkenv, null)
-        profiles.forEach { load(arkenv, it) }
+        active.forEach { load(arkenv, it) }
     }
 
     private fun load(arkenv: Arkenv, file: String?) = parsers
@@ -53,3 +50,5 @@ class ProfileFeature(
 }
 
 typealias PropertyParser = (String, Collection<String>) -> PropertyFeature
+
+val Arkenv.profiles get() = getFeature<ProfileFeature>()

@@ -64,6 +64,9 @@ internal inline fun <reified T : ArkenvFeature> Arkenv.findFeature(): T? {
     return configuration.features.find { it is T } as T?
 }
 
+internal inline fun <reified T : ArkenvFeature> Arkenv.getFeature(): T =
+    findFeature() ?: throw FeatureNotFoundException(T::class.simpleName)
+
 /**
  * Inserts all key-value pairs in [from] to [Arkenv], overwriting already existing keys.
  * Applies all [ProcessorFeature]s to the value.
