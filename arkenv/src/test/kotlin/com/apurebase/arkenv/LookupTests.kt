@@ -47,7 +47,7 @@ class LookupTests {
     @Test fun `should throw when argument does not exist`() {
         val ark = Ark().parse("--other", "name")
         val key = "left-over"
-        assertThrows<IllegalArgumentException> { ark[key] }
+        assertThrows<MissingArgumentException> { ark[key] }
             .expectThat { get { message }.isNotNull().contains(key) }
     }
 
