@@ -23,7 +23,6 @@ class TestArgs : Arkenv() {
 
     val description: String? by argument("-d", "--description") {
         description = "Description"
-        envVariable = "DESC"
     }
 }
 
@@ -68,7 +67,5 @@ class Mixed : Arkenv() {
 }
 
 class CustomEnv : Arkenv() {
-    val arg: String by argument("-a", "--arg") {
-        envVariable = "TEST"
-    }
+    val arg: String by argument("-a", "--arg")
 }
