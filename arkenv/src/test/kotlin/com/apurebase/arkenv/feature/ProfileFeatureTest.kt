@@ -65,6 +65,13 @@ open class ProfileFeatureTest {
         }
     }
 
+    @Test fun `env var should override profile`() {
+        MockSystem("PORT" to "6001")
+        Ark().parse().expectThat {
+            expect(6001, defaultName)
+        }
+    }
+
     protected val arkenvProfile = "ARKENV_PROFILE"
     private val prodPort = 443
     private val devPort = 5000
