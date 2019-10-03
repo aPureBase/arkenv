@@ -11,14 +11,12 @@ Arkenv supports a feature model that allows for
 adding and removing functionality as required.
 
 ```kotlin
-class Ark : Arkenv(configuration = {
+class Ark : Arkenv("Example", configureArkenv {
     install(PropertyFeature())
     uninstall(CliFeature())
 }) {
-
     val mysqlPassword: String by argument()
-    
-    val port: Int by argument("--database-port")
+    val port: Int by argument()
 }
 ```
 
@@ -28,8 +26,10 @@ In the constructor of Arkenv, specify a configuration lambda and call `install` 
 In the above example, we first add support for reading arguments from
 a property file, and then remove the command line support. 
 
-By default, the [CliFeature]({{site.baseurl}}features/command-line) and 
-[EnvironmentVariableFeature]({{site.baseurl}}features/environment-variables) are enabled.
+The following features are installed by default:
+* [CliFeature]({{site.baseurl}}features/command-line) 
+* [ProfileFeature]({{site.baseurl}}features/profiles)
+* [EnvironmentVariableFeature]({{site.baseurl}}features/environment-variables)
 
 ### Order
 The parse order depends on the order in which features are installed. 

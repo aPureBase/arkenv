@@ -14,7 +14,7 @@ import java.util.*
 open class PropertyFeature(
     private val file: String = "application",
     locations: Collection<String> = listOf()
-) : ArkenvFeature, Arkenv("PropertyFeature") {
+) : ArkenvFeature, Arkenv("PropertyFeature", ArkenvBuilder(false)) {
 
     protected open val extensions = listOf("properties")
     private val defaultLocations = locations + listOf("", "config/")
