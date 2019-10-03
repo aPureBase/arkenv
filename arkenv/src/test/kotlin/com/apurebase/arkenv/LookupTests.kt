@@ -11,8 +11,13 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.assertions.contains
+import strikt.assertions.isEqualTo
 import strikt.assertions.isNotNull
 
+/**
+ * Tests for verifying the Arkenv extension getter behavior.
+ * This includes [Arkenv.get] and [Arkenv.getOrNull].
+ */
 class LookupTests {
 
     private class Ark : Arkenv("Test", configureArkenv {
@@ -44,6 +49,14 @@ class LookupTests {
         val key = "left-over"
         assertThrows<IllegalArgumentException> { ark[key] }
             .expectThat { get { message }.isNotNull().contains(key) }
+    }
+
+    @Test fun `input key should be snake-case formatted`() {
+        val expected = "app"
+        MockSystem("CLIENT_DIR" to expected)
+        Ark().parse().expectThat {
+            get { get("clientDir") }.isEqualTo(expected)
+        }
     }
 
     @Nested
