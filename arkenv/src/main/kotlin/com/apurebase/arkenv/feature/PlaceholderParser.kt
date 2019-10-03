@@ -2,6 +2,7 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.ArgumentDelegate
 import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.MissingArgumentException
 import com.apurebase.arkenv.toSnakeCase
 
 /**
@@ -44,7 +45,7 @@ internal class PlaceholderParser : ProcessorFeature {
         findReplacementInDelegates(arkenv.delegates, placeholder)
                 ?: arkenv.getOrNull(placeholder)
                 ?: findReplacementInArgs(arkenv.argList, placeholder)
-                ?: throw IllegalArgumentException("Cannot find value for placeholder $placeholder")
+                ?: throw MissingArgumentException(placeholder, "Cannot find value for placeholder")
 
     private fun findReplacementInDelegates(delegates: Collection<ArgumentDelegate<*>>, placeholder: String): String? =
         delegates

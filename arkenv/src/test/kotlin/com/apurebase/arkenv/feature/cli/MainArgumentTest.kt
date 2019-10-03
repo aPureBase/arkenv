@@ -1,14 +1,15 @@
 package com.apurebase.arkenv.feature.cli
 
 import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.MissingArgumentException
 import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.mainArgument
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldEqual
-import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
 
 internal class MainArgumentTest {
@@ -51,8 +52,8 @@ internal class MainArgumentTest {
     }
 
     @Test fun `no main argument passed`() {
-        { Ark().main } shouldThrow IllegalArgumentException::class
-        { Ark().parse("-e", "import") } shouldThrow IllegalArgumentException::class
+        assertThrows<MissingArgumentException> { Ark().main }
+        assertThrows<MissingArgumentException> { Ark().parse("-e", "import") }
     }
 
     @Test fun `main should not eat unused args`() {

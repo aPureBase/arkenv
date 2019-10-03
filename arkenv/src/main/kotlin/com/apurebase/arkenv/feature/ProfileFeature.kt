@@ -1,6 +1,7 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.ArkenvBuilder
 import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.parse
 
@@ -12,12 +13,11 @@ import com.apurebase.arkenv.parse
  * can be set via *ARKENV_PROFILE_LOCATION*
  * @param parsers additional providers for profile file parsing. By default supports the property format.
  */
-class ProfileFeature
-constructor(
+class ProfileFeature(
     prefix: String = "application",
     locations: Collection<String> = listOf(),
     parsers: Collection<PropertyParser> = listOf()
-) : ArkenvFeature, Arkenv("ProfileFeature") {
+) : ArkenvFeature, Arkenv("ProfileFeature", ArkenvBuilder(false)) {
 
     private val parsers: MutableList<PropertyParser> = mutableListOf(::PropertyFeature)
 

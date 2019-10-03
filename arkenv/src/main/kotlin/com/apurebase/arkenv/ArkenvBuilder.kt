@@ -1,15 +1,13 @@
 package com.apurebase.arkenv
 
-import com.apurebase.arkenv.feature.ArkenvFeature
-import com.apurebase.arkenv.feature.EnvironmentVariableFeature
-import com.apurebase.arkenv.feature.PlaceholderParser
-import com.apurebase.arkenv.feature.ProcessorFeature
+import com.apurebase.arkenv.feature.*
 import com.apurebase.arkenv.feature.cli.CliFeature
 
 /**
  * [Arkenv] configuration builder which controls features and other settings.
+ * @param installAdvancedFeatures whether to install the profile and placeholder feature.
  */
-class ArkenvBuilder {
+class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
 
     /**
      * Whether data should be cleared before parsing.
@@ -26,9 +24,18 @@ class ArkenvBuilder {
 
     /**
      * Installs the [feature] into [Arkenv].
+     * If the feature is already installed, it will be replaced, retaining its order.
+     * @param feature the feature to install.
      */
     fun install(feature: ArkenvFeature) {
-        features.add(feature)
+        var index: Int? = null
+        features.forEachIndexed { i, arkenvFeature ->
+            if (arkenvFeature.key == feature.key) index = i
+        }
+        index?.let { i ->
+            uninstall(feature)
+            features.add(i, feature)
+        } ?: features.add(feature)
     }
 
     /**
@@ -45,6 +52,7 @@ class ArkenvBuilder {
 
     /**
      * Uninstalls the [feature] from [Arkenv] if installed.
+     * @param feature the feature to uninstall.
      */
     fun uninstall(feature: ArkenvFeature) {
         features.removeIf { feature.key == it.key }
@@ -53,11 +61,15 @@ class ArkenvBuilder {
     init {
         install(CliFeature())
         install(EnvironmentVariableFeature())
-        install(PlaceholderParser())
+        if (installAdvancedFeatures) {
+            install(ProfileFeature())
+            install(PlaceholderParser())
+        }
     }
 }
 
 /**
  * Configure [Arkenv] settings.
+ * @param block Arkenv configuration logic.
  */
 inline fun configureArkenv(block: (ArkenvBuilder.() -> Unit)) = ArkenvBuilder().apply(block)

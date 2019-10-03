@@ -90,10 +90,10 @@ class ArgumentDelegate<T : Any?> internal constructor(
 
     private fun checkNullable(arkenv: Arkenv, property: KProperty<*>) {
         val valuesAreNull = value == null && defaultValue == null
-        if (valuesAreNull && !isHelp(arkenv) && !property.returnType.isMarkedNullable) {
-            val nameInfo = if (argument.isMainArg) "Main argument" else argument.names.joinToString()
-            throw IllegalArgumentException("No value passed for property ${property.name} ($nameInfo)")
-        }
+        if (valuesAreNull && !isHelp(arkenv) && !property.returnType.isMarkedNullable) throw MissingArgumentException(
+            property.name,
+            info = if (argument.isMainArg) "Main argument" else argument.names.joinToString()
+        )
     }
 
     private fun isHelp(arkenv: Arkenv): Boolean = argument.isHelp || arkenv.isHelp()
