@@ -72,6 +72,12 @@ open class ProfileFeatureTest {
         }
     }
 
+    @Test fun `access profiles`() {
+        Ark().parse(arkenvProfile, "prod,dev").expectThat {
+            get { profiles.active }.isEqualTo(listOf("prod", "dev"))
+        }
+    }
+
     protected val arkenvProfile = "ARKENV_PROFILE"
     private val prodPort = 443
     private val devPort = 5000
