@@ -81,8 +81,8 @@ abstract class Arkenv(
      * @return The value for the [key] or null if not found
      */
     fun getOrNull(key: String): String? {
-        val result = keyValue[key.toSnakeCase()]
-        return result ?: EnvironmentVariableFeature.getEnv(key, false)
+        val formattedKey = key.toSnakeCase()
+        return keyValue[formattedKey] ?: findFeature<EnvironmentVariableFeature>()?.getEnv(formattedKey, false)
     }
 
     /**
@@ -95,7 +95,7 @@ abstract class Arkenv(
             .mapNotNull { it.onParse(this, delegate) }
             .map { processValue("", it) }
         return if (onParseValues.isNotEmpty()) onParseValues
-        else names.mapNotNull(::getOrNull)
+        else names.filterNot(String::isSimpleName).mapNotNull(::getOrNull)
     }
 
     private fun parse() = delegates

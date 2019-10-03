@@ -35,6 +35,3 @@ internal fun String.mapRelaxed(): String =
     else this
 
 internal fun String.split() = split(',')
-
-internal const val DEPRECATED_GENERAL = "Will be removed in future major version"
-internal const val DEPRECATED_USE_FEATURE = "$DEPRECATED_GENERAL. Use Features instead."

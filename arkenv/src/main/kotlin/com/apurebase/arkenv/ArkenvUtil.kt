@@ -78,10 +78,10 @@ fun Arkenv.putAll(from: Map<out String, String>) = from.forEach { (k, v) -> set(
  * All parsed but not declared arguments are available.
  * @param key the non-case-sensitive name of the argument
  * @return The value for the [key]
- * @throws IllegalArgumentException when the key can not be found
+ * @throws MissingArgumentException when the key can not be found
  */
 operator fun Arkenv.get(key: String): String =
-    getOrNull(key) ?: throw IllegalArgumentException("Arkenv does not contain a value for key '$key'")
+    getOrNull(key) ?: throw MissingArgumentException("Arkenv does not contain a value for key '$key'", "")
 
 /**
  * Maps the input [value] to an instance of [T] using [clazz] as a reference.
