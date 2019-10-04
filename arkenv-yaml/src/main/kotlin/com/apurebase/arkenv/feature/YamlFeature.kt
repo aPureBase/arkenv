@@ -19,19 +19,21 @@ class YamlFeature(
 
     override val extensions: List<String> = listOf("yml", "yaml")
 
+    private val map = mutableMapOf<String, String>()
+
     override fun parse(stream: InputStream): Map<String, String> {
         Yaml().load<Map<String, Any?>>(stream)?.map { (key, value) -> parse(key, value) }
-        return getAll()
+        return map
     }
 
-    override fun finally(arkenv: Arkenv) = clear()
+    override fun finally(arkenv: Arkenv) = map.clear()
 
     @Suppress("UNCHECKED_CAST")
     private fun parse(key: String, value: Any?) {
         when (value) {
             is Map<*, *> -> (value as? Map<String, Any?>)?.forEach { (k, v) -> parse("${key}_$k", v) }
-            is ArrayList<*> -> this[key] = value.joinToString(",")
-            else -> this[key] = value.toString()
+            is ArrayList<*> -> map[key] = value.joinToString(",")
+            else -> map[key] = value.toString()
         }
     }
 }

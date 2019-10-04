@@ -1,6 +1,8 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.getFeature
+import com.apurebase.arkenv.split
 
 /**
  * Feature for loading profile-based configuration.
@@ -11,10 +13,10 @@ import com.apurebase.arkenv.*
  * @param parsers additional providers for profile file parsing. By default supports the property format.
  */
 class ProfileFeature(
-    prefix: String = "application",
-    locations: Collection<String> = listOf(),
+    private var prefix: String = "application",
+    private var locations: Collection<String> = listOf(),
     parsers: Collection<PropertyParser> = listOf()
-) : ArkenvFeature, Arkenv("ProfileFeature", ArkenvBuilder(false)) {
+) : ArkenvFeature {
 
     private val parsers: MutableList<PropertyParser> = mutableListOf(::PropertyFeature)
 
@@ -22,26 +24,19 @@ class ProfileFeature(
         this.parsers.addAll(parsers)
     }
 
-    val active: List<String> by argument("--arkenv-profile") {
-        defaultValue = ::emptyList
-    }
-
-    private val prefix: String by argument("--arkenv-profile-prefix") {
-        defaultValue = { prefix }
-    }
-
-    private val location: Collection<String> by argument("--arkenv-profile-location") {
-        defaultValue = { locations }
-    }
+    var active: List<String> = listOf()
+        private set
 
     override fun onLoad(arkenv: Arkenv) {
-        parse(arkenv.argList.toTypedArray())
+        active = arkenv.getOrNull("--arkenv-profile")?.split() ?: emptyList()
+        prefix = arkenv.getOrNull("--arkenv-profile-prefix") ?: prefix
+        locations = arkenv.getOrNull("--arkenv-profile-location")?.split() ?: locations
         load(arkenv, null)
         active.forEach { load(arkenv, it) }
     }
 
     private fun load(arkenv: Arkenv, file: String?) = parsers
-        .map { it(makeFileName(file), location) }
+        .map { it(makeFileName(file), locations) }
         .forEach { it.onLoad(arkenv) }
 
     private fun makeFileName(profile: String?) =
