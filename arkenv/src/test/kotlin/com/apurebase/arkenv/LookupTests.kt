@@ -60,7 +60,7 @@ class LookupTests {
     }
 
     @Nested
-    inner class Nullable {
+    private inner class Nullable {
 
         @Test fun `should resolve unused properties`() {
             val ark = Ark().parse()

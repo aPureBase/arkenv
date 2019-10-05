@@ -16,7 +16,7 @@ class CliFeature : ArkenvFeature {
     override fun onLoad(arkenv: Arkenv) {
         args = arkenv.argList
         args.replaceAll(String::mapRelaxed)
-        loadCliAssignments(arkenv.delegates).let(arkenv::putAll)
+        loadCliAssignments().let(arkenv::putAll)
         val parsed = parseArguments(args)
         args.clear()
         args.addAll(parsed)
@@ -39,19 +39,14 @@ class CliFeature : ArkenvFeature {
     /**
      * Responsible for loading arguments that use the assignment syntax, e.g. key=value
      */
-    private fun loadCliAssignments(delegates: Iterable<ArgumentDelegate<*>>): Map<String, String> {
-        val names = delegates.flatMap { it.argument.names }.map { it.trimStart('-') }
-        return loadArguments(args, names)
-    }
-
-    private fun loadArguments(args: MutableList<String>, names: List<String>): Map<String, String> {
+    private fun loadCliAssignments(): Map<String, String> {
         val map = mutableMapOf<String, String>()
         var i = 0
         while (i < args.size) {
             val value = args[i]
             val split = value.split('=')
             val key = split.first().toSnakeCase()
-            if (split.size == 2 && names.contains(key)) {
+            if (split.size == 2) {
                 args.removeAt(i)
                 map[key] = split.getOrNull(1) ?: ""
             } else if (split.size == 1 && i < args.size - 1) {

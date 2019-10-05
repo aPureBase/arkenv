@@ -29,7 +29,7 @@ class ProfileFeatureCustomizationTest {
     }
 
     @Nested
-    inner class Prefix {
+    private inner class Prefix {
 
         @Test fun `change via param`() {
             PrefixArk("config").expectThat { isMasterFile() }
@@ -54,7 +54,7 @@ class ProfileFeatureCustomizationTest {
     }
 
     @Nested
-    inner class Location {
+    private inner class Location {
         private val path = "custom/path"
 
         @Test fun `change via param`() {
