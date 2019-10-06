@@ -65,9 +65,6 @@ You can also find more examples and guides in [the documentation](https://apureb
 Please visit [https://apurebase.gitlab.io/arkenv/](https://apurebase.gitlab.io/arkenv/) for in-depth documentation.
 
 ### 🤝 Contributing [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) 
-##### Issues
-This repository is hosted on Gitlab (https://gitlab.com/apurebase/arkenv). 
-Please report issues and open pull requests there.
 
 ##### Slack
 Find the Arkenv channel in the [official Kotlin Slack](https://kotlinlang.slack.com/messages/CGF74HD19/).
