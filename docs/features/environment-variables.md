@@ -28,18 +28,6 @@ Arkenv accepts a variety of different formats.
 val port: Int by argument("--additional-name", "additionalName", "ADDITIONAL_NAME")
 ``` 
 
-##### Explicit env variable name
-⚠️*Deprecated*
-
-Another option is to explicitly set the name of the environment variable.
- 
-```kotlin
-val description: String by argument {
-    envVariable = "DESC"
-}
-```
-You can now use either `DESCRIPTION` or `DESC` to set the argument via environment variables.
-
 ### Customization
 
 ##### Env prefix

@@ -30,7 +30,7 @@ $ export API_KEY_FILE=file_including_api_key.txt
 Arkenv loads the file and reads the entire content. 
 
 ### Customization
-
-* Argument: `--arkenv-env-secrets`
-* Env var: `ARKENV_ENV_SECRETS`
+Docker secrets can be enabled in any of the following ways:
+* Argument: `--arkenv-env-secrets true`
+* Env var: `ARKENV_ENV_SECRETS=true`
 * Code: `EnvironmentVariableFeature(enableEnvSecrets = true)`

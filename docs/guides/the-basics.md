@@ -52,7 +52,7 @@ to change your command line arguments every time.
 You may want to create profiles based on different environments that the
 app is going to run in, e.g. dev, test, production, etc. 
 
-Start by creating adding `application.properties` to your resources folder.
+Start by adding `application.properties` to your resources folder.
 ```properties
 MYSQL_PASSWORD=c0mpl3x
 PORT=5000
@@ -84,7 +84,7 @@ Environment variable:
 export ARKENV_PROFILE=prod,secret
 ```
 ___
-You can also use yaml for your profiles. 
+ℹ️ You can also use yaml for your profiles. 
 See [YamlFeature]({{site.baseurl}}features/yaml). 
 
 ### Docker

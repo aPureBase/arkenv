@@ -11,12 +11,12 @@ Type-safe Kotlin configuration parser `by` delegates.
 Supports the most common external configuration sources, including: 
 * Command line
 * Environment Variables
-* Properties & Spring-like profiles
-* Dot env (.env) files
+* Properties, Yaml & Spring-like profiles
+* `.env` files
 
 
 ### 📦 Installation
-Add jcenter to your repositories. Then you can add Arkenv in Gradle:
+Add jcenter to your repositories and add Arkenv in Gradle:
 
 ```groovy
 repositories { jcenter() }
@@ -51,14 +51,15 @@ class Arguments : Arkenv() {
 ```
 If you don't specify any names for the argument, it will use the property's name. 
 
-In the case of `country`, you can parse it like this:
-* From command line with `--country world`
-* As an environment variable `COUNTRY=world`
+In the case of `nullInt`, you can parse it like this:
+* From command line with `--null-int world`
+* As an environment variable `NULL_INT=world`
 
-By default, Arkenv supports parsing command line arguments and environment variables. 
-Read more about other features and their configuration [here](https://apurebase.gitlab.io/arkenv/features/features/). 
+By default, Arkenv supports parsing command line arguments, 
+environment variables, and profiles.  
 
-You can also find more examples and guides in [the documentation](https://apurebase.gitlab.io/arkenv/guides/guides/) 
+To get started, we recommend reading about [the basics](https://apurebase.gitlab.io/arkenv/guides/the-basics) 
+for a quick tour of what's included. 
 
 
 ### 📃 Documentation
