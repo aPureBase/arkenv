@@ -15,7 +15,7 @@ internal class RelaxedBindingTests {
     }
 
     @Nested
-    inner class Cli {
+    private inner class Cli {
         private fun verifyCli(key: String) = Ark().parse(key, "5").verify()
 
         @Test fun `UPPERCASE`() {
@@ -32,7 +32,7 @@ internal class RelaxedBindingTests {
     }
 
     @Nested
-    inner class Env {
+    private inner class Env {
         private fun verifyEnv() = Ark().parse().verify()
 
         @Test fun `UPPERCASE`() {
@@ -52,7 +52,7 @@ internal class RelaxedBindingTests {
     }
 
     @Nested
-    inner class Property {
+    private inner class Property {
         private fun verifyProperty(file: String) {
             val ark = Ark(configureArkenv {
                 install(PropertyFeature("$file.properties", listOf("binding")))
@@ -74,7 +74,7 @@ internal class RelaxedBindingTests {
     }
 
     @Nested
-    inner class Assignment {
+    private inner class Assignment {
         private fun verifyAssignment(arg: String) = Ark().parse(arg).verify()
 
         @Test fun `UPPERCASE`() {

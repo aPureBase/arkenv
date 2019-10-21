@@ -11,7 +11,7 @@ import strikt.assertions.isTrue
 
 class MergeTests {
 
-    class Arguments : Arkenv() {
+    private class Arguments : Arkenv() {
         val doRun: Boolean by argument("-d", "--do-run")
         val production: Boolean by argument("-p", "--production")
         val something: Boolean by argument("-s", "--something")

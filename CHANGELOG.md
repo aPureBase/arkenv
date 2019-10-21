@@ -1,3 +1,12 @@
+
+# 3.0.0
+* #5 The profile feature is now installed by default
+* #17 Enable access to the active profiles
+
+# 2.2.0
+* #6 Add default mappings for primitive arrays, List<String>, and Collection<String>
+* #1 Fix encryption api only works on java < 9
+
 # 2.1.0
 > Published 2019-09-02
 

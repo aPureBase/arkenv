@@ -48,12 +48,6 @@ open class ProfileFeatureTest {
             .expectThat { isDevelopment("test") }
     }
 
-    @Disabled(DEPRECATED) @Test fun `should throw when profile cannot be found`() {
-        assertThrows<IllegalArgumentException> {
-            Ark().parse("--arkenv-profile", "wrong")
-        }.message.shouldNotBeNull()
-    }
-
     @Test fun `set profile via env`() {
         MockSystem(arkenvProfile to "prod")
         Ark().parse().expectThat { isProduction() }
@@ -68,6 +62,19 @@ open class ProfileFeatureTest {
     @Test fun `should parse multiple comma-separated profiles`() {
         Ark().parse(arkenvProfile, "prod,dev").expectThat {
             expect(devPort, prodName)
+        }
+    }
+
+    @Test fun `env var should override profile`() {
+        MockSystem("PORT" to "6001")
+        Ark().parse().expectThat {
+            expect(6001, defaultName)
+        }
+    }
+
+    @Test fun `access profiles`() {
+        Ark().parse(arkenvProfile, "prod,dev").expectThat {
+            get { profiles.active }.isEqualTo(listOf("prod", "dev"))
         }
     }
 

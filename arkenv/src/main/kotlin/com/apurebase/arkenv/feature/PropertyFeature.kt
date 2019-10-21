@@ -1,6 +1,9 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.putAll
+import com.apurebase.arkenv.split
+import com.apurebase.arkenv.toSnakeCase
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -14,16 +17,14 @@ import java.util.*
 open class PropertyFeature(
     private val file: String = "application",
     locations: Collection<String> = listOf()
-) : ArkenvFeature, Arkenv("PropertyFeature") {
+) : ArkenvFeature {
 
     protected open val extensions = listOf("properties")
     private val defaultLocations = locations + listOf("", "config/")
-    private val extraLocations: List<String> by argument("--arkenv-property-location") {
-        defaultValue = ::emptyList
-    }
+    private var extraLocations: List<String> = emptyList()
 
     override fun onLoad(arkenv: Arkenv) {
-        parse(arkenv.argList.toTypedArray())
+        extraLocations = arkenv.getOrNull("--arkenv-property-location")?.split() ?: extraLocations
         val fileNames = if (extensions.any { file.endsWith(".$it") }) listOf(file)
         else extensions.map(::makeFileName)
 

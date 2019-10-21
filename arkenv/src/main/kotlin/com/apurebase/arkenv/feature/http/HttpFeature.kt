@@ -31,9 +31,9 @@ class HttpFeature(
     override fun onLoad(arkenv: Arkenv) {
         val label = arkenv.getOrNull("ARKENV_LABEL")
         val profileFeature = arkenv.findFeature<ProfileFeature>()
-        val profile = profileFeature?.profiles?.joinToString()
+        val activeProfiles = profileFeature?.active?.joinToString()
         httpClient
-            .resolveUrls(rootUrl, arkenv.programName, profile, label)
+            .resolveUrls(rootUrl, arkenv.programName, activeProfiles, label)
             .map(::parse)
             .reduce { acc, map -> acc + map }
             .let(arkenv::putAll)

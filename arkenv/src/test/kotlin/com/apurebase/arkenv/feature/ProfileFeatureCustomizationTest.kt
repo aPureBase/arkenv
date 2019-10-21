@@ -17,7 +17,7 @@ class ProfileFeatureCustomizationTest {
     private open class Ark(config: ArkenvBuilder = ArkenvBuilder()) : Arkenv("Test", config) {
         val port: Int by argument()
         val name: String by argument()
-        val other: String? by argument("-o")
+        val other: String? by argument()
     }
 
     private class PrefixArk(prefix: String, vararg arguments: String) : Ark(configureArkenv {
@@ -29,7 +29,7 @@ class ProfileFeatureCustomizationTest {
     }
 
     @Nested
-    inner class Prefix {
+    private inner class Prefix {
 
         @Test fun `change via param`() {
             PrefixArk("config").expectThat { isMasterFile() }
@@ -54,7 +54,7 @@ class ProfileFeatureCustomizationTest {
     }
 
     @Nested
-    inner class Location {
+    private inner class Location {
         private val path = "custom/path"
 
         @Test fun `change via param`() {

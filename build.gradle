@@ -10,7 +10,7 @@ plugins {
 }
 
 allprojects {
-    version '2.2.0'
+    version '3.0.0'
     group 'com.apurebase'
 
     apply plugin: 'kotlin'

@@ -1,13 +1,14 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.MissingArgumentException
 import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
-import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
 
 internal class EnvironmentVariableFeatureTest {
@@ -21,7 +22,7 @@ internal class EnvironmentVariableFeatureTest {
 
     @Test fun `when env is off should not use env vars`() {
         MockSystem("ARG" to prefix)
-        EnvArgs(withEnv = false)::arg shouldThrow IllegalArgumentException::class
+        assertThrows<MissingArgumentException> { EnvArgs(withEnv = false).arg }
         EnvArgs().assertParsed()
     }
 

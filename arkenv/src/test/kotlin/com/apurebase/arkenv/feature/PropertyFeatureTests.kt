@@ -27,7 +27,7 @@ class PropertyFeatureTests : FileBasedTests {
 
     @Nested
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    inner class Customization {
+    private inner class Customization {
         private val content = getTestResource("app.properties")
         private val name = "file_based_props.properties"
         private val dir = File("config")
