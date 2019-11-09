@@ -3,6 +3,7 @@ package com.apurebase.arkenv.feature
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.configureArkenv
+import com.apurebase.arkenv.test.dotEnvPath
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.getTestResourcePath
 import com.apurebase.arkenv.test.parse
@@ -31,7 +32,7 @@ class EnvFileTests {
     }
 
     @Test fun `should load values from dot env file`() {
-        EnvFileArk(path).parse().expectThat { verify() }
+        EnvFileArk(dotEnvPath).parse().expectThat { verify() }
     }
 
     @Test fun `dot env file can be specified via argument`() {
@@ -58,6 +59,5 @@ class EnvFileTests {
         get { connectionString }.isEqualTo("localhost")
     }
 
-    private val path = getTestResourcePath(".env")
     private val altPath = getTestResourcePath(".env-alt")
 }

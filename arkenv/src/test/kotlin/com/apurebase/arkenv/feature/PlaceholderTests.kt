@@ -1,14 +1,12 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
-import com.apurebase.arkenv.test.MockSystem
-import com.apurebase.arkenv.test.expectThat
-import com.apurebase.arkenv.test.getTestResourcePath
-import com.apurebase.arkenv.test.parse
+import com.apurebase.arkenv.test.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
+import java.io.File
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PlaceholderTests {
@@ -82,7 +80,7 @@ class PlaceholderTests {
         val testValue = "this_is_expected"
         val expected = "$testValue is not declared"
 
-        Ark { install(EnvironmentVariableFeature(dotEnvFilePath = getTestResourcePath(".env"))) }
+        Ark { install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvPath)) }
             .parse(appNameArg, appName, appDescArg, "\${mysql_password} is not declared")
             .expectThat {
                 get { description }.isEqualTo(expected)
@@ -90,6 +88,7 @@ class PlaceholderTests {
     }
 
     @Test fun `refer to env from profile`() {
+
         Ark().parse("--arkenv-profile", "placeholder")
             .verify()
     }

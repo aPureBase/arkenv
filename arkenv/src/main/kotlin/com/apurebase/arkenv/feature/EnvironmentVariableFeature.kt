@@ -19,9 +19,13 @@ class EnvironmentVariableFeature(
     private val dotEnvFilePath: String? = null
 ) : ArkenvFeature {
 
+    private var isLoaded = false
+
     override fun onLoad(arkenv: Arkenv) {
-        loadEnvironmentVariables(arkenv.getOrNull("ARKENV_DOT_ENV_FILE"))
-            ?.let(arkenv::putAll)
+        loadEnvironmentVariables(arkenv.getOrNull("ARKENV_DOT_ENV_FILE"))?.let {
+            arkenv.putAll(it)
+            isLoaded = true
+        }
     }
 
     override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? = with(delegate) {
@@ -30,7 +34,10 @@ class EnvironmentVariableFeature(
         getEnvValue(argument, envSecrets, setEnvPrefix)
     }
 
-    override fun postLoad(arkenv: Arkenv) = onLoad(arkenv)
+    override fun postLoad(arkenv: Arkenv) {
+        if (!isLoaded) onLoad(arkenv)
+    }
+
     /**
      * Loop over all argument names and pick the first one that matches
      */
