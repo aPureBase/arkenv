@@ -30,6 +30,7 @@ class EnvironmentVariableFeature(
         getEnvValue(argument, envSecrets, setEnvPrefix)
     }
 
+    override fun postLoad(arkenv: Arkenv) = onLoad(arkenv)
     /**
      * Loop over all argument names and pick the first one that matches
      */

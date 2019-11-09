@@ -19,8 +19,8 @@ class PlaceholderTests {
     }
 
     @Test fun `can refer to previously defined arg in properties`() {
-        val ark = Ark { install(PropertyFeature("placeholders.properties")) }
-        ark.parse()
+        Ark { install(PropertyFeature("placeholders.properties")) }
+            .parse()
             .verify()
     }
 
@@ -82,13 +82,16 @@ class PlaceholderTests {
         val testValue = "this_is_expected"
         val expected = "$testValue is not declared"
 
-        val ark = Ark {
-            install(EnvironmentVariableFeature(dotEnvFilePath = getTestResourcePath(".env")))
-        }
-        ark.parse(appNameArg, appName, appDescArg, "\${mysql_password} is not declared")
+        Ark { install(EnvironmentVariableFeature(dotEnvFilePath = getTestResourcePath(".env"))) }
+            .parse(appNameArg, appName, appDescArg, "\${mysql_password} is not declared")
             .expectThat {
                 get { description }.isEqualTo(expected)
             }
+    }
+
+    @Test fun `refer to env from profile`() {
+        Ark().parse("--arkenv-profile", "placeholder")
+            .verify()
     }
 
     @Test fun `should throw when placeholder is not found`() {
