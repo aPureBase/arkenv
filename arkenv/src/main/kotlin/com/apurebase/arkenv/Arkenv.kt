@@ -28,8 +28,9 @@ abstract class Arkenv(
         argList.addAll(args)
         configuration.features.forEach { it.onLoad(this) }
         process()
-        parse()
+        parse(delegates)
         configuration.features.forEach { it.finally(this) }
+        configuration.modules.forEach { parse(it.delegates) }
         if (configuration.clearInputAfterParse) clear()
     }
 
@@ -98,7 +99,7 @@ abstract class Arkenv(
         else names.filterNot(String::isSimpleName).mapNotNull(::getOrNull)
     }
 
-    private fun parse() = delegates
+    private fun parse(delegates: Collection<ArgumentDelegate<*>>) = delegates
         .sortedBy { it.argument.isMainArg }
         .forEach {
             configuration.features.forEach { feature ->
