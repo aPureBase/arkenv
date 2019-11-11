@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Validation
-parent: Yaml
-nav_order: 11
+title: Yaml
+parent: Features
+nav_order: 12
 ---
 
 # Yaml
