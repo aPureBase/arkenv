@@ -19,15 +19,23 @@ class EnvironmentVariableFeature(
     private val dotEnvFilePath: String? = null
 ) : ArkenvFeature {
 
+    private var isLoaded = false
+
     override fun onLoad(arkenv: Arkenv) {
-        loadEnvironmentVariables(arkenv.getOrNull("ARKENV_DOT_ENV_FILE"))
-            ?.let(arkenv::putAll)
+        loadEnvironmentVariables(arkenv.getOrNull("ARKENV_DOT_ENV_FILE"))?.let {
+            arkenv.putAll(it)
+            isLoaded = true
+        }
     }
 
     override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? = with(delegate) {
         val envSecrets = enableEnvSecrets || arkenv.getOrNull("ARKENV_ENV_SECRETS") != null
         val setEnvPrefix = envPrefix ?: arkenv.getOrNull("ARKENV_ENV_PREFIX") ?: ""
         getEnvValue(argument, envSecrets, setEnvPrefix)
+    }
+
+    override fun postLoad(arkenv: Arkenv) {
+        if (!isLoaded) onLoad(arkenv)
     }
 
     /**

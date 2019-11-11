@@ -23,15 +23,16 @@ abstract class Arkenv(
         defaultValue = { programName }
     }
 
-    internal fun parseArguments(args: Array<out String>) {
-        if (configuration.clearInputBeforeParse) clear()
+    internal fun parseArguments(args: Array<out String>) = with(configuration) {
+        if (clearInputBeforeParse) clear()
         argList.addAll(args)
-        configuration.features.forEach { it.onLoad(this) }
+        features.forEach { it.onLoad(this@Arkenv) }
+        features.forEach { it.postLoad(this@Arkenv) }
         process()
         parse(delegates)
-        configuration.features.forEach { it.finally(this) }
-        configuration.modules.forEach { parse(it.delegates) }
-        if (configuration.clearInputAfterParse) clear()
+        features.forEach { it.finally(this@Arkenv) }
+        modules.forEach { parse(it.delegates) }
+        if (clearInputAfterParse) clear()
     }
 
     /**
