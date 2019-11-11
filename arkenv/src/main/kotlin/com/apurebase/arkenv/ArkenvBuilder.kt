@@ -21,6 +21,7 @@ class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
 
     internal val features: MutableList<ArkenvFeature> = mutableListOf()
     internal val processorFeatures: MutableList<ProcessorFeature> = mutableListOf()
+    internal val modules: MutableList<Arkenv> = mutableListOf()
 
     /**
      * Installs the [feature] into [Arkenv].
@@ -73,3 +74,10 @@ class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
  * @param block Arkenv configuration logic.
  */
 inline fun configureArkenv(block: (ArkenvBuilder.() -> Unit)) = ArkenvBuilder().apply(block)
+
+/**
+ * Registers the [module] as a sub module that will be automatically parsed after the super Arkenv.
+ * It will be parsed using the configuration of its root.
+ * @param module the sub module to add to this [Arkenv]
+ */
+fun <T: Arkenv> Arkenv.module(module: T): T = module.also { configuration.modules.add(it) }
