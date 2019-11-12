@@ -23,14 +23,16 @@ abstract class Arkenv(
         defaultValue = { programName }
     }
 
-    internal fun parseArguments(args: Array<out String>) {
-        if (configuration.clearInputBeforeParse) clear()
+    internal fun parseArguments(args: Array<out String>) = with(configuration) {
+        if (clearInputBeforeParse) clear()
         argList.addAll(args)
-        configuration.features.forEach { it.onLoad(this) }
+        features.forEach { it.onLoad(this@Arkenv) }
+        features.forEach { it.postLoad(this@Arkenv) }
         process()
-        parse()
-        configuration.features.forEach { it.finally(this) }
-        if (configuration.clearInputAfterParse) clear()
+        parse(delegates)
+        features.forEach { it.finally(this@Arkenv) }
+        modules.forEach { parse(it.delegates) }
+        if (clearInputAfterParse) clear()
     }
 
     /**
@@ -98,7 +100,7 @@ abstract class Arkenv(
         else names.filterNot(String::isSimpleName).mapNotNull(::getOrNull)
     }
 
-    private fun parse() = delegates
+    private fun parse(delegates: Collection<ArgumentDelegate<*>>) = delegates
         .sortedBy { it.argument.isMainArg }
         .forEach {
             configuration.features.forEach { feature ->

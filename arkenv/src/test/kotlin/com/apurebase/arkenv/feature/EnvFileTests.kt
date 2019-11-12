@@ -3,17 +3,19 @@ package com.apurebase.arkenv.feature
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.configureArkenv
+import com.apurebase.arkenv.test.dotEnvPath
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.getTestResourcePath
 import com.apurebase.arkenv.test.parse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import strikt.api.Assertion
 import strikt.assertions.isEqualTo
 import java.io.FileNotFoundException
 
 class EnvFileTests {
 
-    private class EnvFileArk(dotEnvFilePath: String? = null) : Arkenv("Test", configureArkenv {
+    private inner class EnvFileArk(dotEnvFilePath: String? = null) : Arkenv("Test", configureArkenv {
         uninstall(EnvironmentVariableFeature())
         install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvFilePath))
     }) {
@@ -30,22 +32,32 @@ class EnvFileTests {
     }
 
     @Test fun `should load values from dot env file`() {
-        val path = getTestResourcePath(".env")
-        EnvFileArk(path).parse().expectThat {
-            get { mysqlPassword }.isEqualTo("this_is_expected")
-            get { port }.isEqualTo(5050)
-            get { connectionString }.isEqualTo("localhost:5050;database=testdb;user=testuser;")
-        }
+        EnvFileArk(dotEnvPath).parse().expectThat { verify() }
     }
 
     @Test fun `dot env file can be specified via argument`() {
-        val path = getTestResourcePath(".env-alt")
         EnvFileArk()
-            .parse("ARKENV_DOT_ENV_FILE", path)
-            .expectThat {
-                get { mysqlPassword }.isEqualTo("alternative")
-                get { port }.isEqualTo(8080)
-                get { connectionString }.isEqualTo("localhost")
-            }
+            .parse("ARKENV_DOT_ENV_FILE", altPath)
+            .expectThat { verifyAlt() }
     }
+
+    @Test fun `dot env file can be specified via profile`() {
+        EnvFileArk()
+            .parse("--arkenv-profile", "placeholder")
+            .expectThat { verify() }
+    }
+
+    private fun Assertion.Builder<EnvFileArk>.verify() {
+        get { mysqlPassword }.isEqualTo("this_is_expected")
+        get { port }.isEqualTo(5050)
+        get { connectionString }.isEqualTo("localhost:5050;database=testdb;user=testuser;")
+    }
+
+    private fun Assertion.Builder<EnvFileArk>.verifyAlt() {
+        get { mysqlPassword }.isEqualTo("alternative")
+        get { port }.isEqualTo(8080)
+        get { connectionString }.isEqualTo("localhost")
+    }
+
+    private val altPath = getTestResourcePath(".env-alt")
 }

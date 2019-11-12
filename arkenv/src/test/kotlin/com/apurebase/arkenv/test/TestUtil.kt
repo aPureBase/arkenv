@@ -15,4 +15,4 @@ fun <T : Arkenv> T.parse(vararg arguments: String) = apply { parseArguments(argu
 
 fun getTestResource(name: String) = MockSystem::class.java.classLoader.getResource(name)!!.readText()
 
-const val DEPRECATED = "Property files are no longer required, can be null."
+val dotEnvPath = getTestResourcePath(".env")

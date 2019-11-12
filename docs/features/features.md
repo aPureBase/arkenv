@@ -47,8 +47,9 @@ This means that by default command line arguments have the highest order and wil
 To create a new feature from scratch, simply implement the `ArkenvFeature`
 interface. 
 
-It has 3 overridable methods:
+It has 4 overridable methods:
 * `onLoad` is used to read data from a source and store it for parsing. 
+* `postLoad` is used to react to configuration after all features have been loaded.
 * `onParse` is used on each argument property when parsing to obtain a value.
 * `finally` can be used for clean up. 
 

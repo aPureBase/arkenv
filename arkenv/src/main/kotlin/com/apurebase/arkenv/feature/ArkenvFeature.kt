@@ -17,6 +17,13 @@ interface ArkenvFeature {
     }
 
     /**
+     * Executed after all features have been loaded.
+     * Can be used for reactive loading, where one feature is enabled by another one.
+     */
+    fun postLoad(arkenv: Arkenv) {
+    }
+
+    /**
      * Used to assign a value to the [Argument] represented by [delegate].
      */
     fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? {
@@ -26,6 +33,7 @@ interface ArkenvFeature {
     /**
      * Applies configuration to every [argument].
      */
+    @Deprecated("Will be removed in future major version")
     fun configure(argument: Argument<*>) {
     }
 
