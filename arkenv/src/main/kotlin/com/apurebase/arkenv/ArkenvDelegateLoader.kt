@@ -16,7 +16,14 @@ class ArkenvDelegateLoader<T : Any>(
     private fun getNames(names: List<String>, propName: String) =
         names.ifEmpty { listOf("--${propName.toSnakeCase()}") }
             .map {
-                if (!it.startsWith("-")) "--$it".mapRelaxed()
-                else it.mapRelaxed()
+                (if (!it.startsWith("-")) "--$it" else it)
+                    .prefix(arkenv.configuration.commonPrefix)
+                    .mapRelaxed()
             }
+
+    private fun String.prefix(value: String): String = when {
+        value.isBlank() -> this
+        isAdvancedName() -> "--$value-${substring(2)}"
+        else -> "-$value-${substring(1)}"
+    }
 }
