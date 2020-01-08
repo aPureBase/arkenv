@@ -35,7 +35,7 @@ internal class ModuleTests {
         val expectedPort = 90
         val prefix = "database"
         val sub = object : Arkenv("Test", configureArkenv {
-            commonPrefix = prefix
+            this.prefix = prefix
         }) {
             val port: Int by argument()
         }

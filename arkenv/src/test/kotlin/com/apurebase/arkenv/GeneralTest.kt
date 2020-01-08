@@ -178,7 +178,7 @@ class GeneralTest {
         val expectedPort = 90
         val prefix = "database"
         val ark = object : Arkenv(configuration = configureArkenv {
-            commonPrefix = prefix
+            this.prefix = prefix
         }) {
             val port: Int by argument()
         }
