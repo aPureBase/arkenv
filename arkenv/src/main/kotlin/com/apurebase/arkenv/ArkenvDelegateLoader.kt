@@ -13,10 +13,20 @@ class ArkenvDelegateLoader<T : Any>(
             .also { arkenv.delegates.add(it) }
     }
 
-    private fun getNames(names: List<String>, propName: String) =
-        names.ifEmpty { listOf("--${propName.toSnakeCase()}") }
-            .map {
-                if (!it.startsWith("-")) "--$it".mapRelaxed()
-                else it.mapRelaxed()
-            }
+    private fun getNames(names: List<String>, propName: String) = names
+        .ifEmpty { listOf(propName.toSnakeCase()) }
+        .map {
+            it.ensureStartsWithDash()
+                .prefix(arkenv.configuration.prefix ?: "")
+                .mapRelaxed()
+        }
+
+    private fun String.ensureStartsWithDash() =
+        if (!startsWith("-")) "--$this" else this
+
+    private fun String.prefix(value: String): String = when {
+        value.isBlank() -> this
+        isAdvancedName() -> "--$value-${substring(2)}"
+        else -> "-$value-${substring(1)}"
+    }
 }

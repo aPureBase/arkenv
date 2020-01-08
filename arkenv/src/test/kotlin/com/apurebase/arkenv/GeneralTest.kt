@@ -152,7 +152,7 @@ class GeneralTest {
                 get { bool }.isTrue()
             }
     }
-    
+
     @Test fun `should pass when delegates are empty`() {
         val ark = object : Arkenv() {}
         ark.parse("-empty")
@@ -172,5 +172,19 @@ class GeneralTest {
 
         ark.parse("--newVersion", "2")
             .expectThat { get { version }.isEqualTo(2) }
+    }
+
+    @Test fun `common prefix`() {
+        val expectedPort = 90
+        val prefix = "database"
+        val ark = object : Arkenv(configuration = configureArkenv {
+            this.prefix = prefix
+        }) {
+            val port: Int by argument()
+        }
+        ark.parse("--$prefix-port", expectedPort.toString())
+            .expectThat {
+                get { port }.isEqualTo(expectedPort)
+            }
     }
 }

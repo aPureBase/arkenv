@@ -67,9 +67,7 @@ abstract class Arkenv(
 
     private fun process() {
         configuration.processorFeatures.forEach { it.arkenv = this }
-        keyValue.replaceAll { key, value ->
-            processValue(key, value)
-        }
+        keyValue.replaceAll(::processValue)
     }
 
     private fun processValue(key: String, value: String): String = configuration

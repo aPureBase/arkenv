@@ -10,6 +10,11 @@ import com.apurebase.arkenv.feature.cli.CliFeature
 class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
 
     /**
+     * A common prefix that is applied to all argument names.
+     */
+    var prefix: String? = null
+
+    /**
      * Whether data should be cleared before parsing.
      */
     var clearInputBeforeParse = true

@@ -30,4 +30,23 @@ internal class ModuleTests {
                 get { database.port }.isEqualTo(port)
             }
     }
+
+    @Test fun `common prefix config`() {
+        val expectedPort = 90
+        val prefix = "database"
+        val sub = object : Arkenv("Test", configureArkenv {
+            this.prefix = prefix
+        }) {
+            val port: Int by argument()
+        }
+
+        val ark = object : Arkenv() {
+            val database = module(sub)
+        }
+
+        ark.parse("--$prefix-port", expectedPort.toString())
+            .expectThat {
+                get { database.port }.isEqualTo(expectedPort)
+            }
+    }
 }
