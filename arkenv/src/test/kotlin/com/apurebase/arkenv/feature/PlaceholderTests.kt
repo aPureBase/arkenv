@@ -88,8 +88,14 @@ class PlaceholderTests {
     }
 
     @Test fun `refer to env from profile`() {
-
         Ark().parse("--arkenv-profile", "placeholder")
+            .verify()
+    }
+
+    @Test fun `refer and reparse`() {
+        Ark()
+            .parse("--arkenv-profile", "placeholder")
+            .parse("--arkenv-profile", "placeholder")
             .verify()
     }
 
