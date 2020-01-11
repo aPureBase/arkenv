@@ -1,5 +1,6 @@
 package com.apurebase.arkenv.feature.http
 
+import com.apurebase.arkenv.Arkenv
 import java.io.InputStream
 import java.net.URL
 
@@ -7,6 +8,8 @@ import java.net.URL
  * Defines what [URL]s should be queried and how they are resolved.
  */
 interface HttpClient {
+
+    var arkenv: Arkenv
 
     /**
      * Generates a list of [URL]s to query from the application information.
@@ -17,4 +20,6 @@ interface HttpClient {
      * Resolves a single [URL] and returns an [InputStream] to be read.
      */
     fun get(url: URL): InputStream
+
+
 }
