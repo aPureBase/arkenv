@@ -24,8 +24,8 @@ import java.net.URL
  * @param rootUrl the root url of the endpoint to query. Can be overridden by the *ARKENV_HTTP_URL* argument.
  * @since 2.1.0
  */
-class HttpFeature(
-    private val httpClient: HttpClient = HttpClientImpl(),
+open class HttpFeature(
+    open val httpClient: HttpClient = HttpClientImpl(),
     var rootUrl: String? = null
 ) : ArkenvFeature {
 
@@ -36,24 +36,31 @@ class HttpFeature(
         run(arkenv, getUrl(arkenv), activeProfiles, label)
     }
 
-    private fun getUrl(arkenv: Arkenv): String {
+    /**
+     * Generates a list of [URL]s to query from the application information.
+     */
+    internal open fun resolveUrls(rootUrl: String, name: String, profile: String?, label: String?): Iterable<URL> =
+        listOf(makeUrl(rootUrl, name, profile, label))
+
+    internal open fun makeUrl(rootUrl: String, name: String, profile: String?, label: String?): URL =
+        listOfNotNull(rootUrl, name, profile, label)
+            .joinToString("/")
+            .let(::URL)
+
+    protected open fun getUrl(arkenv: Arkenv): String {
         val url = arkenv.getOrNull("ARKENV_HTTP_URL") ?: rootUrl
         if (url.isNullOrBlank()) {
-            throw MissingArgumentException(
-                HttpFeature::rootUrl.name,
-                "${HttpFeature::class.simpleName} requires this argument to be set."
-            )
+            throw MissingArgumentException(HttpFeature::rootUrl, HttpFeature::class)
         }
         return url
     }
 
-    private fun run(arkenv: Arkenv, url: String, profiles: String?, label: String?) = httpClient
-        .also { it.arkenv = arkenv }
-        .resolveUrls(url, arkenv.programName, profiles, label)
-        .map(::parse)
-        .reduce { acc, map -> acc + map }
-        .also(::println) // TODO remove
-        .let(arkenv::putAll)
+    private fun run(arkenv: Arkenv, url: String, profiles: String?, label: String?) =
+        resolveUrls(url, arkenv.programName, profiles, label)
+            .map(::parse)
+            .reduce { acc, map -> acc + map }
+            .also(::println) // TODO remove
+            .let(arkenv::putAll)
 
     private fun parse(url: URL): Map<String, String> =
         httpClient.get(url).use(PropertyFeature.Companion::parseProperties)

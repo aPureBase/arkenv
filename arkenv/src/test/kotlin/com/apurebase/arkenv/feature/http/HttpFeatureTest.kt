@@ -18,7 +18,8 @@ class HttpFeatureTest {
     private val appName = "Arkenv-Client"
     private val rootUrl = "http://localhost:8888"
 
-    private inner class Ark(url: String, responseMap: Map<URL, String>) : Arkenv(appName, configureArkenv {
+    private inner class Ark(url: String, responseMap: Map<URL, String>) : Arkenv(configureArkenv {
+        programName = appName
         install(ProfileFeature())
         install(HttpFeature(MockClient(responseMap), url))
         install(Encryption(EncryptionTest.decryptCipher))

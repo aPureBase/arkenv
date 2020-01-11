@@ -29,9 +29,20 @@ internal class MappingException(key: String, value: String, clazz: KClass<*>, ca
 /**
  * Unchecked exception thrown when no value can be found for the given name.
  */
-internal class MissingArgumentException(name: String, info: String): ArkenvException(
+internal class MissingArgumentException(name: String, info: String) : ArkenvException(
     "No value passed for property $name ($info)"
-)
+) {
+
+    constructor(property: KProperty<*>, clazz: KClass<*>) : this(
+        property.name,
+        "${clazz::class.simpleName} requires this argument to be set."
+    )
+
+    constructor(name: String, clazz: KClass<*>) : this(
+        name,
+        "${clazz::class.simpleName} requires this argument to be set."
+    )
+}
 
 /**
  * Unchecked exception thrown when the requested feature could not be found.

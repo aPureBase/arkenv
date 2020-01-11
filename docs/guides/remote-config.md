@@ -14,8 +14,8 @@ which contains properties files that can be used remotely.
 
 Let's start with a basic Arkenv implementation:
 ```kotlin
-class Ark : Arkenv("application", configureArkenv {
-    install(HttpFeature(KtorHttpClient(CIO)))
+class Ark : Arkenv(configureArkenv {
+    install(GitFeature())
 }) {
     val source: String by argument()
     val port: Int by argument()
@@ -35,10 +35,6 @@ using a local profile:
 ARKENV_REMOTE_PROJECT_ID : AndreasVolkmann/arkenv-remote-example
 # this points to the sub directory in the repository
 ARKENV_REMOTE_DIRECTORY  : remote-test
-# github is the default remote type
-ARKENV_REMOTE_TYPE       : github
-# host, which can differ in self-hosted scenarios
-ARKENV_HTTP_URL          : https://github.com
 ```
 
 Like the profile feature, Arkenv will look for a base profile and any active profiles.
