@@ -13,7 +13,7 @@ import com.apurebase.arkenv.split
  * @param parsers additional providers for profile file parsing. By default supports the property format.
  */
 class ProfileFeature(
-    private var prefix: String = "application",
+    internal var prefix: String = "application",
     private var locations: Collection<String> = listOf(),
     parsers: Collection<PropertyParser> = listOf()
 ) : ArkenvFeature {
