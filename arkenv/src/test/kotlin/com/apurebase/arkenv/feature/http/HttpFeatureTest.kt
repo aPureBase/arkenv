@@ -18,7 +18,7 @@ class HttpFeatureTest {
     private val appName = "Arkenv-Client"
     private val rootUrl = "http://localhost:8888"
 
-    private inner class Ark(url: String, responseMap: Map<URL, String>) : Arkenv(configureArkenv {
+    private inner class Ark(url: String, responseMap: Map<URL, String>) : Arkenv(configuration = configureArkenv {
         programName = appName
         install(ProfileFeature())
         install(HttpFeature(MockClient(responseMap), url))

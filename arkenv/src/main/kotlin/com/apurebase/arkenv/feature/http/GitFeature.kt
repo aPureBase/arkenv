@@ -18,8 +18,17 @@ class GitFeature(override var httpClient: HttpClient = HttpClientImpl()) : HttpF
         Gitlab("https://gitlab.com");
     }
 
+    companion object {
+
+        private const val argPrefix = "ARKENV_REMOTE"
+
+        internal fun shouldBeInstalled(arkenv: Arkenv): Boolean {
+            return !arkenv.getOrNull("${argPrefix}_PROJECT_ID").isNullOrBlank()
+        }
+
+    }
+
     private lateinit var arkenv: Arkenv
-    private val argPrefix = "ARKENV_REMOTE"
     private var remoteType: RemoteType = Github
     private var branch = "master"
 
@@ -30,19 +39,11 @@ class GitFeature(override var httpClient: HttpClient = HttpClientImpl()) : HttpF
         super.onLoad(arkenv)
     }
 
+    override fun getName(arkenv: Arkenv): String =
+        getOrNull("PREFIX") ?: arkenv.findFeature<ProfileFeature>()?.prefix ?: "application"
+
     override fun getUrl(arkenv: Arkenv): String =
         arkenv.getOrNull("ARKENV_HTTP_URL") ?: rootUrl ?: remoteType.defaultHost
-
-    override fun resolveUrls(rootUrl: String, name: String, profile: String?, label: String?): Iterable<URL> {
-        val prefix = getPrefix()
-        return listOfNotNull(
-            if (!profile.isNullOrBlank()) makeUrl(rootUrl, prefix, null, null) else null, // base
-            makeUrl(rootUrl, prefix, profile, label) // profile-specific
-        )
-    }
-
-    private fun getPrefix(): String =
-        getOrNull("PREFIX") ?: arkenv.findFeature<ProfileFeature>()?.prefix ?: "application"
 
     override fun makeUrl(rootUrl: String, name: String, profile: String?, label: String?): URL {
         val encodedPath = URLEncoder.encode(getResourcePath(name, profile), Charsets.UTF_8)

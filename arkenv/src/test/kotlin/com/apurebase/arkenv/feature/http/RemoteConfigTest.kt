@@ -9,6 +9,7 @@ import com.apurebase.arkenv.test.parse
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import strikt.assertions.isEqualTo
+import strikt.assertions.isTrue
 
 internal class RemoteConfigTest {
 
@@ -18,25 +19,26 @@ internal class RemoteConfigTest {
         val source: String by argument()
         val port: Int by argument()
         val description: String by argument()
+        val secondary: Boolean by argument()
     }
 
     @TestFactory fun `fetch config from remote`() =
         GitFeature.RemoteType.values().map { it.name.toLowerCase() }.map { host ->
             DynamicTest.dynamicTest(host) {
                 MockSystem(
-                    "arkenv-profile-prefix" to "remote-test-$host", // use a different profile scheme locally to config remote
-                    "arkenv-profile" to "prod"
+                    // use a different profile scheme locally to config remote
+                    "arkenv-profile-prefix" to "remote-test-$host",
+                    "arkenv-profile" to "prod,second" // load multiple profiles
                 )
 
                 validate(host)
             }
         }
 
-    private fun validate(host: String) {
-        Ark().parse().expectThat {
-            get { source }.isEqualTo("production-remote")
-            get { port }.isEqualTo(1111)
-            get { description }.isEqualTo("This config comes from $host!")
-        }
+    private fun validate(host: String) = Ark().parse().expectThat {
+        get { source }.isEqualTo("production-remote")
+        get { port }.isEqualTo(1111)
+        get { description }.isEqualTo("This config comes from $host!")
+        get { secondary }.isTrue()
     }
 }

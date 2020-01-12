@@ -1,12 +1,9 @@
 package com.apurebase.arkenv.feature.http
 
-import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.MissingArgumentException
+import com.apurebase.arkenv.*
 import com.apurebase.arkenv.feature.ArkenvFeature
 import com.apurebase.arkenv.feature.ProfileFeature
 import com.apurebase.arkenv.feature.PropertyFeature
-import com.apurebase.arkenv.findFeature
-import com.apurebase.arkenv.putAll
 import java.net.URL
 
 /**
@@ -32,15 +29,27 @@ open class HttpFeature(
     override fun onLoad(arkenv: Arkenv) {
         val label = arkenv.getOrNull("ARKENV_LABEL")
         val profileFeature = arkenv.findFeature<ProfileFeature>()
-        val activeProfiles = profileFeature?.active?.joinToString()
-        run(arkenv, getUrl(arkenv), activeProfiles, label)
+        val activeProfiles = profileFeature?.active ?: listOf()
+        run(arkenv, activeProfiles, label)
     }
 
     /**
      * Generates a list of [URL]s to query from the application information.
      */
-    internal open fun resolveUrls(rootUrl: String, name: String, profile: String?, label: String?): Iterable<URL> =
-        listOf(makeUrl(rootUrl, name, profile, label))
+    private fun resolveUrls(
+        rootUrl: String,
+        name: String,
+        profiles: List<String>,
+        label: String?
+    ): Iterable<URL> {
+        val rootProfile = listOf(makeUrl(rootUrl, name, null, label))
+        return when {
+            profiles.isEmpty() -> rootProfile
+            else -> {
+                rootProfile + profiles.map { makeUrl(rootUrl, name, it, label) }
+            }
+        }
+    }
 
     internal open fun makeUrl(rootUrl: String, name: String, profile: String?, label: String?): URL =
         listOfNotNull(rootUrl, name, profile, label)
@@ -55,13 +64,18 @@ open class HttpFeature(
         return url
     }
 
-    private fun run(arkenv: Arkenv, url: String, profiles: String?, label: String?) =
-        resolveUrls(url, arkenv.programName, profiles, label)
+    protected open fun getName(arkenv: Arkenv) = arkenv.programName
+
+    private fun run(arkenv: Arkenv, profiles: List<String>, label: String?) =
+        resolveUrls(getUrl(arkenv), getName(arkenv), profiles, label)
             .map(::parse)
             .reduce { acc, map -> acc + map }
             .also(::println) // TODO remove
             .let(arkenv::putAll)
 
-    private fun parse(url: URL): Map<String, String> =
+    private fun parse(url: URL): Map<String, String> = try {
         httpClient.get(url).use(PropertyFeature.Companion::parseProperties)
+    } catch (ex: Exception) {
+        throw ArkenvException("There was a problem loading a remote source.", ex)
+    }
 }
