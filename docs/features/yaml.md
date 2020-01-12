@@ -9,7 +9,7 @@ nav_order: 12
 
 **Since v2.1.0**
 
-Arkenv support the yaml file format. 
+Arkenv support the yaml file format.
 
 This functionality is located in a separate module `arkenv-yaml`.
 
@@ -23,7 +23,7 @@ Install the `YamlFeature` and specify the file to load from.
 ### Usage
 
 ```kotlin
-class Ark : Arkenv(configuration = {
+class Ark : Arkenv(configureArkenv {
     install(YamlFeature("config"))
 }) {
     val mysqlPassword: String by argument()
@@ -31,11 +31,11 @@ class Ark : Arkenv(configuration = {
 ```
 
 Arkenv will look for the file in the resources.
- 
+
 Like with environment variables, Arkenv will look for the
 snake-case version of any double-hyphen names.
 
-An example yaml file `config.yml` could have the following content: 
+An example yaml file `config.yml` could have the following content:
 
 ```yaml
 mysql_password : JKE9ehnEA
@@ -47,11 +47,11 @@ Arrays will be parsed as a comma-separated string.
 
 ### Profiles
 
-The yaml feature can also be used together with the profile feature to 
+The yaml feature can also be used together with the profile feature to
 load yaml source files. Specify additional parsers in the constructor.
 
 ```kotlin
-class Ark : Arkenv("Example", configureArkenv {
+class Ark : Arkenv(configureArkenv {
     install(ProfileFeature(parsers = listOf(::YamlFeature)))
 }) {
     ...
@@ -64,12 +64,12 @@ For further information see [Profiles]({{site.baseurl}}features/profiles).
 ### Customization
 
 ##### Locations
-By default, Arkenv will look for profiles in the following relative locations 
-on both the classpath and the file system: 
-* `/` 
-* `/config`  
+By default, Arkenv will look for profiles in the following relative locations
+on both the classpath and the file system:
+* `/`
+* `/config`
 
-You can add additional locations by using the location argument, 
+You can add additional locations by using the location argument,
 which accepts a comma-separated list of directory locations or file paths.
 
 * Argument: `--arkenv-property-location`

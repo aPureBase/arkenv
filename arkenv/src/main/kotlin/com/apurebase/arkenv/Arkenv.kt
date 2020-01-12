@@ -5,13 +5,15 @@ import com.apurebase.arkenv.feature.EnvironmentVariableFeature
 /**
  * The base class that provides the argument parsing capabilities.
  * Extend this to define your own arguments.
- * @param programName
  * @param configuration
  */
-abstract class Arkenv(
-    programName: String = "Arkenv",
-    internal val configuration: ArkenvBuilder = ArkenvBuilder()
-) {
+abstract class Arkenv(internal val configuration: ArkenvBuilder = ArkenvBuilder()) {
+
+    @Deprecated("Will be removed in a future major version.")
+    constructor(
+        programName: String = "Arkenv",
+        configuration: ArkenvBuilder = ArkenvBuilder()
+    ) : this(configuration.also { it.programName = programName })
 
     internal val argList = mutableListOf<String>()
     private val keyValue = mutableMapOf<String, String>()
@@ -19,9 +21,7 @@ abstract class Arkenv(
 
     val help: Boolean by argument("-h", "--help") { isHelp = true }
 
-    val programName: String by argument("--arkenv-application-name") {
-        defaultValue = { programName }
-    }
+    val programName: String get() = getOrNull("--arkenv-application-name") ?: configuration.programName
 
     internal fun parseArguments(args: Array<out String>) = with(configuration) {
         if (clearInputBeforeParse) clear()

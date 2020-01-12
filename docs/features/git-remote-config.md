@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Remote configuration
-parent: Guides
-nav_order: 3
+title: Git Remote Configuration
+parent: Features
+nav_order: 13
 ---
 
-# Remote configuration
+# Git Remote Configuration
 
 Arkenv can be set up to load configuration from a git repository.
 
@@ -23,18 +23,18 @@ class Ark : Arkenv(configureArkenv {
 }
 ```
 
-Install the http feature and provide a client implementation.
-In this case, Ktor is used, which by itself supports many different client engines.
+Install the http feature and optionally provide a client implementation.
 
 Define arguments that are going to be loaded from the repository.
 
-We need to provide some configuration which can be done by
+Some configuration has to be provided, which can be done by
 using a local profile:
 ```properties
-# for github, this is the owner/repository combination
+# For github, this is the owner/repository combination
 ARKENV_REMOTE_PROJECT_ID : AndreasVolkmann/arkenv-remote-example
-# this points to the sub directory in the repository
+# Optional, points to the sub directory in the repository
 ARKENV_REMOTE_DIRECTORY  : remote-test
 ```
 
-Like the profile feature, Arkenv will look for a base profile and any active profiles.
+Like the profile feature, Arkenv will look for a base profile and any
+active profiles in the remote.

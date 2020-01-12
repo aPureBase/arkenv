@@ -9,11 +9,11 @@ import strikt.assertions.isEqualTo
 
 internal class ModuleTests {
 
-    private inner class DatabaseConfig : Arkenv("Database") {
+    private inner class DatabaseConfig : Arkenv() {
         val port: Int by argument()
     }
 
-    private inner class Ark : Arkenv("Root", configureArkenv {
+    private inner class Ark : Arkenv(configureArkenv {
         uninstall(ProfileFeature())
         install(PropertyFeature("application-prod")) // load a specific file to test feature propagation
     }) {
@@ -34,7 +34,7 @@ internal class ModuleTests {
     @Test fun `common prefix config`() {
         val expectedPort = 90
         val prefix = "database"
-        val sub = object : Arkenv("Test", configureArkenv {
+        val sub = object : Arkenv(configureArkenv {
             this.prefix = prefix
         }) {
             val port: Int by argument()

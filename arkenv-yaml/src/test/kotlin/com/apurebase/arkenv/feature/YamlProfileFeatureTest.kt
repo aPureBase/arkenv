@@ -15,7 +15,7 @@ class YamlProfileFeatureTest : ProfileFeatureTest() {
     }
 
     @Test fun `should be able to combine yaml and properties`() {
-        val ark = object : Arkenv("Test", configureArkenv {
+        val ark = object : Arkenv(configureArkenv {
             install(ProfileFeature(prefix = "app-multi", parsers = listOf(::YamlFeature)))
         }) {
             val source: String by argument()

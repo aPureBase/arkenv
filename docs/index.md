@@ -14,6 +14,7 @@ Supports the most common external configuration sources, including:
 * Environment Variables
 * Properties, Yaml & Spring-like profiles
 * `.env` files
+* Git repositories / remote configuration
 
 ### 📦 Installation
 The quick start section contains instructions for:
@@ -35,6 +36,7 @@ The quick start section contains instructions for:
 * [Placeholders]({{site.baseurl}}features/placeholders)
 * [Docker Secrets]({{site.baseurl}}features/docker-secrets)
 * [Dot Env Files]({{site.baseurl}}features/dot-env-files)
+* [Git Remote Configuration]({{site.baseurl}}features/git-remote-config)
 
 
 ### 🤝 Contributing [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)

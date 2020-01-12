@@ -7,11 +7,11 @@ has_children: true
 
 # Features
 
-Arkenv supports a feature model that allows for 
+Arkenv supports a feature model that allows for
 adding and removing functionality as required.
 
 ```kotlin
-class Ark : Arkenv("Example", configureArkenv {
+class Ark : Arkenv(configureArkenv {
     install(PropertyFeature("custom-file"))
     uninstall(CliFeature())
 }) {
@@ -20,40 +20,40 @@ class Ark : Arkenv("Example", configureArkenv {
 }
 ```
 
-In the constructor of Arkenv, specify a configuration lambda and call 
+In the constructor of Arkenv, specify a configuration lambda and call
 `install` to add / replace a feature or
-`uninstall` to remove a feature. 
+`uninstall` to remove a feature.
 
 In the above example, we first add support for reading arguments from
-a property file, and then remove the command line support. 
+a property file, and then remove the command line support.
 
 The following features are installed by default:
-* [CliFeature]({{site.baseurl}}features/command-line) 
+* [CliFeature]({{site.baseurl}}features/command-line)
 * [ProfileFeature]({{site.baseurl}}features/profiles)
 * [EnvironmentVariableFeature]({{site.baseurl}}features/environment-variables)
 
 ### Order
-The parse order depends on the order in which features are installed. 
-Features that are installed earlier overrule features that are installed later.  
+The parse order depends on the order in which features are installed.
+Features that are installed earlier overrule features that are installed later.
 
 Arkenv will start by installing the default features, and then proceed with your features
-installed in the configuration. 
+installed in the configuration.
 
-This means that by default command line arguments have the highest order and will surpass other configuration sources. 
+This means that by default command line arguments have the highest order and will surpass other configuration sources.
 
 
 ### Custom features
 
 To create a new feature from scratch, simply implement the `ArkenvFeature`
-interface. 
+interface.
 
 It has 4 overridable methods:
-* `onLoad` is used to read data from a source and store it for parsing. 
+* `onLoad` is used to read data from a source and store it for parsing.
 * `postLoad` is used to react to configuration after all features have been loaded.
 * `onParse` is used on each argument property when parsing to obtain a value.
-* `finally` can be used for clean up. 
+* `finally` can be used for clean up.
 
-Your feature does not need to implement all of these. 
+Your feature does not need to implement all of these.
 
 Here is an example of how to use them:
 
@@ -84,7 +84,7 @@ class CustomFeature : ArkenvFeature {
 **Since v2.1.0**
 
 Processor features describe transformations that are applied to all values
-that are loaded through Arkenv, no matter what feature they originate from. 
+that are loaded through Arkenv, no matter what feature they originate from.
 
 By default, this is used to resolve [placeholders]({{site.baseurl}}features/placeholders).
 

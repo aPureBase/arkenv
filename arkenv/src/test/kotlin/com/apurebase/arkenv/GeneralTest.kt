@@ -17,7 +17,7 @@ class GeneralTest {
      * The help argument needs to be the first one declared in the [Arkenv] class.
      */
     @Test fun `should ignore validation when help is true`() {
-        class HelpArgs(name: String) : Arkenv(name) {
+        class HelpArgs(name: String) : Arkenv(configureArkenv { programName = name }) {
             val required: String by argument {
                 description = "This arg is required but can be null if help is true"
             }
@@ -50,7 +50,7 @@ class GeneralTest {
             val long: Long by argument()
         }
 
-        LongArg().parse("-long", "5000").long shouldEqualTo expected
+        LongArg().parse("-long", "5000").long shouldBeEqualTo expected
     }
 
     @Test fun `custom mapping`() {
@@ -62,7 +62,7 @@ class GeneralTest {
             }
         }
 
-        CustomArg().parse("1,2,3").list shouldEqual expected
+        CustomArg().parse("1,2,3").list shouldBeEqualTo expected
     }
 
     @Test fun `custom mapping not available should throw`() {
@@ -98,13 +98,13 @@ class GeneralTest {
         }
 
         FixedArgs().parse("-f", "").run {
-            fixed shouldEqualTo value
+            fixed shouldBeEqualTo value
         }
     }
 
     @Test fun `objects should be usable`() {
         ObjectArgs.parse("-i", "10")
-        ObjectArgs.int shouldEqualTo 10
+        ObjectArgs.int shouldBeEqualTo 10
         ObjectArgs.optional shouldBe null
     }
 
@@ -127,7 +127,7 @@ class GeneralTest {
 
     @Test fun `mixed should work`() {
         Mixed().parse("-sa", "5").run {
-            someArg shouldEqualTo 5
+            someArg shouldBeEqualTo 5
             other shouldBeEqualTo "val"
         }
     }

@@ -20,13 +20,13 @@ By default, the prefix is `{cipher}`.
 ### Usage
 
 ```kotlin
-class Ark : Arkenv("Example", configureArkenv {
+class Ark : Arkenv(configureArkenv {
     install(Encryption(decryptCipher))
 }) {
     val string: String by argument()
 }
 ```
 
-Since this is a processor feature, any value that is loaded by 
-Arkenv will be considered for decryption. 
+Since this is a processor feature, any value that is loaded by
+Arkenv will be considered for decryption.
 

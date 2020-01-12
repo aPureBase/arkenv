@@ -37,7 +37,7 @@ class ValidationTests {
     }
 
     @Test fun `should only validate nullable if not null`() {
-        val ark = object : Arkenv("Test", configureArkenv {
+        val ark = object : Arkenv(configureArkenv {
             clearInputBeforeParse = true
         }) {
             val nullable: Int? by argument {

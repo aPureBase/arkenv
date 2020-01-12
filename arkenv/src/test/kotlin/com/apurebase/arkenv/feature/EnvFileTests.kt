@@ -15,7 +15,7 @@ import java.io.FileNotFoundException
 
 class EnvFileTests {
 
-    private inner class EnvFileArk(dotEnvFilePath: String? = null) : Arkenv("Test", configureArkenv {
+    private inner class EnvFileArk(dotEnvFilePath: String? = null) : Arkenv(configureArkenv {
         uninstall(EnvironmentVariableFeature())
         install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvFilePath))
     }) {

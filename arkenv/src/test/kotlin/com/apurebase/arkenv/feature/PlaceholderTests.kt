@@ -11,7 +11,7 @@ import java.io.File
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PlaceholderTests {
 
-    private inner class Ark(config: ArkenvBuilder.() -> Unit = {}) : Arkenv("Test", configureArkenv(config)) {
+    private inner class Ark(config: ArkenvBuilder.() -> Unit = {}) : Arkenv(configureArkenv(config)) {
         val name: String by argument(appNameArg)
         val description: String by argument(appDescArg)
     }

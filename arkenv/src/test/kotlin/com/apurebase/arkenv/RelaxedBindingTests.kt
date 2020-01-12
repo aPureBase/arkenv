@@ -10,7 +10,7 @@ import strikt.assertions.isEqualTo
 
 internal class RelaxedBindingTests {
 
-    private class Ark(configuration: ArkenvBuilder = ArkenvBuilder()) : Arkenv("Test", configuration) {
+    private class Ark(configuration: ArkenvBuilder = ArkenvBuilder()) : Arkenv(configuration) {
         val dbPort: Int by argument()
     }
 

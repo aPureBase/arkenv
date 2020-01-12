@@ -10,6 +10,11 @@ import com.apurebase.arkenv.feature.cli.CliFeature
 class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
 
     /**
+     * The name of the program that Arkenv is used for.
+     */
+    var programName = "Arkenv"
+
+    /**
      * A common prefix that is applied to all argument names.
      */
     var prefix: String? = null
@@ -85,4 +90,4 @@ inline fun configureArkenv(block: (ArkenvBuilder.() -> Unit)) = ArkenvBuilder().
  * It will be parsed using the configuration of its root.
  * @param module the sub module to add to this [Arkenv]
  */
-fun <T: Arkenv> Arkenv.module(module: T): T = module.also { configuration.modules.add(it) }
+fun <T : Arkenv> Arkenv.module(module: T): T = module.also { configuration.modules.add(it) }

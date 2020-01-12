@@ -13,7 +13,7 @@ class DockerSecretTests {
 
     private val pathToDockerSecretFile = "src/test/resources/file_containing_secret.txt"
 
-    private class Ark(envSecrets: Boolean = true) : Arkenv("Test", configureArkenv {
+    private class Ark(envSecrets: Boolean = true) : Arkenv(configureArkenv {
         install(EnvironmentVariableFeature(enableEnvSecrets = envSecrets))
     }) {
         val apiKey: String by argument()

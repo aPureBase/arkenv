@@ -14,7 +14,7 @@ import strikt.assertions.isEqualTo
 
 class ProfileFeatureCustomizationTest {
 
-    private open class Ark(config: ArkenvBuilder = ArkenvBuilder()) : Arkenv("Test", config) {
+    private open class Ark(config: ArkenvBuilder = ArkenvBuilder()) : Arkenv(config) {
         val port: Int by argument()
         val name: String by argument()
         val other: String? by argument()

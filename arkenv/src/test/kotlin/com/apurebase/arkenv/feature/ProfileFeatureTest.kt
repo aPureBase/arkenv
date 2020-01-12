@@ -16,7 +16,7 @@ open class ProfileFeatureTest {
 
     open fun getInstance(): ProfileFeature = ProfileFeature()
 
-    private inner class Ark : Arkenv("Test", configureArkenv { install(getInstance()) }) {
+    private inner class Ark : Arkenv(configureArkenv { install(getInstance()) }) {
         val port: Int by argument("--port")
 
         val name: String by argument("--name")

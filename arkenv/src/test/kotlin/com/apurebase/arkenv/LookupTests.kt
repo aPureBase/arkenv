@@ -20,7 +20,7 @@ import strikt.assertions.isNotNull
  */
 class LookupTests {
 
-    private class Ark : Arkenv("Test", configureArkenv {
+    private class Ark : Arkenv(configureArkenv {
         clearInputAfterParse = false
         install(PropertyFeature())
     })
@@ -64,8 +64,8 @@ class LookupTests {
 
         @Test fun `should resolve unused properties`() {
             val ark = Ark().parse()
-            ark.getOrNull("PORT") shouldEqual "80"
-            ark.getOrNull("name") shouldEqual "profile-test"
+            ark.getOrNull("PORT") shouldBeEqualTo "80"
+            ark.getOrNull("name") shouldBeEqualTo "profile-test"
         }
 
         @Test fun `should return null when argument does not exist`() {

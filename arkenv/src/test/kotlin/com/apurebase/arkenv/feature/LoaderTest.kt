@@ -6,6 +6,7 @@ import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.putAll
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
+import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldEqualTo
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
@@ -16,7 +17,7 @@ import kotlin.collections.component2
 
 class LoaderTest {
 
-    private open class Ark(feature: ArkenvFeature) : Arkenv("Test", configureArkenv {
+    private open class Ark(feature: ArkenvFeature) : Arkenv(configureArkenv {
         install(feature)
     }) {
         val port: Int by argument()
@@ -31,7 +32,7 @@ class LoaderTest {
 
         val ark = Ark(feature)
         ark.parse()
-        ark.port shouldEqualTo 99
+        ark.port shouldBeEqualTo 99
     }
 
     @Test fun `yaml example`() {

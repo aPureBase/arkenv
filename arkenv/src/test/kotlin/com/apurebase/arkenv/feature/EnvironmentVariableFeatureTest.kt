@@ -13,7 +13,7 @@ import strikt.assertions.isEqualTo
 
 internal class EnvironmentVariableFeatureTest {
 
-    private class EnvArgs(envPrefix: String? = null, withEnv: Boolean = true) : Arkenv("Test", configureArkenv {
+    private class EnvArgs(envPrefix: String? = null, withEnv: Boolean = true) : Arkenv(configureArkenv {
         if (withEnv) install(EnvironmentVariableFeature(envPrefix = envPrefix))
         else uninstall(EnvironmentVariableFeature())
     }) {
