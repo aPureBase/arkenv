@@ -20,7 +20,6 @@ class HttpFeatureTest {
 
     private inner class Ark(url: String, responseMap: Map<URL, String>) : Arkenv(configureArkenv {
         programName = appName
-        install(ProfileFeature())
         install(HttpFeature(MockClient(responseMap), url))
         install(Encryption(EncryptionTest.decryptCipher))
     }) {

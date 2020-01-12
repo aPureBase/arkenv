@@ -17,7 +17,8 @@ import java.net.URLEncoder
  *
  * *ARKENV_REMOTE_TYPE* the type of git host, defaults to github.
  *
- * *ARKENV_HTTP_URL* the root url of the remote host, defaults to the remote type's public host, i.e. https://github.com.
+ * *ARKENV_HTTP_URL* the root url of the remote host, defaults to the remote type's public host,
+ * i.e. https://github.com.
  *
  * *ARKENV_REMOTE_PROJECT_ID* the project identification relative to the remote type. Github uses the
  * *owner/repository* convention.
@@ -26,7 +27,8 @@ import java.net.URLEncoder
  *
  * *ARKENV_REMOTE_EXTENSION* the file extension in the repository, defaults to properties.
  *
- * *ARKENV_REMOTE_PREFIX* the prefix for any configuration files, defaults to the profile feature prefix, or application.
+ * *ARKENV_REMOTE_PREFIX* the prefix for any configuration files, defaults to the profile feature prefix,
+ * or application.
  *
  * *ARKENV_REMOTE_DIRECTORY* the sub directory path where the configuration files are located, defaults to top level.
  *
@@ -53,6 +55,19 @@ class GitFeature(override var httpClient: HttpClient = HttpClientImpl()) : HttpF
         super.onLoad(arkenv)
     }
 
+    override fun resolveUrls(
+        rootUrl: String,
+        name: String,
+        profiles: List<String>,
+        label: String?
+    ): Iterable<URL> {
+        val rootProfile = listOf(makeUrl(rootUrl, name, null, label))
+        return when {
+            profiles.isEmpty() -> rootProfile
+            else -> rootProfile + profiles.map { makeUrl(rootUrl, name, it, label) }
+        }
+    }
+
     override fun getName(arkenv: Arkenv): String =
         getOrNull("PREFIX") ?: arkenv.findFeature<ProfileFeature>()?.prefix ?: "application"
 
@@ -60,7 +75,7 @@ class GitFeature(override var httpClient: HttpClient = HttpClientImpl()) : HttpF
         arkenv.getOrNull("ARKENV_HTTP_URL") ?: rootUrl ?: remoteType.defaultHost
 
     override fun makeUrl(rootUrl: String, name: String, profile: String?, label: String?): URL {
-        val encodedPath = URLEncoder.encode(getResourcePath(name, profile), Charsets.UTF_8)
+        val encodedPath = URLEncoder.encode(getResourcePath(name, profile), Charsets.UTF_8.displayName())
         return super.makeUrl(rootUrl, getApiPath(), encodedPath, getReference())
     }
 

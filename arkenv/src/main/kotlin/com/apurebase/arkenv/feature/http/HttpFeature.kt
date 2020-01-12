@@ -36,20 +36,12 @@ open class HttpFeature(
     /**
      * Generates a list of [URL]s to query from the application information.
      */
-    private fun resolveUrls(
+    protected open fun resolveUrls(
         rootUrl: String,
         name: String,
         profiles: List<String>,
         label: String?
-    ): Iterable<URL> {
-        val rootProfile = listOf(makeUrl(rootUrl, name, null, label))
-        return when {
-            profiles.isEmpty() -> rootProfile
-            else -> {
-                rootProfile + profiles.map { makeUrl(rootUrl, name, it, label) }
-            }
-        }
-    }
+    ): Iterable<URL> = listOf(makeUrl(rootUrl, name, profiles.joinToString(","), label))
 
     internal open fun makeUrl(rootUrl: String, name: String, profile: String?, label: String?): URL =
         listOfNotNull(rootUrl, name, profile, label)
@@ -73,6 +65,7 @@ open class HttpFeature(
             .also(::println) // TODO remove
             .let(arkenv::putAll)
 
+    @Suppress("TooGenericExceptionCaught")
     private fun parse(url: URL): Map<String, String> = try {
         httpClient.get(url).use(PropertyFeature.Companion::parseProperties)
     } catch (ex: Exception) {
