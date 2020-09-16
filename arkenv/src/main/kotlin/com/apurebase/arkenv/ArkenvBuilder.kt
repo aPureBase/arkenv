@@ -85,4 +85,4 @@ inline fun configureArkenv(block: (ArkenvBuilder.() -> Unit)) = ArkenvBuilder().
  * It will be parsed using the configuration of its root.
  * @param module the sub module to add to this [Arkenv]
  */
-fun <T: Arkenv> Arkenv.module(module: T): T = module.also { configuration.modules.add(it) }
+fun <T : Arkenv> Arkenv.module(module: T): T = module.also { configuration.modules.add(it) }
