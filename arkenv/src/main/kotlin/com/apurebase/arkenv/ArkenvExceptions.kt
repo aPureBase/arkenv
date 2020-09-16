@@ -29,7 +29,7 @@ internal class MappingException(key: String, value: String, clazz: KClass<*>, ca
 /**
  * Unchecked exception thrown when no value can be found for the given name.
  */
-internal class MissingArgumentException(name: String, info: String): ArkenvException(
+internal class MissingArgumentException(name: String, info: String) : ArkenvException(
     "No value passed for property $name ($info)"
 )
 

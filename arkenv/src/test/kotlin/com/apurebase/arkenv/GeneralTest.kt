@@ -98,13 +98,13 @@ class GeneralTest {
         }
 
         FixedArgs().parse("-f", "").run {
-            fixed shouldEqualTo value
+            fixed shouldBeEqualTo value
         }
     }
 
     @Test fun `objects should be usable`() {
         ObjectArgs.parse("-i", "10")
-        ObjectArgs.int shouldEqualTo 10
+        ObjectArgs.int shouldBeEqualTo 10
         ObjectArgs.optional shouldBe null
     }
 
@@ -127,7 +127,7 @@ class GeneralTest {
 
     @Test fun `mixed should work`() {
         Mixed().parse("-sa", "5").run {
-            someArg shouldEqualTo 5
+            someArg shouldBeEqualTo 5
             other shouldBeEqualTo "val"
         }
     }

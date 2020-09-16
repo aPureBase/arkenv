@@ -4,7 +4,6 @@ import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
@@ -25,14 +24,14 @@ class DefaultValueTests {
 
     @Test fun `defaultValue should be used when no other value can be found`() {
         DefArgs().run {
-            def shouldEqualTo 5
+            def shouldBeEqualTo 5
             defString shouldBeEqualTo "hey"
         }
     }
 
     @Test fun `default can be overruled by args`() {
         DefArgs().parse("-i", "1", "no").run {
-            def shouldEqualTo 1
+            def shouldBeEqualTo 1
             defString shouldBeEqualTo "no"
         }
     }
@@ -40,7 +39,7 @@ class DefaultValueTests {
     @Test fun `default can be overruled by env`() {
         MockSystem("INT" to "1")
         DefArgs().parse().run {
-            def shouldEqualTo 1
+            def shouldBeEqualTo 1
             defString shouldBeEqualTo "hey"
         }
     }
