@@ -24,39 +24,39 @@ compile "com.apurebase:arkenv:$arkenv_version"
 ```
 
 ### 🔨 Usage
-Define your arguments by extending `Arkenv` and declaring props with the `argument` delegate.
+Define your arguments with the `argument` delegate.
 ```kotlin
-class Arguments : Arkenv() {
+object Arguments {
 
     val country: String by argument()
 
-    val bool: Boolean by argument {
-        description = "A bool, which will be false by default"
-    }
+    val bool: Boolean by argument("-b")
 
-    val port: Int by argument("-p", "--this-can-be-set-via-env") {
-        description = "An Int with a default value and custom names"
-        defaultValue = { 5000 }
-    }
-
-    val nullInt: Int? by argument {
-        description = "A nullable Int, which doesn't have to be declared"
-    }
-
-    val mapped: List<String> by argument {
-        description = "Complex types can be achieved with a mapping"
-        mapping = { it.split("|") }
-    }
+    val port: Int by argument()
 }
 ```
-If you don't specify any names for the argument, it will use the property's name. 
 
-In the case of `nullInt`, you can parse it like this:
-* From command line with `--null-int world`
-* As an environment variable `NULL_INT=world`
+Parse your arguments.
 
-By default, Arkenv supports parsing command line arguments, 
-environment variables, and profiles.  
+```kotlin
+fun main(args: Array<String>) {
+    Arkenv.parse(Arguments, args)
+}
+```
+
+You can specify additional custom names for each argument. 
+The property's name is used as a fallback.
+
+By default, Arkenv supports parsing command line arguments,
+environment variables, and profiles.
+
+
+In the case of `port`, you can parse it like this:
+* From command line with `--port 443`
+* As an environment variable `PORT=80`
+* In a profile, like `application-dev.properties`, add `port=5000` 
+
+ 
 
 To get started, we recommend reading about [the basics](https://apurebase.gitlab.io/arkenv/guides/the-basics) 
 for a quick tour of what's included. 

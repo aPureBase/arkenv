@@ -3,6 +3,7 @@ package com.apurebase.arkenv.test
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument
 import com.apurebase.arkenv.mainArgument
+import com.apurebase.arkenv.parse
 
 class TestArgs : Arkenv() {
 
@@ -26,8 +27,19 @@ class TestArgs : Arkenv() {
     }
 }
 
+class ReadmeArguments {
+    val country: String by argument()
+    val bool: Boolean by argument("-b")
+    val port: Int by argument()
+    val nullInt: Int? by argument()
+}
+
 class MainArg : Arkenv() {
     val mainArg by mainArgument<String>()
+}
+
+fun main(args: Array<String>) {
+    Arkenv.parse(ObjectArgs, args)
 }
 
 class Nullable : Arkenv() {

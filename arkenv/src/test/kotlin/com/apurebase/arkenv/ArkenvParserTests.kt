@@ -1,5 +1,6 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.test.ReadmeArguments
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -144,6 +145,23 @@ class ArkenvParserTests {
         assertThrows<ValidationException> {
             // Act
             Arkenv.parse(config, arrayOf("--country", " "))
+        }
+    }
+
+    @Test fun `parsing sample should pass`() {
+        // Arrange
+        val config = ReadmeArguments()
+        val expectedCountry = "test"
+
+        // Act
+        Arkenv.parse(config, arrayOf("--country", expectedCountry, "-b"))
+
+        // Assert
+        expectThat(config) {
+            get { port } isEqualTo 80
+            get { country } isEqualTo expectedCountry
+            get { bool }.isTrue()
+            get { nullInt }.isNull()
         }
     }
 }

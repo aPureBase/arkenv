@@ -43,6 +43,4 @@ class Argument<T : Any?>(var names: List<String>) {
      * If the [assertion] returns false, the validation will throw an exception with the provided [message]
      */
     fun validate(message: String, assertion: (T) -> Boolean) = validation.add(Validation(message, assertion))
-
-    internal class Validation<T>(val message: String, val assertion: (T) -> Boolean)
 }
