@@ -50,7 +50,7 @@ class GeneralTest {
             val long: Long by argument()
         }
 
-        LongArg().parse("-long", "5000").long shouldEqualTo expected
+        LongArg().parse("-long", "5000").long shouldBeEqualTo expected
     }
 
     @Test fun `custom mapping`() {
@@ -62,7 +62,7 @@ class GeneralTest {
             }
         }
 
-        CustomArg().parse("1,2,3").list shouldEqual expected
+        CustomArg().parse("1,2,3").list shouldBeEqualTo expected
     }
 
     @Test fun `custom mapping not available should throw`() {

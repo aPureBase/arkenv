@@ -9,7 +9,7 @@ import strikt.assertions.isEqualTo
 class ParserTest {
 
     private val customFeature = object : ArkenvFeature {
-        override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? = "9000"
+        override fun onParse(arkenv: Arkenv, delegate: ArkenvArgument<*>): String? = "9000"
     }
 
     @Test fun `custom parser`() {

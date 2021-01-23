@@ -5,6 +5,25 @@ import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
 /**
+ * Parses the [configuration] class using the provided [args].
+ * @param configuration the configuration class to parse.
+ * @param args the command line arguments.
+ */
+inline fun <reified T : Any> Arkenv.Arkenv.parse(configuration: T, args: Array<String>) {
+    ArkenvParser(configuration, T::class, args).parse()
+}
+
+/**
+ * Defines an argument that can be parsed in the current class.
+ * @param names additional names to consider when parsing.
+ * @param configuration optional configuration of the argument's properties
+ */
+fun <T : Any> argument(vararg names: String, configuration: Argument<T>.() -> Unit = {}): ArkenvArgument<T> =
+    ArkenvSimpleArgument(
+        Argument<T>(names.toList()).apply(configuration)
+    )
+
+/**
  * Parses the arguments contained in this instance using the installed features.
  * Validation will be run and potentially throw an Exception if not passed.
  *
@@ -56,7 +75,7 @@ inline fun <T : Any> Arkenv.mainArgument(block: Argument<T>.() -> Unit = {}): Ar
 internal val ArkenvFeature.key get() = this::class.jvmName
 
 internal fun Arkenv.isHelp(): Boolean = when {
-    argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false
+    argList.isEmpty() && delegates.first { it.argument.isHelp }.value == false -> false
     else -> help
 }
 
@@ -81,7 +100,7 @@ fun Arkenv.putAll(from: Map<out String, String>) = from.forEach { (k, v) -> set(
  * @throws MissingArgumentException when the key can not be found
  */
 operator fun Arkenv.get(key: String): String =
-    getOrNull(key) ?: throw MissingArgumentException("Arkenv does not contain a value for key '$key'", "")
+    getOrNull(key) ?: throw MissingArgumentException("Arkenv does not contain a value for key '$key'", "", programName)
 
 /**
  * Maps the input [value] to an instance of [T] using [clazz] as a reference.

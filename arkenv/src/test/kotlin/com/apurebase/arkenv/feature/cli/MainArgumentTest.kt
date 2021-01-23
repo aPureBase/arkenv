@@ -7,6 +7,7 @@ import com.apurebase.arkenv.mainArgument
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
+import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldEqual
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -21,8 +22,8 @@ internal class MainArgumentTest {
 
     @Test fun `mixed main and normal`() {
         val args = Ark().parse("-e", "import", "abc")
-        args.main shouldEqual "abc"
-        args.extra shouldEqual "import"
+        args.main shouldBeEqualTo "abc"
+        args.extra shouldBeEqualTo "import"
     }
 
     @Test fun `mixed main and env`() {

@@ -9,6 +9,9 @@ import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
 
+/**
+ * Tests for the [BooleanMergeParser] functionality.
+ */
 class MergeTests {
 
     private class Arguments : Arkenv() {

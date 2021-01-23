@@ -5,6 +5,7 @@ import com.apurebase.arkenv.feature.PropertyFeature
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
 import org.junit.jupiter.api.Test
+import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
 internal class ModuleTests {
@@ -48,5 +49,18 @@ internal class ModuleTests {
             .expectThat {
                 get { database.port }.isEqualTo(expectedPort)
             }
+    }
+
+    @Test fun `multi nested modules`() {
+        // Arrange
+        val c = object : Arkenv("C") { val port: Int by argument() }
+        val b = object : Arkenv("B") { val c = module(c) }
+        val a = object: Arkenv("A") { val b = module(b) }
+
+        // Act
+        a.parse()
+
+        // Assert
+        expectThat(a.b.c.port) isEqualTo 80
     }
 }

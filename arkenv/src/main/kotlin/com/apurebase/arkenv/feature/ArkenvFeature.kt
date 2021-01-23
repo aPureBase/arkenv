@@ -1,8 +1,8 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Argument
-import com.apurebase.arkenv.ArgumentDelegate
 import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.ArkenvArgument
 
 /**
  * Defines functionality for use in [Arkenv] instances.
@@ -26,7 +26,7 @@ interface ArkenvFeature {
     /**
      * Used to assign a value to the [Argument] represented by [delegate].
      */
-    fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? {
+    fun onParse(arkenv: Arkenv, delegate: ArkenvArgument<*>): String? {
         return null
     }
 

@@ -1,12 +1,15 @@
 package com.apurebase.arkenv.feature.cli
 
-import com.apurebase.arkenv.ArgumentDelegate
 import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.ArkenvArgument
 import com.apurebase.arkenv.isSimpleName
 
+/**
+ * Parses merged boolean arguments from the command line.
+ */
 internal class BooleanMergeParser {
 
-    internal fun checkRemaining(arkenv: Arkenv, argList: List<String>): List<Pair<String, List<ArgumentDelegate<*>>>> =
+    internal fun findRemaining(arkenv: Arkenv, argList: List<String>): List<Pair<String, List<ArkenvArgument<*>>>> =
         when {
             argList.isEmpty() -> listOf()
             else -> {
@@ -18,21 +21,20 @@ internal class BooleanMergeParser {
             }
         }
 
-    private fun findMergeCandidates(delegates: List<ArgumentDelegate<*>>) = delegates
+    private fun findMergeCandidates(delegates: List<ArkenvArgument<*>>) = delegates
         .map { delegate ->
             val simpleNames = delegate.argument.names.prepareNames()
             MergeCandidate(delegate, simpleNames)
         }
         .filter(MergeCandidate::hasNames)
 
-    private fun findBooleanDelegates(arkenv: Arkenv, delegates: List<ArgumentDelegate<*>>): List<ArgumentDelegate<*>> =
+    private fun findBooleanDelegates(arkenv: Arkenv, delegates: List<ArkenvArgument<*>>): List<ArkenvArgument<*>> =
         delegates
             .filter { it.isBoolean }
             .filterNot { it.getValue(arkenv, it.property) as Boolean }
 
-    private class MergeCandidate(val delegate: ArgumentDelegate<*>, val names: List<String>) {
-        fun filterNames(arg: String) =
-            MergeCandidate(delegate, names.filter { arg.startsWith(it) })
+    private class MergeCandidate(val delegate: ArkenvArgument<*>, val names: List<String>) {
+        fun filterNames(arg: String) = MergeCandidate(delegate, names.filter(arg::startsWith))
 
         fun hasNames() = names.isNotEmpty()
         override fun equals(other: Any?): Boolean = other is MergeCandidate && other.delegate == delegate
@@ -40,8 +42,8 @@ internal class BooleanMergeParser {
     }
 
     private fun resolveMatch(
-        arg: String, candidates: List<MergeCandidate>, results: List<ArgumentDelegate<*>>, index: Int, nameIndex: Int
-    ): List<ArgumentDelegate<*>> {
+        arg: String, candidates: List<MergeCandidate>, results: List<ArkenvArgument<*>>, index: Int, nameIndex: Int
+    ): List<ArkenvArgument<*>> {
         val options = candidates.findCandidates(arg)
         val chosen = options.getOrNull(index) ?: return listOf()
         val remaining = candidates - chosen
@@ -61,12 +63,12 @@ internal class BooleanMergeParser {
     /**
      * Continue search if there are no matches and there are more items in the list.
      */
-    private fun shouldContinueSearch(matches: List<ArgumentDelegate<*>>, list: List<*>, index: Int) =
+    private fun shouldContinueSearch(matches: List<ArkenvArgument<*>>, list: List<*>, index: Int) =
         matches.isEmpty() && list.size > index + 1
 
     private fun List<MergeCandidate>.findCandidates(arg: String): List<MergeCandidate> =
         map { it.filterNames(arg) }.filter(MergeCandidate::hasNames)
 
     private fun List<String>.prepareNames(): List<String> =
-        filter { it.isSimpleName() }.map { it.removePrefix("-") }
+        filter(String::isSimpleName).map { it.removePrefix("-") }
 }

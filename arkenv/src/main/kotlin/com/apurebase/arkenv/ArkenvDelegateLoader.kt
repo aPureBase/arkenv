@@ -9,7 +9,7 @@ class ArkenvDelegateLoader<T : Any>(
 ) {
     operator fun provideDelegate(thisRef: Arkenv, prop: KProperty<*>): ReadOnlyProperty<Arkenv, T> {
         argument.names = getNames(argument.names, prop.name)
-        return ArgumentDelegate(argument, prop)
+        return ArkenvExtendedArgument(thisRef, argument, prop)
             .also { arkenv.delegates.add(it) }
     }
 

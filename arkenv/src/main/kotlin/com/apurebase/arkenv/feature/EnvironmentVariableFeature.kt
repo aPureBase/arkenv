@@ -27,7 +27,7 @@ class EnvironmentVariableFeature(
         isLoaded = loadedEnvVars != null // reset in case of re-parse
     }
 
-    override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? = with(delegate) {
+    override fun onParse(arkenv: Arkenv, delegate: ArkenvArgument<*>): String? = with(delegate) {
         val envSecrets = enableEnvSecrets || arkenv.getOrNull("ARKENV_ENV_SECRETS") != null
         val setEnvPrefix = envPrefix ?: arkenv.getOrNull("ARKENV_ENV_PREFIX") ?: ""
         getEnvValue(argument, envSecrets, setEnvPrefix)

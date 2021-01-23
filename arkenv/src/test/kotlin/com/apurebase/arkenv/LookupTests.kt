@@ -64,8 +64,8 @@ class LookupTests {
 
         @Test fun `should resolve unused properties`() {
             val ark = Ark().parse()
-            ark.getOrNull("PORT") shouldEqual "80"
-            ark.getOrNull("name") shouldEqual "profile-test"
+            ark.getOrNull("PORT") shouldBeEqualTo "80"
+            ark.getOrNull("name") shouldBeEqualTo "profile-test"
         }
 
         @Test fun `should return null when argument does not exist`() {

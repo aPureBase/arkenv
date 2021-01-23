@@ -27,9 +27,9 @@ interface FileBasedTests {
         vararg args: String = arrayOf()
     ) = PropertiesArk(configure(path, locations)).parse(*args).apply {
         expectThat {
-            get { this.mysqlPassword }.isEqualTo(pw)
-            get { this.port }.isEqualTo(port)
-            get { this.multiLine.trim() }.isEqualTo("this stretches lines")
+            get { this.mysqlPassword } isEqualTo pw
+            get { this.port } isEqualTo port
+            get { this.multiLine.trim() } isEqualTo "this stretches lines"
         }
     }
 }
