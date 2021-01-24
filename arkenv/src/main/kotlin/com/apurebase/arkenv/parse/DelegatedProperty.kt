@@ -5,6 +5,11 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.jvm.javaField
 
+internal data class DelegatedProperty<R : Any, DELEGATE : Any>(
+    val property: KProperty1<R, *>,
+    val delegate: DELEGATE
+)
+
 internal fun <R : Any, DELEGATE : Any> findDelegates(
     instance: R, delegateClass: KClass<DELEGATE>
 ): Collection<DelegatedProperty<out R, DELEGATE>> {
@@ -20,8 +25,3 @@ internal fun <R : Any, DELEGATE : Any> findDelegates(
         }
     }
 }
-
-internal data class DelegatedProperty<R : Any, DELEGATE : Any>(
-    val property: KProperty1<R, *>,
-    val delegate: DELEGATE
-)
