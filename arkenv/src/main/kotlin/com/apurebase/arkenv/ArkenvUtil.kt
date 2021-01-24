@@ -9,9 +9,11 @@ import kotlin.reflect.jvm.jvmName
  * @param configuration the configuration class to parse.
  * @param args the command line arguments.
  */
-inline fun <reified T : Any> Arkenv.Arkenv.parse(configuration: T, args: Array<String>) {
-    ArkenvParser(configuration, T::class, args).parse()
-}
+inline fun <reified T : Any> Arkenv.Arkenv.parse(configuration: T, args: Array<String>) =
+    ArkenvParser(T::class, args).parse(configuration)
+
+inline fun <reified T: Any> Arkenv.Arkenv.parse(args: Array<String>): T =
+    ArkenvParser(T::class, args).parseClass()
 
 /**
  * Defines an argument that can be parsed in the current class.
@@ -101,31 +103,3 @@ fun Arkenv.putAll(from: Map<out String, String>) = from.forEach { (k, v) -> set(
  */
 operator fun Arkenv.get(key: String): String =
     getOrNull(key) ?: throw MissingArgumentException("Arkenv does not contain a value for key '$key'", "", programName)
-
-/**
- * Maps the input [value] to an instance of [T] using [clazz] as a reference.
- * @throws IllegalArgumentException if the mapping is not supported or didn't succeed
- */
-@Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY", "ComplexMethod", "LongMethod", "TooGenericExceptionCaught")
-internal fun <T> mapDefault(key: String, value: String, clazz: KClass<*>): T = try {
-    with(value) {
-        when (clazz) {
-            Int::class -> toIntOrNull()
-            Long::class -> toLongOrNull()
-            String::class -> value
-            Char::class -> firstOrNull()
-            List::class, Collection::class -> split()
-            IntArray::class -> split().map(String::toInt).toIntArray()
-            ShortArray::class -> split().map(String::toShort).toShortArray()
-            CharArray::class -> toCharArray()
-            LongArray::class -> split().map(String::toLong).toLongArray()
-            FloatArray::class -> split().map(String::toFloat).toFloatArray()
-            DoubleArray::class -> split().map(String::toDouble).toDoubleArray()
-            BooleanArray::class -> split().map(String::toBoolean).toBooleanArray()
-            ByteArray::class -> split().map(String::toByte).toByteArray()
-            else -> throw UnsupportedMappingException(key, clazz)
-        } as T
-    }
-} catch (ex: RuntimeException) {
-    throw MappingException(key, value, clazz, ex)
-}

@@ -24,6 +24,6 @@ internal class FeatureOrderTest {
         val encryptedInt = prefix + EncryptionTest.encrypt(intValue.toString())
 
         Ark().parse("ARKENV_ENCRYPTION_PREFIX", prefix, "--STRING", encryptedString, "--INT", encryptedInt)
-            .expectThat { get { string }.isEqualTo(expectedValue) }
+            .expectThat { get { string } isEqualTo expectedValue }
     }
 }

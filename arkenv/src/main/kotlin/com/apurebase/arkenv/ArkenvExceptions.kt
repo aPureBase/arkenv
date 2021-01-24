@@ -26,7 +26,7 @@ internal class UnsupportedMappingException(key: String, clazz: KClass<*>) : Arke
  * Unchecked exception thrown when mapping was unsuccessful.
  */
 internal class MappingException(key: String, value: String, clazz: KClass<*>, cause: Exception) : ArkenvException(
-    "Could not parse property '$key' with value '$value' as class '$clazz'", cause
+    "Could not map property '$key' with value '$value' as class '$clazz'", cause
 )
 
 /**
@@ -41,4 +41,8 @@ class MissingArgumentException(name: String, info: String, moduleName: String) :
  */
 internal class FeatureNotFoundException(featureName: String?) : ArkenvException(
     "Feature $featureName could not be found. Make sure it was installed correctly."
+)
+
+internal class ParsingException(className: String, innerException: Exception) : ArkenvException(
+    "Exception encountered when parsing $className", innerException
 )

@@ -97,7 +97,7 @@ interface ArkenvArgument<T : Any?> : ReadOnlyProperty<Any, T> {
 
     private fun map(value: String): T =
         argument.mapping?.invoke(value)
-            ?: mapDefault(property.name, value, property.returnType.jvmErasure)
+            ?: ArkenvMapper.mapDefault(property.name, value, property.returnType.jvmErasure)
 
     private fun isHelp(): Boolean = argument.isHelp || arkenv.isHelp()
 }

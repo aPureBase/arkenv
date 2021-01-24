@@ -11,9 +11,9 @@ import strikt.assertions.isNull
 import strikt.assertions.isTrue
 
 /**
- * Tests for the [ArkenvParser] functionality, parsing plain classes.
+ * Tests for the [ArkenvParser.parse] functionality, parsing plain classes.
  */
-class ArkenvParserTests {
+class ParseInstanceTests {
 
     @Test fun `parsing plain class - profile`() {
         // Arrange

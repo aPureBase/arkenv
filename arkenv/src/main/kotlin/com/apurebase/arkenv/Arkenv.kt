@@ -26,12 +26,20 @@ open class Arkenv(
         defaultValue = { programName }
     }
 
-    internal fun parseArguments(args: Array<out String>) = with(configuration) {
+    internal fun parseArguments(args: Array<out String>) {
+        load(args)
+        parsePostLoad()
+    }
+
+    internal fun load(args: Array<out String>) = with(configuration) {
         if (clearInputBeforeParse) clear()
         argList.addAll(args)
         features.forEach { it.onLoad(this@Arkenv) }
         features.forEach { it.postLoad(this@Arkenv) }
         process()
+    }
+
+    internal fun parsePostLoad() = with(configuration) {
         parse(delegates)
         features.forEach { it.finally(this@Arkenv) }
         modules.forEach { parse(it.delegates) }

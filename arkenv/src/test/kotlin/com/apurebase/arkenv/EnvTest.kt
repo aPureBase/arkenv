@@ -20,8 +20,8 @@ class EnvTest : ArkenvTest() {
         TestArgs().parse(expectedMainString).expectThat {
             get { help }.isFalse()
             get { bool }.isTrue()
-            get { country }.isEqualTo("dk")
-            get { mainString }.isEqualTo(expectedMainString)
+            get { country } isEqualTo "dk"
+            get { mainString } isEqualTo expectedMainString
             get { null }.isNull()
         }
     }
@@ -30,7 +30,7 @@ class EnvTest : ArkenvTest() {
         val expected = "test"
         MockSystem(MainArg::mainArg.name to expected)
         MainArg().parse("").expectThat {
-            get { mainArg }.isEqualTo("")
+            get { mainArg } isEqualTo ""
         }
     }
 
