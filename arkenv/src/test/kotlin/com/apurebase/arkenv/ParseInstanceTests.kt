@@ -1,5 +1,7 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.feature.ProfileFeature
+import com.apurebase.arkenv.test.Expected
 import com.apurebase.arkenv.test.ReadmeArguments
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -18,13 +20,12 @@ class ParseInstanceTests {
     @Test fun `parsing plain class - profile`() {
         // Arrange
         val config = object { val port: Int by argument() }
-        val expectedPort = 80
 
         // Act
         Arkenv.parse(config, arrayOf())
 
         // Assert
-        expectThat(config).get { port } isEqualTo expectedPort
+        expectThat(config).get { port } isEqualTo Expected.port
     }
 
 
@@ -158,10 +159,27 @@ class ParseInstanceTests {
 
         // Assert
         expectThat(config) {
-            get { port } isEqualTo 80
+            get { port } isEqualTo Expected.port
             get { country } isEqualTo expectedCountry
             get { bool }.isTrue()
             get { nullInt }.isNull()
+        }
+    }
+
+    @Test fun `configure arkenv should apply`() {
+        // Arrange
+        val config = object {
+            val mysqlPassword: String by argument()
+        }
+
+        // Act
+        Arkenv.parse(config, arrayOf()) {
+            install(ProfileFeature(prefix = "app"))
+        }
+
+        // Assert
+        expectThat(config) {
+            get { mysqlPassword } isEqualTo Expected.mysqlPassword
         }
     }
 }

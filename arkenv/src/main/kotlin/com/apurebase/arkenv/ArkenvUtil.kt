@@ -8,12 +8,27 @@ import kotlin.reflect.jvm.jvmName
  * Parses the [configuration] class using the provided [args].
  * @param configuration the configuration class to parse.
  * @param args the command line arguments.
+ * @param configureArkenv additional arkenv configuration.
  */
-inline fun <reified T : Any> Arkenv.Arkenv.parse(configuration: T, args: Array<String>) =
-    ArkenvParser(T::class, args).parse(configuration)
+inline fun <reified T : Any> Arkenv.Arkenv.parse(
+    configuration: T, args: Array<String>, configureArkenv: ArkenvBuilder.() -> Unit = {}
+) {
+    val builder = ArkenvBuilder().apply(configureArkenv)
+    ArkenvParser(T::class, args, builder).parse(configuration)
+}
 
-inline fun <reified T: Any> Arkenv.Arkenv.parse(args: Array<String>): T =
-    ArkenvParser(T::class, args).parseClass()
+/**
+ * Parses a configuration class of type [T] using the provided [args].
+ * @param args the command line arguments.
+ * @param configureArkenv additional arkenv configuration.
+ * @return an instance of the parsed class.
+ */
+inline fun <reified T : Any> Arkenv.Arkenv.parse(
+    args: Array<String>, configureArkenv: ArkenvBuilder.() -> Unit = {}
+): T {
+    val builder = ArkenvBuilder().apply(configureArkenv)
+    return ArkenvParser(T::class, args, builder).parseClass()
+}
 
 /**
  * Defines an argument that can be parsed in the current class.

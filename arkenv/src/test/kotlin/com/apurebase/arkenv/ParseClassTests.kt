@@ -1,5 +1,7 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.feature.ProfileFeature
+import com.apurebase.arkenv.test.Expected
 import org.junit.jupiter.api.Test
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
@@ -18,7 +20,7 @@ class ParseClassTests {
         val config = Arkenv.parse<Configuration>(arrayOf())
 
         // Assert
-        expectThat(config).get { port } isEqualTo 80
+        expectThat(config).get { port } isEqualTo Expected.port
     }
 
     @Test fun `default value should not throw`() {
@@ -59,7 +61,6 @@ class ParseClassTests {
     @Test fun `mixing constructor and delegates works`() {
         // Arrange
         val expectedCountry = "dk"
-        val expectedPort = 80
         class Configuration(val country: String) {
             val port: Int by argument()
         }
@@ -70,8 +71,25 @@ class ParseClassTests {
         // Assert
         expectThat(config) {
             get { country } isEqualTo expectedCountry
-            get { port } isEqualTo expectedPort
+            get { port } isEqualTo Expected.port
         }
     }
 
+    @Test fun `configure arkenv should apply`() {
+        // Arrange
+        class Configuration(val databasePort: Int) {
+            val mysqlPassword: String by argument()
+        }
+
+        // Act
+        val config = Arkenv.parse<Configuration>(arrayOf()) {
+            install(ProfileFeature(prefix = "app"))
+        }
+
+        // Assert
+        expectThat(config) {
+            get { mysqlPassword } isEqualTo Expected.mysqlPassword
+            get { databasePort } isEqualTo Expected.databasePort
+        }
+    }
 }

@@ -15,10 +15,11 @@ import kotlin.reflect.jvm.jvmErasure
  */
 class ArkenvParser<T : Any>(
     private val kClass: KClass<T>,
-    private val args: Array<String>
+    private val args: Array<String>,
+    arkenvConfiguration: ArkenvBuilder
 ) {
+    private val arkenv: Arkenv = Arkenv(configuration = arkenvConfiguration)
     private val className get() = kClass.java.name
-    private val arkenv: Arkenv = Arkenv()
 
     /**
      * Parses the arguments in the provided configuration [instance].
