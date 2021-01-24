@@ -6,7 +6,7 @@
 
 <img src="/docs/arkenv_logo.png?raw=true" width="200">
 
-Type-safe Kotlin configuration parser `by` delegates. 
+Type-safe Kotlin configuration `by` delegates. 
 
 Supports the most common external configuration sources, including: 
 * Command line
@@ -27,24 +27,26 @@ compile "com.apurebase:arkenv:$arkenv_version"
 Define your arguments with the `argument` delegate.
 ```kotlin
 object Arguments {
-
-    val country: String by argument()
-
-    val bool: Boolean by argument("-b")
-
     val port: Int by argument()
 }
+```
+
+or use constructor injection:
+```kotlin
+class Arguments(val port: Int)
 ```
 
 Parse your arguments.
 
 ```kotlin
 fun main(args: Array<String>) {
-    Arkenv.parse(Arguments, args)
+    Arkenv.parse(Arguments, args) // object or existing instance
+    Arkenv.parse<Arguments>(args) // constructor injection 
 }
 ```
 
-You can specify additional custom names for each argument. 
+You can specify additional custom names for each `argument`.
+
 The property's name is used as a fallback.
 
 By default, Arkenv supports parsing command line arguments,
