@@ -1,7 +1,7 @@
 package com.apurebase.arkenv.feature.http
 
 import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.feature.Encryption
 import com.apurebase.arkenv.feature.EncryptionTest

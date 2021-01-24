@@ -1,8 +1,10 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.argument.ArkenvArgument
 import com.apurebase.arkenv.feature.ArkenvFeature
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
+import com.apurebase.arkenv.util.argument
 import org.junit.jupiter.api.Test
 import strikt.assertions.isEqualTo
 
@@ -20,7 +22,7 @@ class ParserTest {
         }
 
         ark.parse().expectThat {
-            get { port }.isEqualTo(9000)
+            get { port } isEqualTo 9000
         }
     }
 

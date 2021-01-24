@@ -1,5 +1,7 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.argument.Argument
+import com.apurebase.arkenv.argument.ArkenvSimpleArgument
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 

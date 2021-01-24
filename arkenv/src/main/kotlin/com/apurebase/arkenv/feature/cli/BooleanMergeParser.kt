@@ -1,8 +1,8 @@
 package com.apurebase.arkenv.feature.cli
 
 import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.ArkenvArgument
-import com.apurebase.arkenv.isSimpleName
+import com.apurebase.arkenv.argument.ArkenvArgument
+import com.apurebase.arkenv.util.isSimpleName
 
 /**
  * Parses merged boolean arguments from the command line.

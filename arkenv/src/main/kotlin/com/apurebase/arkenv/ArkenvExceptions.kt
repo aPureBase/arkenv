@@ -46,3 +46,7 @@ internal class FeatureNotFoundException(featureName: String?) : ArkenvException(
 internal class ParsingException(className: String, innerException: Exception) : ArkenvException(
     "Exception encountered when parsing $className", innerException
 )
+
+internal class ModuleInitializationException(name: String) : ArkenvException(
+    "Module for class $name has not been initialized."
+)

@@ -1,9 +1,10 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.feature.Encryption
-import com.apurebase.arkenv.feature.EncryptionTest
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
+import com.apurebase.arkenv.util.argument
 import org.junit.jupiter.api.Test
 import strikt.assertions.isEqualTo
 

@@ -1,5 +1,6 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.argument
 
+import com.apurebase.arkenv.ValidationException
 import kotlin.reflect.KProperty
 
 internal class Validation<T>(val message: String, val assertion: (T) -> Boolean)

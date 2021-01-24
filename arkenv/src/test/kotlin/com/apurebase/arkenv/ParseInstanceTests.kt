@@ -1,8 +1,11 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.ProfileFeature
+import com.apurebase.arkenv.module.module
 import com.apurebase.arkenv.test.Expected
 import com.apurebase.arkenv.test.ReadmeArguments
+import com.apurebase.arkenv.util.argument
+import com.apurebase.arkenv.util.parse
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -180,6 +183,66 @@ class ParseInstanceTests {
         // Assert
         expectThat(config) {
             get { mysqlPassword } isEqualTo Expected.mysqlPassword
+        }
+    }
+
+    @Test fun `module by instance is parsed`() {
+        // Arrange
+        val subModule = object {
+            val port: Int by argument()
+        }
+        val config = object {
+            val subModule by module(subModule)
+        }
+
+        // Act
+        Arkenv.parse(config, arrayOf())
+
+        // Assert
+        expectThat(config.subModule) {
+            get { port } isEqualTo Expected.port
+        }
+    }
+
+    @Test fun `module by class is parsed`() {
+        // Arrange
+        val expectedCountry = "DK"
+        class SubConfig(val country: String) {
+            val port: Int by argument()
+        }
+        val config = object  {
+            val subModule by module<SubConfig>()
+        }
+
+        // Act
+        Arkenv.parse(config, arrayOf("--country", expectedCountry))
+
+        // Assert
+        expectThat(config.subModule) {
+            get { port } isEqualTo Expected.port
+            get { country } isEqualTo expectedCountry
+        }
+    }
+
+    @Test fun `nested module by instance is parsed`() {
+        // Arrange
+        val expectedCountry = "DK"
+        val subSub = object {
+            val port: Int by argument()
+        }
+        val sub = object {
+            val subSubModule by module(subSub)
+        }
+        val config = object  {
+            val subModule by module(sub)
+        }
+
+        // Act
+        Arkenv.parse(config, arrayOf("--country", expectedCountry))
+
+        // Assert
+        expectThat(config.subModule.subSubModule) {
+            get { port } isEqualTo Expected.port
         }
     }
 }

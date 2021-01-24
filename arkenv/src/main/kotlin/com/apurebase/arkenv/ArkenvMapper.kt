@@ -1,5 +1,6 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.util.split
 import kotlin.reflect.KClass
 
 /**

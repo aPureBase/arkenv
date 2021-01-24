@@ -1,5 +1,6 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.argument
 
+import com.apurebase.arkenv.Arkenv
 import kotlin.reflect.KProperty
 
 /**

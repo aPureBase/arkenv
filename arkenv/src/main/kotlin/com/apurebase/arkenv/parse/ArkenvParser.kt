@@ -1,17 +1,22 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.parse
 
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.ArkenvBuilder
+import com.apurebase.arkenv.ArkenvMapper
+import com.apurebase.arkenv.ParsingException
+import com.apurebase.arkenv.argument.ArkenvArgument
+import com.apurebase.arkenv.module.ArkenvModule
+import com.apurebase.arkenv.util.toSnakeCase
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.jvmErasure
 
 /**
  * Parses [Arkenv] arguments in configuration classes.
  * @param kClass the class to be parsed.
  * @param args the command line arguments.
+ * @param arkenvConfiguration additional arkenv configuration.
  */
 class ArkenvParser<T : Any>(
     private val kClass: KClass<T>,
@@ -21,24 +26,15 @@ class ArkenvParser<T : Any>(
     private val arkenv: Arkenv = Arkenv(configuration = arkenvConfiguration)
     private val className get() = kClass.java.name
 
+    init {
+        arkenv.load(args)
+    }
+
     /**
      * Parses the arguments in the provided configuration [instance].
      * @param instance the configuration instance to parse.
      */
-    fun parse(instance: T) {
-        parse(instance, true)
-    }
-
-    private fun parse(instance: T, doFullParse: Boolean) {
-        val delegates = findDelegates(instance).let { initializeDelegates(it, arkenv) }
-        arkenv.delegates.addAll(delegates)
-        if (doFullParse) {
-            arkenv.parse(args)
-        }
-        else {
-            arkenv.parsePostLoad()
-        }
-    }
+    fun parse(instance: T) = parse<T>(instance)
 
     /**
      * Parses the arguments in a class of the given type.
@@ -46,16 +42,24 @@ class ArkenvParser<T : Any>(
      * @throws ParsingException when parsing was unsuccessful.
      */
     fun parseClass(): T {
-        val constructor = kClass.constructors.firstOrNull()
-            ?: throw ParsingException(className, IllegalStateException("No valid constructor found"))
-
-        arkenv.load(args)
-        val instance = parseConstructor(constructor)
-        parse(instance, false)
+        val instance = createInstance(kClass)
+        parse(instance)
         return instance
     }
 
-    private fun parseConstructor(constructor: KFunction<T>): T = try {
+    internal fun <R : Any> parse(instance: R) {
+        initializeDelegates(instance)
+        initializeModules(instance)
+        arkenv.parsePostLoad()
+    }
+
+    internal fun <R : Any> createInstance(kClass: KClass<R>): R {
+        val constructor = kClass.constructors.firstOrNull()
+            ?: throw ParsingException(className, IllegalStateException("No valid constructor found"))
+        return parseConstructor(constructor)
+    }
+
+    private fun <R> parseConstructor(constructor: KFunction<R>): R = try {
         val constructorArgs = parseConstructorArgs(constructor.parameters)
         constructor.callBy(constructorArgs)
     } catch (ex: IllegalArgumentException) {
@@ -83,31 +87,16 @@ class ArkenvParser<T : Any>(
         }
     }
 
-    private fun initializeDelegates(
-        delegates: Collection<DelegatedProperty<T, ArkenvArgument<*>>>,
-        arkenv: Arkenv
-    ): Collection<ArkenvArgument<*>> = delegates.map { (property, delegate) ->
-        delegate.initialize(arkenv, property)
-        delegate
-    }
-
-    private fun findDelegates(instance: T): Collection<DelegatedProperty<T, ArkenvArgument<*>>> {
-        val delegateClass = ArkenvArgument::class
-        return kClass.declaredMemberProperties.mapNotNull { prop ->
-            val javaField = prop.javaField
-            if (javaField != null && delegateClass.java.isAssignableFrom(javaField.type)) {
-                javaField.isAccessible = true
-                @Suppress("UNCHECKED_CAST")
-                val delegateInstance = javaField.get(instance) as ArkenvArgument<*>
-                DelegatedProperty(prop, delegateInstance)
-            } else {
-                null
-            }
+    private fun <R : Any> initializeModules(instance: R) {
+        findDelegates(instance, ArkenvModule::class).forEach { (_, delegate) ->
+            delegate.initialize(this)
         }
     }
 
-    private data class DelegatedProperty<T : Any, DELEGATE : Any>(
-        val property: KProperty1<T, *>,
-        val delegate: DELEGATE
-    )
+    private fun <R : Any> initializeDelegates(instance: R) {
+        findDelegates(instance, ArkenvArgument::class).forEach { (property, delegate) ->
+            delegate.initialize(arkenv, property)
+            arkenv.delegates.add(delegate)
+        }
+    }
 }

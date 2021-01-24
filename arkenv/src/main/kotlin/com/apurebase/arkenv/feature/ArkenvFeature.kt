@@ -1,8 +1,8 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.Argument
+import com.apurebase.arkenv.argument.Argument
 import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.ArkenvArgument
+import com.apurebase.arkenv.argument.ArkenvArgument
 
 /**
  * Defines functionality for use in [Arkenv] instances.

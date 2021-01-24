@@ -2,6 +2,7 @@ package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.*
 import com.apurebase.arkenv.feature.cli.CliFeature
+import com.apurebase.arkenv.util.key
 
 /**
  * [Arkenv] configuration builder which controls features and other settings.
@@ -79,13 +80,3 @@ class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
  * @param block Arkenv configuration logic.
  */
 inline fun configureArkenv(block: (ArkenvBuilder.() -> Unit)) = ArkenvBuilder().apply(block)
-
-/**
- * Registers the [module] as a sub module that will be automatically parsed after the super Arkenv.
- * It will be parsed using the configuration of its root.
- * @param module the sub module to add to this [Arkenv]
- */
-fun <T : Arkenv> Arkenv.module(module: T): T = module.also {
-    it.parent = this
-    configuration.modules.add(it)
-}

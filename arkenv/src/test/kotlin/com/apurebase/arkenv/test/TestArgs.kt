@@ -1,9 +1,9 @@
 package com.apurebase.arkenv.test
 
 import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.argument
-import com.apurebase.arkenv.mainArgument
-import com.apurebase.arkenv.parse
+import com.apurebase.arkenv.util.argument
+import com.apurebase.arkenv.util.mainArgument
+import com.apurebase.arkenv.util.parse
 
 class TestArgs : Arkenv() {
 
