@@ -74,7 +74,6 @@ class ArkenvParser<T : Any>(
     }
 
     private fun parseParameter(parameter: KParameter): Pair<KParameter, Any?>? {
-        println("${parameter.name} - ${parameter.type}")
         val name = parameter.name!!.toSnakeCase()
         val value = arkenv.getOrNull(name)
         return if (parameter.isOptional && value == null) null
