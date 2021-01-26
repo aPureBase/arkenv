@@ -13,9 +13,9 @@ internal fun String.removePrefixes(prefix: CharSequence): String = this
         else it
     }
 
-internal fun String.endsWith(list: Iterable<String>): Boolean = list.any { endsWith(it) }
+internal fun String.endsWith(list: Iterable<String>): Boolean = list.any(::endsWith)
 
-internal fun String.startsWith(list: Iterable<String>): Boolean = list.any { startsWith(it) }
+internal fun String.startsWith(list: Iterable<String>): Boolean = list.any(::startsWith)
 
 internal fun String.removeSurrounding(list: Iterable<String>): String =
     list.fold(this) { acc, s -> acc.removeSurrounding(s) }

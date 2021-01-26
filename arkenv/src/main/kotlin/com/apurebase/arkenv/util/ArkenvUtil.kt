@@ -42,6 +42,7 @@ inline fun <reified T : Any> Arkenv.Arkenv.parse(
  * Defines an argument that can be parsed in the current class.
  * @param names additional names to consider when parsing.
  * @param configuration optional configuration of the argument's properties
+ * @since 3.2.0
  */
 fun <T : Any> argument(vararg names: String, configuration: Argument<T>.() -> Unit = {}): ArkenvArgument<T> =
     ArkenvSimpleArgument(
