@@ -15,6 +15,7 @@ import kotlin.reflect.jvm.jvmName
  * @param configuration the configuration class to parse.
  * @param args the command line arguments.
  * @param configureArkenv additional arkenv configuration.
+ * @since 3.2.0
  */
 inline fun <reified T : Any> Arkenv.Arkenv.parse(
     configuration: T, args: Array<String>, configureArkenv: ArkenvBuilder.() -> Unit = {}
@@ -28,6 +29,7 @@ inline fun <reified T : Any> Arkenv.Arkenv.parse(
  * @param args the command line arguments.
  * @param configureArkenv additional arkenv configuration.
  * @return an instance of the parsed class.
+ * @since 3.2.0
  */
 inline fun <reified T : Any> Arkenv.Arkenv.parse(
     args: Array<String>, configureArkenv: ArkenvBuilder.() -> Unit = {}

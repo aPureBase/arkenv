@@ -11,7 +11,7 @@ Type-safe Kotlin configuration `by` delegates.
 Supports the most common external configuration sources, including: 
 * Command line
 * Environment Variables
-* Properties, Yaml & Spring-like profiles
+* Properties, Yaml, and Spring-like profiles
 * `.env` files
 
 
@@ -24,7 +24,8 @@ compile "com.apurebase:arkenv:$arkenv_version"
 ```
 
 ### 🔨 Usage
-Define your arguments with the `argument` delegate.
+
+#### 1. Define your arguments with the `argument` delegate.
 ```kotlin
 object Arguments {
     val port: Int by argument()
@@ -36,7 +37,7 @@ or use constructor injection:
 class Arguments(val port: Int)
 ```
 
-Parse your arguments.
+#### 2. Parse your arguments.
 
 ```kotlin
 fun main(args: Array<String>) {

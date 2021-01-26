@@ -17,7 +17,7 @@ class PlaceholderTests {
     }
 
     @Test fun `can refer to previously defined arg in properties`() {
-        Ark { install(PropertyFeature("placeholders.properties")) }
+        Ark { +PropertyFeature("placeholders.properties") }
             .parse()
             .verify()
     }
@@ -41,8 +41,8 @@ class PlaceholderTests {
     @Test fun `should allow ${ expression`() {
         Ark().parse(appNameArg, "\${", appDescArg, "test")
             .expectThat {
-                get { name }.isEqualTo("\${")
-                get { description }.isEqualTo("test")
+                get { name } isEqualTo "\${"
+                get { description } isEqualTo "test"
             }
     }
 
@@ -51,7 +51,7 @@ class PlaceholderTests {
         Ark()
             .parse(appNameArg, name, appDescArg, "\${app_name} is \${app_name}")
             .expectThat {
-                get { description }.isEqualTo("$name is $name")
+                get { description } isEqualTo "$name is $name"
             }
     }
 
@@ -61,7 +61,7 @@ class PlaceholderTests {
         Ark()
             .parse(appNameArg, appName, "--test", testValue, appDescArg, "\${test} is not declared")
             .expectThat {
-                get { description }.isEqualTo(expected)
+                get { description } isEqualTo expected
             }
     }
 
@@ -72,7 +72,7 @@ class PlaceholderTests {
         Ark()
             .parse(appNameArg, appName, appDescArg, "\${test} is not declared")
             .expectThat {
-                get { description }.isEqualTo(expected)
+                get { description } isEqualTo expected
             }
     }
 
@@ -80,10 +80,10 @@ class PlaceholderTests {
         val testValue = "this_is_expected"
         val expected = "$testValue is not declared"
 
-        Ark { install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvPath)) }
+        Ark { +EnvironmentVariableFeature(dotEnvFilePath = dotEnvPath) }
             .parse(appNameArg, appName, appDescArg, "\${mysql_password} is not declared")
             .expectThat {
-                get { description }.isEqualTo(expected)
+                get { description } isEqualTo expected
             }
     }
 
@@ -107,8 +107,8 @@ class PlaceholderTests {
     }
 
     private fun Ark.verify() = expectThat {
-        get { name }.isEqualTo(appName)
-        get { description }.isEqualTo("$appName is a Arkenv application")
+        get { name } isEqualTo appName
+        get { description } isEqualTo "$appName is a Arkenv application"
     }
 
     private val appNameArg = "--app-name"

@@ -16,8 +16,8 @@ import java.io.FileNotFoundException
 class EnvFileTests {
 
     private inner class EnvFileArk(dotEnvFilePath: String? = null) : Arkenv("Test", configureArkenv {
-        uninstall(EnvironmentVariableFeature())
-        install(EnvironmentVariableFeature(dotEnvFilePath = dotEnvFilePath))
+        -EnvironmentVariableFeature()
+        +EnvironmentVariableFeature(dotEnvFilePath = dotEnvFilePath)
     }) {
         val mysqlPassword: String by argument()
         val port: Int by argument("--database-port")
@@ -48,15 +48,15 @@ class EnvFileTests {
     }
 
     private fun Assertion.Builder<EnvFileArk>.verify() {
-        get { mysqlPassword }.isEqualTo("this_is_expected")
-        get { port }.isEqualTo(5050)
-        get { connectionString }.isEqualTo("localhost:5050;database=testdb;user=testuser;")
+        get { mysqlPassword } isEqualTo "this_is_expected"
+        get { port } isEqualTo 5050
+        get { connectionString } isEqualTo "localhost:5050;database=testdb;user=testuser;"
     }
 
     private fun Assertion.Builder<EnvFileArk>.verifyAlt() {
-        get { mysqlPassword }.isEqualTo("alternative")
-        get { port }.isEqualTo(8080)
-        get { connectionString }.isEqualTo("localhost")
+        get { mysqlPassword } isEqualTo "alternative"
+        get { port } isEqualTo 8080
+        get { connectionString } isEqualTo "localhost"
     }
 
     private val altPath = getTestResourcePath(".env-alt")

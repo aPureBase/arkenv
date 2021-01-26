@@ -17,8 +17,8 @@ internal class ModuleTests {
     }
 
     private inner class Ark : Arkenv("Root", configureArkenv {
-        uninstall(ProfileFeature())
-        install(PropertyFeature("application-prod")) // load a specific file to test feature propagation
+        -ProfileFeature()
+        +PropertyFeature("application-prod") // load a specific file to test feature propagation
     }) {
         val name: String by argument()
         val database = module(DatabaseConfig())
@@ -29,8 +29,8 @@ internal class ModuleTests {
         val port = 443
         Ark().parse()
             .expectThat {
-                get { name }.isEqualTo(myApp)
-                get { database.port }.isEqualTo(port)
+                get { name } isEqualTo myApp
+                get { database.port } isEqualTo port
             }
     }
 
@@ -49,7 +49,7 @@ internal class ModuleTests {
 
         ark.parse("--$prefix-port", expectedPort.toString())
             .expectThat {
-                get { database.port }.isEqualTo(expectedPort)
+                get { database.port } isEqualTo expectedPort
             }
     }
 

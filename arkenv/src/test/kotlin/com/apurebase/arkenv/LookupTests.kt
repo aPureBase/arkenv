@@ -22,7 +22,7 @@ class LookupTests {
 
     private class Ark : Arkenv("Test", configureArkenv {
         clearInputAfterParse = false
-        install(PropertyFeature())
+        +PropertyFeature()
     })
 
     @Test fun `should resolve unused properties`() {

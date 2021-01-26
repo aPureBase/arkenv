@@ -11,13 +11,13 @@ internal class YamlFeatureTest : FileBasedTests {
 
     override fun configure(propertiesFile: String, locations: List<String>): ArkenvBuilder = configureArkenv {
         clearInputAfterParse = false
-        install(YamlFeature(propertiesFile, locations))
+        +YamlFeature(propertiesFile, locations)
     }
 
     @Test fun `should load properties file`() {
         verify("app.yml").expectThat {
-            get { this["this.is.a.nested"] }.isEqualTo("value")
-            get { this["this.is.an.array"] }.isEqualTo("a,b,c")
+            get { this["this.is.a.nested"] } isEqualTo "value"
+            get { this["this.is.an.array"] } isEqualTo "a,b,c"
         }
     }
 

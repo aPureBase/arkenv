@@ -56,7 +56,7 @@ internal class RelaxedBindingTests {
     private inner class Property {
         private fun verifyProperty(file: String) {
             val ark = Ark(configureArkenv {
-                install(PropertyFeature("$file.properties", listOf("binding")))
+                +PropertyFeature("$file.properties", listOf("binding"))
             })
             ark.parse().verify()
         }
@@ -92,6 +92,6 @@ internal class RelaxedBindingTests {
     }
 
     private fun Ark.verify() = expectThat {
-        get { dbPort }.isEqualTo(5)
+        get { dbPort } isEqualTo 5
     }
 }

@@ -19,9 +19,9 @@ class HttpFeatureTest {
     private val rootUrl = "http://localhost:8888"
 
     private inner class Ark(url: String, responseMap: Map<URL, String>) : Arkenv(appName, configureArkenv {
-        install(ProfileFeature())
-        install(HttpFeature(url, MockClient(responseMap)))
-        install(Encryption(EncryptionTest.decryptCipher))
+        +ProfileFeature()
+        +HttpFeature(url, MockClient(responseMap))
+        +Encryption(EncryptionTest.decryptCipher)
     }) {
         val message: String by argument()
         val status: Int by argument()
@@ -36,10 +36,10 @@ class HttpFeatureTest {
         Ark(rootUrl, responseMap)
             .parse("ARKENV_PROFILE", profile, "ARKENV_LABEL", label)
             .expectThat {
-                get { message }.isEqualTo("Hello world")
-                get { status }.isEqualTo(100)
-                get { nested }.isEqualTo(1)
-                get { password }.isEqualTo(password)
+                get { message } isEqualTo "Hello world"
+                get { status } isEqualTo 100
+                get { nested } isEqualTo 1
+                get { password } isEqualTo password
             }
     }
 

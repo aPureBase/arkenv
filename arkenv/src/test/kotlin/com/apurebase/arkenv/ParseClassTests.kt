@@ -86,7 +86,7 @@ class ParseClassTests {
 
         // Act
         val config = Arkenv.parse<Configuration>(arrayOf()) {
-            install(ProfileFeature(prefix = "app"))
+            +ProfileFeature(prefix = "app")
         }
 
         // Assert

@@ -15,9 +15,7 @@ import javax.crypto.Cipher
 
 internal class EncryptionTest {
 
-    private inner class Ark : Arkenv("EncryptionTest", configureArkenv {
-        install(Encryption(decryptCipher))
-    }) {
+    private inner class Ark : Arkenv("EncryptionTest", configureArkenv { +Encryption(decryptCipher) }) {
         val string: String by argument()
         val int: Int by argument()
     }

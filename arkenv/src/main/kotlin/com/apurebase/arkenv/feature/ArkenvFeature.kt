@@ -1,7 +1,7 @@
 package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.argument.Argument
 import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.argument.Argument
 import com.apurebase.arkenv.argument.ArkenvArgument
 
 /**
@@ -28,13 +28,6 @@ interface ArkenvFeature {
      */
     fun onParse(arkenv: Arkenv, delegate: ArkenvArgument<*>): String? {
         return null
-    }
-
-    /**
-     * Applies configuration to every [argument].
-     */
-    @Deprecated("Will be removed in future major version")
-    fun configure(argument: Argument<*>) {
     }
 
     /**

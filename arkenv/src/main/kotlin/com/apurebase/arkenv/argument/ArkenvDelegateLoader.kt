@@ -14,7 +14,7 @@ class ArkenvDelegateLoader<T : Any>(
     operator fun provideDelegate(thisRef: Arkenv, prop: KProperty<*>): ReadOnlyProperty<Arkenv, T> {
         argument.names = getNames(argument.names, prop.name)
         return ArkenvExtendedArgument(thisRef, argument, prop)
-            .also { arkenv.delegates.add(it) }
+            .also(arkenv.delegates::add)
     }
 
     private fun getNames(names: List<String>, propName: String) = names

@@ -21,7 +21,7 @@ class ProfileFeatureCustomizationTest {
     }
 
     private class PrefixArk(prefix: String, vararg arguments: String) : Ark(configureArkenv {
-        install(ProfileFeature(prefix = prefix))
+        +ProfileFeature(prefix = prefix)
     }) {
         init {
             parse(*arguments)
@@ -46,7 +46,7 @@ class ProfileFeatureCustomizationTest {
     }
 
     private class LocationArk(locations: Collection<String>, vararg arguments: String) : Ark(configureArkenv {
-        install(ProfileFeature(locations = locations))
+        +ProfileFeature(locations = locations)
     }) {
         init {
             parse(*arguments)
@@ -72,7 +72,7 @@ class ProfileFeatureCustomizationTest {
     }
 
     private fun <T : Ark> Assertion.Builder<T>.isMasterFile() {
-        get { name }.isEqualTo("profile-config")
-        get { port }.isEqualTo(777)
+        get { name } isEqualTo "profile-config"
+        get { port } isEqualTo 777
     }
 }

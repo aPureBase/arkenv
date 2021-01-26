@@ -16,7 +16,7 @@ open class ProfileFeatureTest {
 
     open fun getInstance(): ProfileFeature = ProfileFeature()
 
-    private inner class Ark : Arkenv("Test", configureArkenv { install(getInstance()) }) {
+    private inner class Ark : Arkenv("Test", configureArkenv { +getInstance() }) {
         val port: Int by argument("--port")
 
         val name: String by argument("--name")
@@ -87,8 +87,8 @@ open class ProfileFeatureTest {
     private fun Assertion.Builder<Ark>.isProduction() = expect(prodPort, prodName, null)
 
     private fun Assertion.Builder<Ark>.expect(port: Int, name: String, other: String? = null) {
-        get { this.port }.isEqualTo(port)
-        get { this.name }.isEqualTo(name)
-        get { this.other }.isEqualTo(other)
+        get { this.port } isEqualTo port
+        get { this.name } isEqualTo name
+        get { this.other } isEqualTo other
     }
 }

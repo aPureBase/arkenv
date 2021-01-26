@@ -11,7 +11,7 @@ import strikt.assertions.isEqualTo
 internal class FeatureOrderTest {
 
     private inner class Ark : Arkenv("FeatureOrderTest", configureArkenv {
-        install(Encryption(EncryptionTest.decryptCipher))
+        +Encryption(EncryptionTest.decryptCipher)
     }) {
         val string: String by argument()
     }

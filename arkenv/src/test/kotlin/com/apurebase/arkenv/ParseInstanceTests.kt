@@ -1,6 +1,7 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.ProfileFeature
+import com.apurebase.arkenv.feature.cli.CliFeature
 import com.apurebase.arkenv.module.module
 import com.apurebase.arkenv.test.Expected
 import com.apurebase.arkenv.test.ReadmeArguments
@@ -177,7 +178,8 @@ class ParseInstanceTests {
 
         // Act
         Arkenv.parse(config, arrayOf()) {
-            install(ProfileFeature(prefix = "app"))
+            +ProfileFeature(prefix = "app")
+            -CliFeature()
         }
 
         // Assert
