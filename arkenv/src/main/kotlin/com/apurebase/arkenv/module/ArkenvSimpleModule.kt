@@ -6,13 +6,19 @@ import kotlin.reflect.KClass
 /**
  * Registers the [module] as a sub module that will be automatically parsed after the super Arkenv.
  * It will be parsed using the configuration of its root.
- * @param module the sub module to add to this [Arkenv]
+ * @param module the sub module to add to this [Arkenv].
+ * @since 3.1.0
  */
 fun <T : Arkenv> Arkenv.module(module: T): T = module.also {
     it.parent = this
     configuration.modules.add(it)
 }
 
+/**
+ * Registers the [module] as a sub module that will be automatically parsed after the super class.
+ * @param module the sub module to add to this class.
+ * @since 3.2.0
+ */
 inline fun <reified T : Any> module(module: T? = null): ArkenvModule<T> = ArkenvSimpleModule(T::class, module)
 
 class ArkenvSimpleModule<T : Any>(

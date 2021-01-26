@@ -20,7 +20,7 @@ Add jcenter to your repositories and add Arkenv in Gradle:
 
 ```groovy
 repositories { jcenter() }
-compile "com.apurebase:arkenv:$arkenv_version"
+implementation "com.apurebase:arkenv:$arkenv_version"
 ```
 
 ### 🔨 Usage

@@ -7,12 +7,12 @@ nav_order: 1
 <img src="{{ site.url }}{{ site.baseurl }}/arkenv_logo.png?raw=true" width="200">
 
 
-Type-safe Kotlin configuration parser `by` delegates.
+Type-safe Kotlin configuration `by` delegates.
 
 Supports the most common external configuration sources, including:
 * Command line
 * Environment Variables
-* Properties, Yaml & Spring-like profiles
+* Properties, Yaml, and Spring-like profiles
 * `.env` files
 
 ### 📦 Installation

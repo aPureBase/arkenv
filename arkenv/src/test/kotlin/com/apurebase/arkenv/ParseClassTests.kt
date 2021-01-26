@@ -1,7 +1,6 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.ProfileFeature
-import com.apurebase.arkenv.module.module
 import com.apurebase.arkenv.test.Expected
 import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.util.parse
