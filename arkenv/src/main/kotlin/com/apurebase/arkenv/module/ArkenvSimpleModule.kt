@@ -19,9 +19,13 @@ fun <T : Arkenv> Arkenv.module(module: T): T = module.also {
  * @param module the sub module to add to this class.
  * @since 3.2.0
  */
-inline fun <reified T : Any> module(module: T? = null): ArkenvModule<T> = ArkenvSimpleModule(T::class, module)
+inline fun <reified T : Any> module(
+    module: T? = null,
+    configuration: ArkenvModuleConfiguration.() -> Unit = {}
+): ArkenvModule<T> = ArkenvSimpleModule(T::class, module, ArkenvModuleConfiguration().apply(configuration))
 
 class ArkenvSimpleModule<T : Any>(
     override val kClass: KClass<T>,
-    override var module: T?
+    override var module: T?,
+    override val configuration: ArkenvModuleConfiguration
 ) : ArkenvModule<T>

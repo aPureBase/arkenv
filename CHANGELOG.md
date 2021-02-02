@@ -1,3 +1,8 @@
+# 3.2.0
+* #29 Common prefix support
+* #43 New feature syntax
+* #36 Plain class support
+* #31 Fix re-parsing bugs
 
 # 3.1.0
 * Added module support.

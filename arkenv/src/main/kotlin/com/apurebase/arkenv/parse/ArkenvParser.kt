@@ -6,6 +6,7 @@ import com.apurebase.arkenv.ArkenvMapper
 import com.apurebase.arkenv.ParsingException
 import com.apurebase.arkenv.argument.ArkenvArgument
 import com.apurebase.arkenv.module.ArkenvModule
+import com.apurebase.arkenv.module.ArkenvModuleConfiguration
 import com.apurebase.arkenv.util.toSnakeCase
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -34,7 +35,7 @@ class ArkenvParser<T : Any>(
      * Parses the arguments in the provided configuration [instance].
      * @param instance the configuration instance to parse.
      */
-    fun parse(instance: T) = parse<T>(instance)
+    fun parse(instance: T) = parse(instance, null)
 
     /**
      * Parses the arguments in a class of the given type.
@@ -47,8 +48,8 @@ class ArkenvParser<T : Any>(
         return instance
     }
 
-    internal fun <R : Any> parse(instance: R) {
-        initializeDelegates(instance)
+    internal fun <R : Any> parse(instance: R, moduleConfiguration: ArkenvModuleConfiguration? = null) {
+        initializeDelegates(instance, moduleConfiguration)
         initializeModules(instance)
         arkenv.parsePostLoad()
     }
@@ -92,9 +93,9 @@ class ArkenvParser<T : Any>(
         }
     }
 
-    private fun <R : Any> initializeDelegates(instance: R) {
+    private fun <R : Any> initializeDelegates(instance: R, moduleConfiguration: ArkenvModuleConfiguration?) {
         findDelegates(instance, ArkenvArgument::class).forEach { (property, delegate) ->
-            delegate.initialize(arkenv, property)
+            delegate.initialize(arkenv, property, moduleConfiguration)
             arkenv.delegates.add(delegate)
         }
     }
