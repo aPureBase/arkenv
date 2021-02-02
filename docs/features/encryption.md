@@ -21,7 +21,7 @@ By default, the prefix is `{cipher}`.
 
 ```kotlin
 class Ark : Arkenv("Example", configureArkenv {
-    install(Encryption(decryptCipher))
+    +Encryption(decryptCipher)
 }) {
     val string: String by argument()
 }

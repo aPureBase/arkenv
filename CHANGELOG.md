@@ -1,4 +1,7 @@
 
+# 3.1.0
+* Added module support.
+
 # 3.0.0
 * #5 The profile feature is now installed by default
 * #17 Enable access to the active profiles

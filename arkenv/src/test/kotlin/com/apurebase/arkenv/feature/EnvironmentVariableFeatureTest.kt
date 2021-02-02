@@ -2,7 +2,7 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.MissingArgumentException
-import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
@@ -14,8 +14,8 @@ import strikt.assertions.isEqualTo
 internal class EnvironmentVariableFeatureTest {
 
     private class EnvArgs(envPrefix: String? = null, withEnv: Boolean = true) : Arkenv("Test", configureArkenv {
-        if (withEnv) install(EnvironmentVariableFeature(envPrefix = envPrefix))
-        else uninstall(EnvironmentVariableFeature())
+        if (withEnv) +EnvironmentVariableFeature(envPrefix = envPrefix)
+        else -EnvironmentVariableFeature()
     }) {
         val arg: String by argument()
     }
@@ -43,5 +43,5 @@ internal class EnvironmentVariableFeatureTest {
     private val prefix = "prefix"
     private val envPrefix = "test"
     private val testArg = "TEST_ARG"
-    private fun EnvArgs.assertParsed() = expectThat { get { arg }.isEqualTo(prefix) }
+    private fun EnvArgs.assertParsed() = expectThat { get { arg } isEqualTo prefix }
 }

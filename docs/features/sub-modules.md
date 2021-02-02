@@ -27,6 +27,7 @@ class Ark : Arkenv() {
     val database = module(DatabaseConfig())
 }
 ```
+
 The above example shows how to use the `module` function to register 
 another Arkenv instance as a module, which will then be parsed together 
 with the root module that it is defined in.   
@@ -42,3 +43,19 @@ fun main(args: Array<String>) {
 The sub modules will be parsed using the root module's features.
 
 Recursive modules are not supported and will lead to a stack overflow.
+
+## Plain classes
+
+**Since v3.2.0**
+
+For plain classes, the module function is used to provide a delegate.
+
+```kotlin
+object Module {
+    val port: Int by argument()
+}
+
+object Configuration {
+    val subModule by module(Module)
+}
+```

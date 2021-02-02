@@ -2,6 +2,7 @@ package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.*
 import com.apurebase.arkenv.feature.cli.CliFeature
+import com.apurebase.arkenv.util.key
 
 /**
  * [Arkenv] configuration builder which controls features and other settings.
@@ -39,10 +40,28 @@ class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
             if (arkenvFeature.key == feature.key) index = i
         }
         index?.let { i ->
-            uninstall(feature)
+            -feature
             features.add(i, feature)
         } ?: features.add(feature)
     }
+
+    /**
+     * Installs the feature.
+     * @since 3.2.0
+     */
+    operator fun ArkenvFeature.unaryPlus() = install(this)
+
+    /**
+     * Uninstalls the feature.
+     * @since 3.2.0
+     */
+    operator fun ArkenvFeature.unaryMinus() = uninstall(this)
+
+    /**
+     * Installs the processor feature.
+     * @since 3.2.0
+     */
+    operator fun ProcessorFeature.unaryPlus() = install(this)
 
     /**
      * Installs the [feature] for processing.
@@ -65,11 +84,11 @@ class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
     }
 
     init {
-        install(CliFeature())
-        install(EnvironmentVariableFeature())
+        +CliFeature()
+        +EnvironmentVariableFeature()
         if (installAdvancedFeatures) {
-            install(ProfileFeature())
-            install(PlaceholderParser())
+            +ProfileFeature()
+            +PlaceholderParser()
         }
     }
 }
@@ -79,10 +98,3 @@ class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
  * @param block Arkenv configuration logic.
  */
 inline fun configureArkenv(block: (ArkenvBuilder.() -> Unit)) = ArkenvBuilder().apply(block)
-
-/**
- * Registers the [module] as a sub module that will be automatically parsed after the super Arkenv.
- * It will be parsed using the configuration of its root.
- * @param module the sub module to add to this [Arkenv]
- */
-fun <T : Arkenv> Arkenv.module(module: T): T = module.also { configuration.modules.add(it) }

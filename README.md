@@ -6,12 +6,12 @@
 
 <img src="/docs/arkenv_logo.png?raw=true" width="200">
 
-Type-safe Kotlin configuration parser `by` delegates. 
+Type-safe Kotlin configuration `by` delegates. 
 
 Supports the most common external configuration sources, including: 
 * Command line
 * Environment Variables
-* Properties, Yaml & Spring-like profiles
+* Properties, Yaml, and Spring-like profiles
 * `.env` files
 
 
@@ -20,43 +20,46 @@ Add jcenter to your repositories and add Arkenv in Gradle:
 
 ```groovy
 repositories { jcenter() }
-compile "com.apurebase:arkenv:$arkenv_version"
+implementation "com.apurebase:arkenv:$arkenv_version"
 ```
 
 ### 🔨 Usage
-Define your arguments by extending `Arkenv` and declaring props with the `argument` delegate.
+
+#### 1. Define your arguments with the `argument` delegate.
 ```kotlin
-class Arguments : Arkenv() {
-
-    val country: String by argument()
-
-    val bool: Boolean by argument {
-        description = "A bool, which will be false by default"
-    }
-
-    val port: Int by argument("-p", "--this-can-be-set-via-env") {
-        description = "An Int with a default value and custom names"
-        defaultValue = { 5000 }
-    }
-
-    val nullInt: Int? by argument {
-        description = "A nullable Int, which doesn't have to be declared"
-    }
-
-    val mapped: List<String> by argument {
-        description = "Complex types can be achieved with a mapping"
-        mapping = { it.split("|") }
-    }
+object Arguments {
+    val port: Int by argument()
 }
 ```
-If you don't specify any names for the argument, it will use the property's name. 
 
-In the case of `nullInt`, you can parse it like this:
-* From command line with `--null-int world`
-* As an environment variable `NULL_INT=world`
+or use constructor injection:
+```kotlin
+class Arguments(val port: Int)
+```
 
-By default, Arkenv supports parsing command line arguments, 
-environment variables, and profiles.  
+#### 2. Parse your arguments.
+
+```kotlin
+fun main(args: Array<String>) {
+    Arkenv.parse(Arguments, args) // object or existing instance
+    Arkenv.parse<Arguments>(args) // constructor injection 
+}
+```
+
+You can specify additional custom names for each `argument`.
+
+The property's name is used as a fallback.
+
+By default, Arkenv supports parsing command line arguments,
+environment variables, and profiles.
+
+
+In the case of `port`, you can parse it like this:
+* From command line with `--port 443`
+* As an environment variable `PORT=80`
+* In a profile, like `application-dev.properties`, add `port=5000` 
+
+ 
 
 To get started, we recommend reading about [the basics](https://apurebase.gitlab.io/arkenv/guides/the-basics) 
 for a quick tour of what's included. 

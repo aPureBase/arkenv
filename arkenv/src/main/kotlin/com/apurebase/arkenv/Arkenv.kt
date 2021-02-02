@@ -1,6 +1,11 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.argument.ArkenvArgument
 import com.apurebase.arkenv.feature.EnvironmentVariableFeature
+import com.apurebase.arkenv.util.argument
+import com.apurebase.arkenv.util.findFeature
+import com.apurebase.arkenv.util.isSimpleName
+import com.apurebase.arkenv.util.toSnakeCase
 
 /**
  * The base class that provides the argument parsing capabilities.
@@ -8,14 +13,17 @@ import com.apurebase.arkenv.feature.EnvironmentVariableFeature
  * @param programName
  * @param configuration
  */
-abstract class Arkenv(
+open class Arkenv(
     programName: String = "Arkenv",
     internal val configuration: ArkenvBuilder = ArkenvBuilder()
 ) {
+    companion object Arkenv
+
+    internal var parent: com.apurebase.arkenv.Arkenv? = null
 
     internal val argList = mutableListOf<String>()
     private val keyValue = mutableMapOf<String, String>()
-    internal val delegates = mutableListOf<ArgumentDelegate<*>>()
+    internal val delegates = mutableListOf<ArkenvArgument<*>>()
 
     val help: Boolean by argument("-h", "--help") { isHelp = true }
 
@@ -23,12 +31,20 @@ abstract class Arkenv(
         defaultValue = { programName }
     }
 
-    internal fun parseArguments(args: Array<out String>) = with(configuration) {
+    internal fun parseArguments(args: Array<out String>) {
+        load(args)
+        parsePostLoad()
+    }
+
+    internal fun load(args: Array<out String>) = with(configuration) {
         if (clearInputBeforeParse) clear()
         argList.addAll(args)
         features.forEach { it.onLoad(this@Arkenv) }
         features.forEach { it.postLoad(this@Arkenv) }
         process()
+    }
+
+    internal fun parsePostLoad() = with(configuration) {
         parse(delegates)
         features.forEach { it.finally(this@Arkenv) }
         modules.forEach { parse(it.delegates) }
@@ -90,7 +106,7 @@ abstract class Arkenv(
      */
     fun getAll(): Map<String, String> = keyValue
 
-    internal fun parseDelegate(delegate: ArgumentDelegate<*>, names: List<String>): List<String> {
+    internal fun parseDelegate(delegate: ArkenvArgument<*>, names: List<String>): List<String> {
         val onParseValues = configuration.features
             .mapNotNull { it.onParse(this, delegate) }
             .map { processValue("", it) }
@@ -98,13 +114,11 @@ abstract class Arkenv(
         else names.filterNot(String::isSimpleName).mapNotNull(::getOrNull)
     }
 
-    private fun parse(delegates: Collection<ArgumentDelegate<*>>) = delegates
+    private fun parse(delegates: Collection<ArkenvArgument<*>>) = delegates
         .sortedBy { it.argument.isMainArg }
         .forEach {
-            configuration.features.forEach { feature ->
-                feature.configure(it.argument)
-            }
             it.reset()
+            it.initialize(this, it.property)
             it.getValue(this, it.property)
         }
 }

@@ -3,12 +3,17 @@ package com.apurebase.arkenv.feature.cli
 import com.apurebase.arkenv.*
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
+import com.apurebase.arkenv.util.argument
+import com.apurebase.arkenv.util.mainArgument
 import org.junit.jupiter.api.Test
 import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 import strikt.assertions.isFalse
 import strikt.assertions.isTrue
 
+/**
+ * Tests for the [BooleanMergeParser] functionality.
+ */
 class MergeTests {
 
     private class Arguments : Arkenv() {

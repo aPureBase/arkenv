@@ -2,7 +2,7 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.ValidationException
-import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
@@ -13,6 +13,9 @@ import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
 import strikt.assertions.isNull
 
+/**
+ * Tests for the [com.apurebase.arkenv.Validation] functionality
+ */
 class ValidationTests {
 
     @Test fun `parsing should throw when validation returns false`() {
@@ -26,8 +29,9 @@ class ValidationTests {
         ark.parse("--failing-prop", "5")
 
         val actualValue = "0"
-        val message =
-            assertThrows<ValidationException> { ark.parse("--failing-prop", actualValue) }.message.shouldNotBeNull()
+        val message = assertThrows<ValidationException> {
+            ark.parse("--failing-prop", actualValue)
+        }.message.shouldNotBeNull()
         println(message)
         message shouldContain "did not pass validation"
         message shouldContain "failingProp"

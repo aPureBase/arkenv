@@ -1,10 +1,11 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.test.*
+import com.apurebase.arkenv.util.argument
+import com.apurebase.arkenv.util.mainArgument
+import com.apurebase.arkenv.util.parse
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldEqual
-import org.amshove.kluent.shouldEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.assertions.contains
@@ -50,7 +51,7 @@ class GeneralTest {
             val long: Long by argument()
         }
 
-        LongArg().parse("-long", "5000").long shouldEqualTo expected
+        LongArg().parse("-long", "5000").long shouldBeEqualTo expected
     }
 
     @Test fun `custom mapping`() {
@@ -62,7 +63,7 @@ class GeneralTest {
             }
         }
 
-        CustomArg().parse("1,2,3").list shouldEqual expected
+        CustomArg().parse("1,2,3").list shouldBeEqualTo expected
     }
 
     @Test fun `custom mapping not available should throw`() {
