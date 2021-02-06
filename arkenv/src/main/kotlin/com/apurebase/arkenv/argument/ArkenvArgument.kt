@@ -3,6 +3,7 @@ package com.apurebase.arkenv.argument
 import com.apurebase.arkenv.*
 import com.apurebase.arkenv.ArkenvMapper
 import com.apurebase.arkenv.MappingException
+import com.apurebase.arkenv.module.ArkenvModuleConfiguration
 import com.apurebase.arkenv.util.isHelp
 import com.apurebase.arkenv.util.toSnakeCase
 import kotlin.properties.ReadOnlyProperty
@@ -40,7 +41,7 @@ interface ArkenvArgument<T : Any?> : ReadOnlyProperty<Any, T> {
         isSet = false
     }
 
-    fun initialize(arkenv: Arkenv, property: KProperty<*>)
+    fun initialize(arkenv: Arkenv, property: KProperty<*>, moduleConfiguration: ArkenvModuleConfiguration?)
 
     /**
      * Sets the argument's value.
@@ -49,7 +50,7 @@ interface ArkenvArgument<T : Any?> : ReadOnlyProperty<Any, T> {
      * @throws MappingException when the value cannot be mapped to the argument's type.
      */
     fun setValue() {
-        val names = argument.names + property.name.toSnakeCase()
+        val names = getNames()
         val rootArkenv = arkenv.getRootArkenv()
         val values = rootArkenv.parseDelegate(this, names)
         val foundValue = when {
@@ -73,6 +74,10 @@ interface ArkenvArgument<T : Any?> : ReadOnlyProperty<Any, T> {
         else -> throw MappingException(
             property.name, "true", Boolean::class,
             IllegalStateException("Attempted to set value to true but ${property.name} is not boolean"))
+    }
+
+    private fun getNames(): Collection<String> {
+        return argument.names + property.name.toSnakeCase()
     }
 
     private fun checkNullable(value: T) {

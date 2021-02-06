@@ -1,6 +1,7 @@
 package com.apurebase.arkenv.argument
 
 import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.module.ArkenvModuleConfiguration
 import kotlin.reflect.KProperty
 
 /**
@@ -29,5 +30,5 @@ internal class ArkenvExtendedArgument<T : Any?>(
         isSet = false
     }
 
-    override fun initialize(arkenv: Arkenv, property: KProperty<*>) {}
+    override fun initialize(arkenv: Arkenv, property: KProperty<*>, moduleConfiguration: ArkenvModuleConfiguration?) {}
 }

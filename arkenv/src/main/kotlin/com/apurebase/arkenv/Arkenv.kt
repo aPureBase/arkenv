@@ -106,7 +106,7 @@ open class Arkenv(
      */
     fun getAll(): Map<String, String> = keyValue
 
-    internal fun parseDelegate(delegate: ArkenvArgument<*>, names: List<String>): List<String> {
+    internal fun parseDelegate(delegate: ArkenvArgument<*>, names: Collection<String>): List<String> {
         val onParseValues = configuration.features
             .mapNotNull { it.onParse(this, delegate) }
             .map { processValue("", it) }
@@ -118,7 +118,7 @@ open class Arkenv(
         .sortedBy { it.argument.isMainArg }
         .forEach {
             it.reset()
-            it.initialize(this, it.property)
+            it.initialize(this, it.property, null)
             it.getValue(this, it.property)
         }
 }

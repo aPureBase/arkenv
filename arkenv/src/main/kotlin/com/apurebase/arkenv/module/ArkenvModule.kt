@@ -12,11 +12,13 @@ interface ArkenvModule<T : Any> : ReadOnlyProperty<Any, T> {
 
     var module: T?
 
+    val configuration: ArkenvModuleConfiguration
+
     fun initialize(arkenvParser: ArkenvParser<*>) {
         if (module == null) {
             module = arkenvParser.createInstance(kClass)
         }
-        arkenvParser.parse(module!!)
+        arkenvParser.parse(module!!, configuration)
     }
 
     override fun getValue(thisRef: Any, property: KProperty<*>): T {

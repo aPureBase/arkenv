@@ -247,4 +247,42 @@ class ParseInstanceTests {
             get { port } isEqualTo Expected.port
         }
     }
+
+    @Test fun `common prefix is applied`() {
+        // Arrange
+        val prefix = "database"
+        val expectedPort = 199
+        val config = object {
+            val port: Int by argument()
+        }
+
+        // Act
+        Arkenv.parse(config, arrayOf("--$prefix-port", expectedPort.toString())) {
+            this.prefix = "database"
+        }
+
+        // Assert
+        expectThat(config).get { port } isEqualTo expectedPort
+    }
+
+    @Test fun `common prefix per module`() {
+        // Arrange
+        val prefix = "database"
+        val expectedPort = 199
+
+        val nested = object {
+            val port: Int by argument()
+
+        }
+
+        val config = object {
+            val database by module(nested) { this.prefix = prefix }
+        }
+
+        // Act
+        Arkenv.parse(config, arrayOf("--$prefix-port", expectedPort.toString()))
+
+        // Assert
+        expectThat(config.database).get { port } isEqualTo expectedPort
+    }
 }
