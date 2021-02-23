@@ -1,4 +1,4 @@
-[![Bintray](https://api.bintray.com/packages/apurebase/apurebase/arkenv/images/download.svg)](https://bintray.com/apurebase/apurebase/arkenv)
+[![Maven Central](https://img.shields.io/maven-central/v/com.apurebase/arkenv.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.apurebase%22%20AND%20a:%22arkenv%22)
 [![Pipelines](https://gitlab.com/apurebase/arkenv/badges/master/pipeline.svg)](https://gitlab.com/apurebase/arkenv/pipelines)
 [![Pipelines](https://gitlab.com/apurebase/arkenv/badges/master/coverage.svg)](https://gitlab.com/apurebase/arkenv/commits/master)
 [![Chat](https://img.shields.io/badge/chat-on%20slack-green.svg)](https://kotlinlang.slack.com/messages/CGF74HD19/)
