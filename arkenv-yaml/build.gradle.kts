@@ -1,26 +1,42 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     base
+    java
     kotlin("jvm") version "1.3.72"
-    id("org.jetbrains.dokka") version "0.9.17"
+    id("org.jetbrains.dokka") version "0.10.1"
     signing
 }
 
 val snakeyamlVersion: String by project
-
-val sourceTests: SourceSetOutput = project(":arkenv").sourceSets["test"].output
+val jmockitVersion: String by project
+val kluentVersion: String by project
+val junitVersion: String by project
+val striktVersion: String by project
 val isReleaseVersion = !version.toString().endsWith("SNAPSHOT")
 
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions.jvmTarget = "1.8"
+//val sourceTests: SourceSetOutput =
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     compile(project(":arkenv"))
     compile("org.yaml:snakeyaml:$snakeyamlVersion")
 
-    testCompile(sourceTests)
+    // Can't figure out how to extend via arkenv project test sourcesets
+    testCompile(project(":arkenv", "testArchive"))
+}
+
+tasks {
+    compileKotlin { kotlinOptions { jvmTarget = "1.8" } }
+    compileTestKotlin { kotlinOptions { jvmTarget = "1.8" } }
+
+    dokka {
+        outputFormat = "html"
+        outputDirectory = "$buildDir/javadoc"
+        impliedPlatforms = mutableListOf("JVM")
+        configuration {
+            jdkVersion = 8
+            reportUndocumented = true
+        }
+    }
 }
 
 val sourcesJar by tasks.creating(Jar::class) {
@@ -32,13 +48,6 @@ val dokkaJar by tasks.creating(Jar::class) {
     group = JavaBasePlugin.DOCUMENTATION_GROUP
     classifier = "javadoc"
     from(tasks.dokka)
-}
-tasks.dokka {
-    outputFormat = "javadoc"
-    outputDirectory = "$buildDir/javadoc"
-    jdkVersion = 8
-    reportUndocumented = true
-    impliedPlatforms = mutableListOf("JVM")
 }
 
 publishing {
@@ -75,8 +84,8 @@ publishing {
                     }
                 }
                 scm {
-                    connection.set("scm:git:https://github.com/aPureBase/arkenv/.git")
-                    developerConnection.set("scm:git:https://github.com/aPureBase/arkenv/.git")
+                    connection.set("scm:git:https://github.com/aPureBase/arkenv.git")
+                    developerConnection.set("scm:git:https://github.com/aPureBase/arkenv.git")
                     url.set("https://github.com/aPureBase/arkenv/")
                     tag.set("HEAD")
                 }

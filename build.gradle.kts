@@ -1,8 +1,8 @@
 import de.marcphilipp.gradle.nexus.NexusPublishPlugin
 import java.time.Duration
 
-val GROUP: String by project
-val VERSION_NAME: String by project
+val group: String by project
+val version: String by project
 val ossrhUsername: String? by project
 val ossrhPassword: String? by project
 
@@ -20,8 +20,8 @@ allprojects {
 }
 
 subprojects {
-    group = GROUP
-    version = VERSION_NAME
+    group = group
+    version = version
 
     apply<NexusPublishPlugin>()
 
@@ -34,7 +34,7 @@ subprojects {
 }
 
 nexusStaging {
-    packageGroup = GROUP
+    packageGroup = group
     username = ossrhUsername
     password = ossrhPassword
     numberOfRetries = 360 // 1 hour if 10 seconds delay
@@ -51,10 +51,3 @@ tasks.closeRepository {
 tasks.closeAndReleaseRepository {
     mustRunAfter(subprojects.map { it.tasks.getByName("publishToSonatype") }.toTypedArray())
 }
-
-//dependencies {
-//    // Make the root project archives configuration depend on every subproject
-//    subprojects.forEach {
-//        archives(it)
-//    }
-//}
