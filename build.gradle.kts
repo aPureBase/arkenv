@@ -3,8 +3,8 @@ import java.time.Duration
 
 val group: String by project
 val version: String by project
-val ossrhUsername: String? by project
-val ossrhPassword: String? by project
+val sonatypeUsername: String? = project.findProperty("sonatypeUsername") as String? ?: System.getenv("sonatypeUsername")
+val sonatypePassword: String? = project.findProperty("sonatypeUsername") as String? ?: System.getenv("sonatypePassword")
 
 plugins {
     id("io.codearte.nexus-staging") version "0.21.2"
@@ -35,8 +35,8 @@ subprojects {
 
 nexusStaging {
     packageGroup = group
-    username = ossrhUsername
-    password = ossrhPassword
+    username = sonatypeUsername
+    password = sonatypePassword
     numberOfRetries = 360 // 1 hour if 10 seconds delay
     delayBetweenRetriesInMillis = 10000 // 10 seconds
 }
