@@ -1,12 +1,12 @@
 name: Maven Publish
 
 on:
-  push:
-    branches:
-      - sonatype-setup
+  release:
+    types:
+      - released
 
 jobs:
-  build:
+  maven-publish:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
