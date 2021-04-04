@@ -1,8 +1,53 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.util
 
+import com.apurebase.arkenv.*
+import com.apurebase.arkenv.FeatureNotFoundException
+import com.apurebase.arkenv.argument.Argument
+import com.apurebase.arkenv.argument.ArkenvArgument
+import com.apurebase.arkenv.argument.ArkenvDelegateLoader
+import com.apurebase.arkenv.argument.ArkenvSimpleArgument
 import com.apurebase.arkenv.feature.ArkenvFeature
-import kotlin.reflect.KClass
+import com.apurebase.arkenv.parse.ArkenvParser
 import kotlin.reflect.jvm.jvmName
+
+/**
+ * Parses the [configuration] class using the provided [args].
+ * @param configuration the configuration class to parse.
+ * @param args the command line arguments.
+ * @param configureArkenv additional arkenv configuration.
+ * @since 3.2.0
+ */
+inline fun <reified T : Any> Arkenv.Arkenv.parse(
+    configuration: T, args: Array<String>, configureArkenv: ArkenvBuilder.() -> Unit = {}
+) {
+    val builder = ArkenvBuilder().apply(configureArkenv)
+    ArkenvParser(T::class, args, builder).parse(configuration)
+}
+
+/**
+ * Parses a configuration class of type [T] using the provided [args].
+ * @param args the command line arguments.
+ * @param configureArkenv additional arkenv configuration.
+ * @return an instance of the parsed class.
+ * @since 3.2.0
+ */
+inline fun <reified T : Any> Arkenv.Arkenv.parse(
+    args: Array<String>, configureArkenv: ArkenvBuilder.() -> Unit = {}
+): T {
+    val builder = ArkenvBuilder().apply(configureArkenv)
+    return ArkenvParser(T::class, args, builder).parseClass()
+}
+
+/**
+ * Defines an argument that can be parsed in the current class.
+ * @param names additional names to consider when parsing.
+ * @param configuration optional configuration of the argument's properties
+ * @since 3.2.0
+ */
+fun <T : Any> argument(vararg names: String, configuration: Argument<T>.() -> Unit = {}): ArkenvArgument<T> =
+    ArkenvSimpleArgument(
+        Argument<T>(names.toList()).apply(configuration)
+    )
 
 /**
  * Parses the arguments contained in this instance using the installed features.
@@ -56,7 +101,7 @@ inline fun <T : Any> Arkenv.mainArgument(block: Argument<T>.() -> Unit = {}): Ar
 internal val ArkenvFeature.key get() = this::class.jvmName
 
 internal fun Arkenv.isHelp(): Boolean = when {
-    argList.isEmpty() && !delegates.first { it.argument.isHelp }.isSet -> false
+    argList.isEmpty() && delegates.first { it.argument.isHelp }.value == false -> false
     else -> help
 }
 
@@ -81,32 +126,4 @@ fun Arkenv.putAll(from: Map<out String, String>) = from.forEach { (k, v) -> set(
  * @throws MissingArgumentException when the key can not be found
  */
 operator fun Arkenv.get(key: String): String =
-    getOrNull(key) ?: throw MissingArgumentException("Arkenv does not contain a value for key '$key'", "")
-
-/**
- * Maps the input [value] to an instance of [T] using [clazz] as a reference.
- * @throws IllegalArgumentException if the mapping is not supported or didn't succeed
- */
-@Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY", "ComplexMethod", "LongMethod", "TooGenericExceptionCaught")
-internal fun <T> mapDefault(key: String, value: String, clazz: KClass<*>): T = try {
-    with(value) {
-        when (clazz) {
-            Int::class -> toIntOrNull()
-            Long::class -> toLongOrNull()
-            String::class -> value
-            Char::class -> firstOrNull()
-            List::class, Collection::class -> split()
-            IntArray::class -> split().map(String::toInt).toIntArray()
-            ShortArray::class -> split().map(String::toShort).toShortArray()
-            CharArray::class -> toCharArray()
-            LongArray::class -> split().map(String::toLong).toLongArray()
-            FloatArray::class -> split().map(String::toFloat).toFloatArray()
-            DoubleArray::class -> split().map(String::toDouble).toDoubleArray()
-            BooleanArray::class -> split().map(String::toBoolean).toBooleanArray()
-            ByteArray::class -> split().map(String::toByte).toByteArray()
-            else -> throw UnsupportedMappingException(key, clazz)
-        } as T
-    }
-} catch (ex: RuntimeException) {
-    throw MappingException(key, value, clazz, ex)
-}
+    getOrNull(key) ?: throw MissingArgumentException("Arkenv does not contain a value for key '$key'", "", programName)

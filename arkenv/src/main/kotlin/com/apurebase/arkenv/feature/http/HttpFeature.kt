@@ -4,8 +4,8 @@ import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.feature.ArkenvFeature
 import com.apurebase.arkenv.feature.ProfileFeature
 import com.apurebase.arkenv.feature.PropertyFeature
-import com.apurebase.arkenv.findFeature
-import com.apurebase.arkenv.putAll
+import com.apurebase.arkenv.util.findFeature
+import com.apurebase.arkenv.util.putAll
 import java.net.URL
 
 /**

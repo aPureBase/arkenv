@@ -4,9 +4,9 @@ import com.apurebase.arkenv.feature.PropertyFeature
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
+import com.apurebase.arkenv.util.get
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeNull
-import org.amshove.kluent.shouldEqual
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -22,7 +22,7 @@ class LookupTests {
 
     private class Ark : Arkenv("Test", configureArkenv {
         clearInputAfterParse = false
-        install(PropertyFeature())
+        +PropertyFeature()
     })
 
     @Test fun `should resolve unused properties`() {
@@ -64,8 +64,8 @@ class LookupTests {
 
         @Test fun `should resolve unused properties`() {
             val ark = Ark().parse()
-            ark.getOrNull("PORT") shouldEqual "80"
-            ark.getOrNull("name") shouldEqual "profile-test"
+            ark.getOrNull("PORT") shouldBeEqualTo "80"
+            ark.getOrNull("name") shouldBeEqualTo "profile-test"
         }
 
         @Test fun `should return null when argument does not exist`() {

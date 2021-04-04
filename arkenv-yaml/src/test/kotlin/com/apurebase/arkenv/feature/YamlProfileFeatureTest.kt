@@ -1,7 +1,7 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
@@ -16,15 +16,15 @@ class YamlProfileFeatureTest : ProfileFeatureTest() {
 
     @Test fun `should be able to combine yaml and properties`() {
         val ark = object : Arkenv("Test", configureArkenv {
-            install(ProfileFeature(prefix = "app-multi", parsers = listOf(::YamlFeature)))
+            +ProfileFeature(prefix = "app-multi", parsers = listOf(::YamlFeature))
         }) {
             val source: String by argument()
             val profile: String by argument()
         }
 
         ark.parse(arkenvProfile, "prop").expectThat {
-            get { source }.isEqualTo("yaml")
-            get { profile }.isEqualTo("properties")
+            get { source } isEqualTo "yaml"
+            get { profile } isEqualTo "properties"
         }
     }
 

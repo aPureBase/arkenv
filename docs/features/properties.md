@@ -15,7 +15,7 @@ Install the `PropertyFeature` and specify the file to load from.
 
 ```kotlin
 class Ark : Arkenv(configuration = {
-    install(PropertyFeature("application"))
+    +PropertyFeature("application")
 }) { 
     val mysqlPassword: String by argument()
 }

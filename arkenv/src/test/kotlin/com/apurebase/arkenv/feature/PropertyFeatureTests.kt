@@ -14,7 +14,7 @@ import java.io.File
 class PropertyFeatureTests : FileBasedTests {
 
     override fun configure(propertiesFile: String, locations: List<String>): ArkenvBuilder = configureArkenv {
-        install(PropertyFeature(propertiesFile, locations))
+        +PropertyFeature(propertiesFile, locations)
     }
 
     @Test fun `should load properties file`() {
@@ -82,7 +82,7 @@ class PropertyFeatureTests : FileBasedTests {
         }
 
         @AfterEach fun afterEach() {
-            files.forEach { it.deleteRecursively() }
+            files.forEach(File::deleteRecursively)
             File(name).delete()
             dir.deleteRecursively()
             File("custom").deleteRecursively()

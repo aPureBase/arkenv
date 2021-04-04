@@ -7,7 +7,7 @@ nav_order: 2
 
 # Maven Installation
 
-```maven
+```xml
 <dependency>
     <groupId>com.apurebase</groupId>
     <artifactId>arkenv</artifactId>

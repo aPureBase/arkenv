@@ -15,7 +15,7 @@ Below is a sample Arkenv configuration that defines arguments for a
 MySQL password and a port. 
 
 ```kotlin
-object Ark : Arkenv() {
+object Configuration {
     val mysqlPassword: String by argument()
     val port: Int by argument()
 }
@@ -24,9 +24,9 @@ object Ark : Arkenv() {
 Your app might look something like this:
 ```kotlin
 fun main(args: Array<String>) {
-    Ark.parse(args)
-    Database(Ark.mysqlPassword).connect()
-    Server(Ark.port).start()
+    Arkenv.parse(Configuration, args)
+    Database(Configuration.mysqlPassword).connect()
+    Server(Configuration.port).start()
 }
 ```
 

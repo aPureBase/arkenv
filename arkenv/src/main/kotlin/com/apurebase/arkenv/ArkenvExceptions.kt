@@ -3,7 +3,10 @@ package com.apurebase.arkenv
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-internal open class ArkenvException(message: String, cause: Exception? = null) : RuntimeException(message, cause)
+/**
+ * Generic Arkenv exception.
+ */
+sealed class ArkenvException(message: String, cause: Exception? = null) : RuntimeException(message, cause)
 
 /**
  * Unchecked exception thrown when validation of an [Argument] was unsuccessful.
@@ -23,14 +26,14 @@ internal class UnsupportedMappingException(key: String, clazz: KClass<*>) : Arke
  * Unchecked exception thrown when mapping was unsuccessful.
  */
 internal class MappingException(key: String, value: String, clazz: KClass<*>, cause: Exception) : ArkenvException(
-    "Could not parse property '$key' with value '$value' as class '$clazz'", cause
+    "Could not map property '$key' with value '$value' as class '$clazz'", cause
 )
 
 /**
  * Unchecked exception thrown when no value can be found for the given name.
  */
-internal class MissingArgumentException(name: String, info: String): ArkenvException(
-    "No value passed for property $name ($info)"
+class MissingArgumentException(name: String, info: String, moduleName: String) : ArkenvException(
+    "No value passed for property $name ($info) in Arkenv module $moduleName"
 )
 
 /**
@@ -38,4 +41,12 @@ internal class MissingArgumentException(name: String, info: String): ArkenvExcep
  */
 internal class FeatureNotFoundException(featureName: String?) : ArkenvException(
     "Feature $featureName could not be found. Make sure it was installed correctly."
+)
+
+internal class ParsingException(className: String, innerException: Exception) : ArkenvException(
+    "Exception encountered when parsing $className", innerException
+)
+
+internal class ModuleInitializationException(name: String) : ArkenvException(
+    "Module for class $name has not been initialized."
 )

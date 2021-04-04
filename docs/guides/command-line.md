@@ -2,17 +2,17 @@
 layout: default
 title: Command Line Guide
 parent: Guides
-nav_order: 1
+nav_order: 2
 ---
 
 # Command Line Guide
 
-This guide introduces several features that are useful 
-if your primary purpose is to support command line configuration 
+This guide introduces several features that are useful
+if your primary purpose is to support command line configuration
 with the args that are passed through via your main method
 
-The code below defines an Arkenv instance with several arguments 
-which showcase distinct functionality. 
+The code below defines an Arkenv instance with several arguments
+which showcase distinct functionality.
 
 ```kotlin
 class Arguments : Arkenv() {
@@ -45,7 +45,7 @@ class Arguments : Arkenv() {
 }
 ```
 
-Each argument declares a `description`, which explains its significance. 
+Each argument declares a `description`, which explains its significance.
 This description is included when calling `toString()` on the instance.
 
 Here is a valid example of how to parse these arguments from the command line,

@@ -2,7 +2,7 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.ArkenvBuilder
-import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
@@ -21,7 +21,7 @@ class ProfileFeatureCustomizationTest {
     }
 
     private class PrefixArk(prefix: String, vararg arguments: String) : Ark(configureArkenv {
-        install(ProfileFeature(prefix = prefix))
+        +ProfileFeature(prefix = prefix)
     }) {
         init {
             parse(*arguments)
@@ -46,7 +46,7 @@ class ProfileFeatureCustomizationTest {
     }
 
     private class LocationArk(locations: Collection<String>, vararg arguments: String) : Ark(configureArkenv {
-        install(ProfileFeature(locations = locations))
+        +ProfileFeature(locations = locations)
     }) {
         init {
             parse(*arguments)
@@ -72,7 +72,7 @@ class ProfileFeatureCustomizationTest {
     }
 
     private fun <T : Ark> Assertion.Builder<T>.isMasterFile() {
-        get { name }.isEqualTo("profile-config")
-        get { port }.isEqualTo(777)
+        get { name } isEqualTo "profile-config"
+        get { port } isEqualTo 777
     }
 }

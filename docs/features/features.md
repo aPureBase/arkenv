@@ -11,21 +11,18 @@ Arkenv supports a feature model that allows for
 adding and removing functionality as required.
 
 ```kotlin
-class Ark : Arkenv("Example", configureArkenv {
-    install(PropertyFeature("custom-file"))
-    uninstall(CliFeature())
-}) {
-    val mysqlPassword: String by argument()
-    val port: Int by argument()
+Arkenv.parse(Configuration, args) {
+    +ProfileFeature(prefix = "app")
+    -CliFeature()
 }
 ```
 
-In the constructor of Arkenv, specify a configuration lambda and call 
-`install` to add / replace a feature or
-`uninstall` to remove a feature. 
+When parsing, the last argument takes a lambda, allowing you to call:
+* `install` / `+` to add or replace a feature
+* `uninstall` / `-` to remove a feature
 
 In the above example, we first add support for reading arguments from
-a property file, and then remove the command line support. 
+a specific property file, and then remove the command line support. 
 
 The following features are installed by default:
 * [CliFeature]({{site.baseurl}}features/command-line) 

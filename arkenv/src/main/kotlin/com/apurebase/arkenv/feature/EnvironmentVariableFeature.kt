@@ -1,6 +1,12 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.*
+import com.apurebase.arkenv.argument.Argument
+import com.apurebase.arkenv.argument.ArkenvArgument
+import com.apurebase.arkenv.util.ensureEndsWith
+import com.apurebase.arkenv.util.isAdvancedName
+import com.apurebase.arkenv.util.putAll
+import com.apurebase.arkenv.util.toSnakeCase
 import java.io.File
 
 /**
@@ -22,13 +28,12 @@ class EnvironmentVariableFeature(
     private var isLoaded = false
 
     override fun onLoad(arkenv: Arkenv) {
-        loadEnvironmentVariables(arkenv.getOrNull("ARKENV_DOT_ENV_FILE"))?.let {
-            arkenv.putAll(it)
-            isLoaded = true
-        }
+        val loadedEnvVars = loadEnvironmentVariables(arkenv.getOrNull("ARKENV_DOT_ENV_FILE"))
+        loadedEnvVars?.let(arkenv::putAll)
+        isLoaded = loadedEnvVars != null // reset in case of re-parse
     }
 
-    override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? = with(delegate) {
+    override fun onParse(arkenv: Arkenv, delegate: ArkenvArgument<*>): String? = with(delegate) {
         val envSecrets = enableEnvSecrets || arkenv.getOrNull("ARKENV_ENV_SECRETS") != null
         val setEnvPrefix = envPrefix ?: arkenv.getOrNull("ARKENV_ENV_PREFIX") ?: ""
         getEnvValue(argument, envSecrets, setEnvPrefix)

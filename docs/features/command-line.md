@@ -11,7 +11,7 @@ Arkenv supports parsing arguments from the command line.
 The following exemplifies how to pass arguments correctly. 
 
 ```kotlin
-class Ark : Arkenv() {
+class Configuration {
     val int: Int by argument("-i", "--int")
     
     val bool: Boolean by argument("-b", "--bool")
@@ -41,9 +41,9 @@ and false when passed as a parameter.
 
 When multiple boolean arguments are declared, you can merge their arguments instead of defining them separately.
 
-Given the following Arkenv: 
+Given the following configuration class: 
 ```kotlin
-class Arguments : Arkenv() {
+class Configuration {
     val doRun: Boolean by argument("-d", "--do-run")
     val production: Boolean by argument("-p", "--production")
     val something: Boolean by argument("-s", "--something")

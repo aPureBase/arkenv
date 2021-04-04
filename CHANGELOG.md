@@ -1,3 +1,11 @@
+# 3.2.0
+* #29 Common prefix support
+* #43 New feature syntax
+* #36 Plain class support
+* #31 Fix re-parsing bugs
+
+# 3.1.0
+* Added module support.
 
 # 3.0.0
 * #5 The profile feature is now installed by default

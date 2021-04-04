@@ -1,6 +1,6 @@
 package com.apurebase.arkenv.feature.cli
 
-import com.apurebase.arkenv.get
+import com.apurebase.arkenv.util.get
 import com.apurebase.arkenv.test.Nullable
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse

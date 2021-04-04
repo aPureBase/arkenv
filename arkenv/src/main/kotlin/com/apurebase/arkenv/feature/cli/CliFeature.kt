@@ -1,13 +1,19 @@
 package com.apurebase.arkenv.feature.cli
 
 import com.apurebase.arkenv.*
+import com.apurebase.arkenv.argument.Argument
+import com.apurebase.arkenv.argument.ArkenvArgument
 import com.apurebase.arkenv.feature.ArkenvFeature
-import com.apurebase.arkenv.mapRelaxed
+import com.apurebase.arkenv.util.*
+import com.apurebase.arkenv.util.endsWith
+import com.apurebase.arkenv.util.mapRelaxed
+import com.apurebase.arkenv.util.startsWith
+import com.apurebase.arkenv.util.toSnakeCase
 import kotlin.collections.set
 
 /**
  * Provides command line argument support.
- * Loads and parses the arguments that were passed to Arkenv via the parse function.
+ * Loads and parses the arguments that were passed to [Arkenv] via the parse function.
  */
 class CliFeature : ArkenvFeature {
 
@@ -22,7 +28,7 @@ class CliFeature : ArkenvFeature {
         args.addAll(parsed)
     }
 
-    override fun onParse(arkenv: Arkenv, delegate: ArgumentDelegate<*>): String? =
+    override fun onParse(arkenv: Arkenv, delegate: ArkenvArgument<*>): String? =
         findIndex(delegate.argument, arkenv.argList)?.let {
             val value = parseCli(it) ?: if (delegate.isBoolean) parseCli(it - 1) else null
             removeArgumentFromList(delegate, it, value)
@@ -30,7 +36,7 @@ class CliFeature : ArkenvFeature {
         }
 
     override fun finally(arkenv: Arkenv) {
-        BooleanMergeParser().checkRemaining(arkenv, args).forEach { (arg, boolDelegates) ->
+        BooleanMergeParser().findRemaining(arkenv, args).forEach { (arg, boolDelegates) ->
             args.remove("-$arg")
             boolDelegates.forEach { it.setTrue() }
         }
@@ -87,7 +93,7 @@ class CliFeature : ArkenvFeature {
             .find { it >= 0 }
     }
 
-    private fun removeArgumentFromList(delegate: ArgumentDelegate<*>, index: Int, value: Any?) {
+    private fun removeArgumentFromList(delegate: ArkenvArgument<*>, index: Int, value: Any?) {
         removeValueArgument(index, delegate.isBoolean, value, delegate.isDefault)
         removeNameArgument(index, delegate.argument.isMainArg)
     }

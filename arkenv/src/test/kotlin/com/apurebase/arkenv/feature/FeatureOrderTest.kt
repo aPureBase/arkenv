@@ -1,16 +1,17 @@
-package com.apurebase.arkenv
+package com.apurebase.arkenv.feature
 
-import com.apurebase.arkenv.feature.Encryption
-import com.apurebase.arkenv.feature.EncryptionTest
+import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
+import com.apurebase.arkenv.util.argument
 import org.junit.jupiter.api.Test
 import strikt.assertions.isEqualTo
 
 internal class FeatureOrderTest {
 
     private inner class Ark : Arkenv("FeatureOrderTest", configureArkenv {
-        install(Encryption(EncryptionTest.decryptCipher))
+        +Encryption(EncryptionTest.decryptCipher)
     }) {
         val string: String by argument()
     }
@@ -24,6 +25,6 @@ internal class FeatureOrderTest {
         val encryptedInt = prefix + EncryptionTest.encrypt(intValue.toString())
 
         Ark().parse("ARKENV_ENCRYPTION_PREFIX", prefix, "--STRING", encryptedString, "--INT", encryptedInt)
-            .expectThat { get { string }.isEqualTo(expectedValue) }
+            .expectThat { get { string } isEqualTo expectedValue }
     }
 }
