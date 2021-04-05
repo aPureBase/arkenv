@@ -6,7 +6,7 @@ nav_order: 2
 ---
 
 # Maven Installation
-
+[![Maven Central](https://img.shields.io/maven-central/v/com.apurebase/arkenv.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.apurebase%22%20AND%20a:%22arkenv%22)
 ```xml
 <dependency>
     <groupId>com.apurebase</groupId>
@@ -16,8 +16,8 @@ nav_order: 2
 
 <repositories>
     <repository>
-        <id>jcenter</id>
-        <url>https://jcenter.bintray.com/</url>
+        <id>central</id>
+        <url>https://repo1.maven.org/maven2</url>
     </repository>
 </repositories>
 ```

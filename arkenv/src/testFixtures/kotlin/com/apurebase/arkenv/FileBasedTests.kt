@@ -1,11 +1,9 @@
-package com.apurebase.arkenv.feature
+package com.apurebase.arkenv
 
-import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.ArkenvBuilder
-import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.test.Expected
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
+import com.apurebase.arkenv.util.argument
 import strikt.assertions.isEqualTo
 
 interface FileBasedTests {

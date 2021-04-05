@@ -31,7 +31,7 @@ open class Arkenv(
         defaultValue = { programName }
     }
 
-    internal fun parseArguments(args: Array<out String>) {
+    fun parseArguments(args: Array<out String>) {
         load(args)
         parsePostLoad()
     }
@@ -68,12 +68,12 @@ open class Arkenv(
                 .append(delegate.argument.names)
                 .append(doubleIndent)
                 .append(delegate.argument.description)
-                .appendln()
+                .appendLine()
                 .append(doubleIndent)
                 .append(delegate.property.name)
                 .append(doubleIndent)
                 .append(delegate.getValue(this@Arkenv, delegate.property))
-                .appendln()
+                .appendLine()
         }
     }.toString()
 

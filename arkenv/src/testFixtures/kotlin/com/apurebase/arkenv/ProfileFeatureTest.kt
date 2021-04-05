@@ -1,8 +1,8 @@
-package com.apurebase.arkenv.feature
+package com.apurebase.arkenv
 
-import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.util.argument
-import com.apurebase.arkenv.configureArkenv
+import com.apurebase.arkenv.feature.ProfileFeature
+import com.apurebase.arkenv.feature.profiles
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse

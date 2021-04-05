@@ -2,6 +2,7 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.ArkenvBuilder
 import com.apurebase.arkenv.configureArkenv
+import com.apurebase.arkenv.FileBasedTests
 import com.apurebase.arkenv.util.get
 import com.apurebase.arkenv.test.expectThat
 import org.junit.jupiter.api.Test
