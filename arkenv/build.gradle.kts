@@ -30,12 +30,6 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
-configurations {
-    register("testArchive") {
-        extendsFrom(configurations.testCompile.get())
-    }
-}
-
 tasks {
     compileKotlin { kotlinOptions { jvmTarget = "1.8" } }
     compileTestKotlin { kotlinOptions { jvmTarget = "1.8" } }
@@ -58,11 +52,6 @@ tasks {
             reportUndocumented = true
         }
     }
-    register<Jar>("jarTest") {
-        from(project.sourceSets.test.get().output)
-        description = "create a jar from the test source set"
-        archiveClassifier.set("test")
-    }
 }
 
 val sourcesJar by tasks.creating(Jar::class) {
@@ -76,10 +65,6 @@ val dokkaJar by tasks.creating(Jar::class) {
     from(tasks.dokka)
 }
 
-
-artifacts {
-    add("testArchive", tasks.getByName("jarTest"))
-}
 
 publishing {
     publications {
