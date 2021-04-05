@@ -19,7 +19,7 @@ Supports the most common external configuration sources, including:
 Add jcenter to your repositories and add Arkenv in Gradle:
 
 ```groovy
-repositories { jcenter() }
+repositories { mavenCentral() }
 implementation "com.apurebase:arkenv:$arkenv_version"
 ```
 
