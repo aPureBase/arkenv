@@ -1,9 +1,9 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.putAll
-import com.apurebase.arkenv.split
-import com.apurebase.arkenv.toSnakeCase
+import com.apurebase.arkenv.util.putAll
+import com.apurebase.arkenv.util.split
+import com.apurebase.arkenv.util.toSnakeCase
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream

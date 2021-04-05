@@ -1,7 +1,7 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.argument
+import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.configureArkenv
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
@@ -15,9 +15,7 @@ import javax.crypto.Cipher
 
 internal class EncryptionTest {
 
-    private inner class Ark : Arkenv("EncryptionTest", configureArkenv {
-        install(Encryption(decryptCipher))
-    }) {
+    private inner class Ark : Arkenv("EncryptionTest", configureArkenv { +Encryption(decryptCipher) }) {
         val string: String by argument()
         val int: Int by argument()
     }

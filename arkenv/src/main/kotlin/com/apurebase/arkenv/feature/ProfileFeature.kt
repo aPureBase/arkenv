@@ -1,8 +1,8 @@
 package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.getFeature
-import com.apurebase.arkenv.split
+import com.apurebase.arkenv.util.getFeature
+import com.apurebase.arkenv.util.split
 
 /**
  * Feature for loading profile-based configuration.

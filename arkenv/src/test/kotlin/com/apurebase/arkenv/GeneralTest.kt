@@ -1,10 +1,11 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.test.*
+import com.apurebase.arkenv.util.argument
+import com.apurebase.arkenv.util.mainArgument
+import com.apurebase.arkenv.util.parse
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldEqual
-import org.amshove.kluent.shouldEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.assertions.contains
@@ -50,7 +51,7 @@ class GeneralTest {
             val long: Long by argument()
         }
 
-        LongArg().parse("-long", "5000").long shouldEqualTo expected
+        LongArg().parse("-long", "5000").long shouldBeEqualTo expected
     }
 
     @Test fun `custom mapping`() {
@@ -62,7 +63,7 @@ class GeneralTest {
             }
         }
 
-        CustomArg().parse("1,2,3").list shouldEqual expected
+        CustomArg().parse("1,2,3").list shouldBeEqualTo expected
     }
 
     @Test fun `custom mapping not available should throw`() {
@@ -98,13 +99,13 @@ class GeneralTest {
         }
 
         FixedArgs().parse("-f", "").run {
-            fixed shouldEqualTo value
+            fixed shouldBeEqualTo value
         }
     }
 
     @Test fun `objects should be usable`() {
         ObjectArgs.parse("-i", "10")
-        ObjectArgs.int shouldEqualTo 10
+        ObjectArgs.int shouldBeEqualTo 10
         ObjectArgs.optional shouldBe null
     }
 
@@ -127,7 +128,7 @@ class GeneralTest {
 
     @Test fun `mixed should work`() {
         Mixed().parse("-sa", "5").run {
-            someArg shouldEqualTo 5
+            someArg shouldBeEqualTo 5
             other shouldBeEqualTo "val"
         }
     }
@@ -152,7 +153,7 @@ class GeneralTest {
                 get { bool }.isTrue()
             }
     }
-    
+
     @Test fun `should pass when delegates are empty`() {
         val ark = object : Arkenv() {}
         ark.parse("-empty")
@@ -172,5 +173,19 @@ class GeneralTest {
 
         ark.parse("--newVersion", "2")
             .expectThat { get { version }.isEqualTo(2) }
+    }
+
+    @Test fun `common prefix`() {
+        val expectedPort = 90
+        val prefix = "database"
+        val ark = object : Arkenv(configuration = configureArkenv {
+            this.prefix = prefix
+        }) {
+            val port: Int by argument()
+        }
+        ark.parse("--$prefix-port", expectedPort.toString())
+            .expectThat {
+                get { port }.isEqualTo(expectedPort)
+            }
     }
 }

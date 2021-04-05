@@ -2,12 +2,12 @@ package com.apurebase.arkenv.feature.cli
 
 import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.MissingArgumentException
-import com.apurebase.arkenv.argument
-import com.apurebase.arkenv.mainArgument
+import com.apurebase.arkenv.util.argument
+import com.apurebase.arkenv.util.mainArgument
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
-import org.amshove.kluent.shouldEqual
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import strikt.assertions.isEqualTo
@@ -21,8 +21,8 @@ internal class MainArgumentTest {
 
     @Test fun `mixed main and normal`() {
         val args = Ark().parse("-e", "import", "abc")
-        args.main shouldEqual "abc"
-        args.extra shouldEqual "import"
+        args.main shouldBeEqualTo "abc"
+        args.extra shouldBeEqualTo "import"
     }
 
     @Test fun `mixed main and env`() {

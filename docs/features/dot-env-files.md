@@ -21,7 +21,7 @@ PORT=5050
 Use `dotEnvFilePath` to specify the location of the dot env file. 
 ```kotlin
 class Ark : Arkenv("Example", configureArkenv {
-    install(EnvironmentVariableFeature(dotEnvFilePath = ".env"))
+    +EnvironmentVariableFeature(dotEnvFilePath = ".env")
 }) {
     val mysqlPassword: String by argument()
     val port: Int by argument()

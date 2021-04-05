@@ -1,7 +1,8 @@
 plugins {
     base
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.4.21"
     id("org.jetbrains.dokka") version "0.10.1"
+    id("java-test-fixtures")
     signing
 }
 
@@ -18,11 +19,14 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    testImplementation("org.yaml:snakeyaml:$snakeyamlVersion")
-    testImplementation("org.jmockit:jmockit:$jmockitVersion")
-    testImplementation("org.amshove.kluent:kluent:$kluentVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testImplementation("io.strikt:strikt-core:$striktVersion")
+
+    testFixturesApi("org.yaml:snakeyaml:$snakeyamlVersion")
+    testFixturesApi("org.jmockit:jmockit:$jmockitVersion")
+    testFixturesApi("org.amshove.kluent:kluent:$kluentVersion")
+    testFixturesApi("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testFixturesApi("io.strikt:strikt-core:$striktVersion")
+
+    testImplementation(testFixtures(project(":arkenv")))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
@@ -35,6 +39,7 @@ configurations {
 tasks {
     compileKotlin { kotlinOptions { jvmTarget = "1.8" } }
     compileTestKotlin { kotlinOptions { jvmTarget = "1.8" } }
+    compileTestFixturesKotlin { kotlinOptions { jvmTarget = "1.8" } }
 
     test {
         useJUnitPlatform()

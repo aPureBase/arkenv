@@ -4,6 +4,7 @@ import com.apurebase.arkenv.feature.PropertyFeature
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
+import com.apurebase.arkenv.util.argument
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import strikt.assertions.isEqualTo
@@ -55,7 +56,7 @@ internal class RelaxedBindingTests {
     private inner class Property {
         private fun verifyProperty(file: String) {
             val ark = Ark(configureArkenv {
-                install(PropertyFeature("$file.properties", listOf("binding")))
+                +PropertyFeature("$file.properties", listOf("binding"))
             })
             ark.parse().verify()
         }
@@ -91,6 +92,6 @@ internal class RelaxedBindingTests {
     }
 
     private fun Ark.verify() = expectThat {
-        get { dbPort }.isEqualTo(5)
+        get { dbPort } isEqualTo 5
     }
 }

@@ -2,6 +2,7 @@ package com.apurebase.arkenv.feature
 
 import com.apurebase.arkenv.ArkenvBuilder
 import com.apurebase.arkenv.configureArkenv
+import com.apurebase.arkenv.FileBasedTests
 import com.apurebase.arkenv.test.MockSystem
 import com.apurebase.arkenv.test.getTestResource
 import org.junit.jupiter.api.AfterEach
@@ -14,7 +15,7 @@ import java.io.File
 class PropertyFeatureTests : FileBasedTests {
 
     override fun configure(propertiesFile: String, locations: List<String>): ArkenvBuilder = configureArkenv {
-        install(PropertyFeature(propertiesFile, locations))
+        +PropertyFeature(propertiesFile, locations)
     }
 
     @Test fun `should load properties file`() {
@@ -82,7 +83,7 @@ class PropertyFeatureTests : FileBasedTests {
         }
 
         @AfterEach fun afterEach() {
-            files.forEach { it.deleteRecursively() }
+            files.forEach(File::deleteRecursively)
             File(name).delete()
             dir.deleteRecursively()
             File("custom").deleteRecursively()

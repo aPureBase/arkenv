@@ -1,7 +1,7 @@
 plugins {
     base
     java
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm") version "1.4.21"
     id("org.jetbrains.dokka") version "0.10.1"
     signing
 }
@@ -13,15 +13,13 @@ val junitVersion: String by project
 val striktVersion: String by project
 val isReleaseVersion = !version.toString().endsWith("SNAPSHOT")
 
-//val sourceTests: SourceSetOutput =
-
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     api(project(":arkenv"))
     implementation("org.yaml:snakeyaml:$snakeyamlVersion")
 
-    // Can't figure out how to extend via arkenv project test sourcesets
-    testImplementation(project(":arkenv", "testArchive"))
+    testImplementation(testFixtures(project(":arkenv")))
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
 tasks {

@@ -32,5 +32,5 @@ class Encryption(private val cipher: Cipher) : ProcessorFeature {
     private fun Cipher.decrypt(input: String): String = Base64.getDecoder()
         .decode(input)
         .let(::doFinal)
-        .let { String(it) }
+        .let(::String)
 }
