@@ -17,17 +17,25 @@ val isReleaseVersion = !version.toString().endsWith("SNAPSHOT")
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    compile(project(":arkenv"))
-    compile("org.yaml:snakeyaml:$snakeyamlVersion")
+    api(project(":arkenv"))
+    implementation("org.yaml:snakeyaml:$snakeyamlVersion")
 
     // Can't figure out how to extend via arkenv project test sourcesets
-    testCompile(project(":arkenv", "testArchive"))
+    testImplementation(project(":arkenv", "testArchive"))
 }
 
 tasks {
     compileKotlin { kotlinOptions { jvmTarget = "1.8" } }
     compileTestKotlin { kotlinOptions { jvmTarget = "1.8" } }
 
+    test {
+        useJUnitPlatform()
+        doFirst {
+            jvmArgs = listOf(
+                "-javaagent:${classpath.find { it.name.contains("jmockit") }!!.absolutePath}"
+            )
+        }
+    }
     dokka {
         outputFormat = "html"
         outputDirectory = "$buildDir/javadoc"

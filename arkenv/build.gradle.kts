@@ -18,12 +18,12 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
 
-    testCompile("org.yaml:snakeyaml:$snakeyamlVersion")
-    testCompile("org.jmockit:jmockit:$jmockitVersion")
-    testCompile("org.amshove.kluent:kluent:$kluentVersion")
-    testCompile("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testCompile("io.strikt:strikt-core:$striktVersion")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testImplementation("org.yaml:snakeyaml:$snakeyamlVersion")
+    testImplementation("org.jmockit:jmockit:$jmockitVersion")
+    testImplementation("org.amshove.kluent:kluent:$kluentVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testImplementation("io.strikt:strikt-core:$striktVersion")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
 configurations {
@@ -36,6 +36,14 @@ tasks {
     compileKotlin { kotlinOptions { jvmTarget = "1.8" } }
     compileTestKotlin { kotlinOptions { jvmTarget = "1.8" } }
 
+    test {
+        useJUnitPlatform()
+        doFirst {
+            jvmArgs = listOf(
+                "-javaagent:${classpath.find { it.name.contains("jmockit") }!!.absolutePath}"
+            )
+        }
+    }
     dokka {
         outputFormat = "html"
         outputDirectory = "$buildDir/javadoc"
@@ -45,7 +53,6 @@ tasks {
             reportUndocumented = true
         }
     }
-
     register<Jar>("jarTest") {
         from(project.sourceSets.test.get().output)
         description = "create a jar from the test source set"
