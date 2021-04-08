@@ -9,10 +9,10 @@
 Type-safe Kotlin configuration `by` delegates. 
 
 Supports the most common external configuration sources, including: 
-* Command line
-* Environment Variables
-* Properties, Yaml, and Spring-like profiles
-* `.env` files
+* [Command line](https://apurebase.gitlab.io/arkenv/features/command-line/)
+* [Environment Variables](https://apurebase.gitlab.io/arkenv/features/environment-variables/)
+* [Properties](https://apurebase.gitlab.io/arkenv/features/properties/), [Yaml](https://apurebase.gitlab.io/arkenv/features/yaml/), and Spring-like [profiles](https://apurebase.gitlab.io/arkenv/features/profiles/)
+* [`.env` files](https://apurebase.gitlab.io/arkenv/features/dot-env-files/)
 
 
 ### 📦 Installation
