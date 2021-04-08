@@ -16,11 +16,12 @@ Supports the most common external configuration sources, including:
 
 
 ### 📦 Installation
-Add jcenter to your repositories and add Arkenv in Gradle:
+Add Maven Central to your repositories and add Arkenv in Gradle:
 
 ```groovy
 repositories { mavenCentral() }
 implementation "com.apurebase:arkenv:$arkenv_version"
+implementation "com.apurebase:arkenv-yaml:$arkenv_version" // for yaml support
 ```
 
 ### 🔨 Usage
