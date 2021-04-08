@@ -16,7 +16,7 @@ Supports the most common external configuration sources, including:
 
 
 ### 📦 Installation
-Add Maven Central to your repositories and add Arkenv in Gradle:
+Add [Maven Central](https://search.maven.org/search?q=arkenv) to your repositories and add Arkenv in Gradle:
 
 ```groovy
 repositories { mavenCentral() }
