@@ -7,10 +7,10 @@ services:
       - public
     deploy:
       labels:
-        traefik.http.routers.kgraphql.rule: 'Host(`arkenv.io`)'
-        traefik.http.routers.kgraphql.entrypoints: 'websecure'
-        traefik.http.routers.kgraphql.tls.certresolver: 'le'
-        traefik.http.services.kgraphql.loadbalancer.server.port: '80'
+        traefik.http.routers.arkenv.rule: 'Host(`arkenv.io`)'
+        traefik.http.routers.arkenv.entrypoints: 'websecure'
+        traefik.http.routers.arkenv.tls.certresolver: 'le'
+        traefik.http.services.arkenv.loadbalancer.server.port: '80'
 
 networks:
   public:
