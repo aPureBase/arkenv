@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+  docs:
+    image: jeggy/arkenv-docs
+    networks:
+      - public
+    deploy:
+      labels:
+        traefik.http.routers.kgraphql.rule: 'Host(`arkenv.io`)'
+        traefik.http.routers.kgraphql.entrypoints: 'websecure'
+        traefik.http.routers.kgraphql.tls.certresolver: 'le'
+        traefik.http.services.kgraphql.loadbalancer.server.port: '80'
+
+networks:
+  public:
+    external: true
+

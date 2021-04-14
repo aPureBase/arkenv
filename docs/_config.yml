@@ -1,10 +1,8 @@
 title: Arkenv
 description: >-
   Kotlin Cli & Env argument parser.
-baseurl: "/arkenv/" 
-url: "https://apurebase.gitlab.io"
-# github_username:  jeggy
-# email: jo@jebster.net
+url: "https://arkenv.io"
+
 
 # Build settings
 markdown: kramdown
@@ -20,8 +18,8 @@ sass:
   load_paths:
     - _sass
 aux_links:
-  "Arkenv on GitLab":
-    - "//gitlab.com/apurebase/arkenv"
+  "Arkenv on GitHub":
+    - "//github.com/aPureBase/arkenv"
 
 exclude:
   - Gemfile
