@@ -2,6 +2,8 @@ package com.apurebase.arkenv
 
 import com.apurebase.arkenv.util.split
 import java.io.File
+import java.net.URI
+import java.net.URL
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.reflect.KClass
@@ -40,6 +42,11 @@ internal object ArkenvMapper {
         ByteArray::class -> split().map(String::toByte).toByteArray()
         Path::class -> Paths.get(this)
         File::class -> File(this)
+        URL::class -> URL(this)
+        URI::class -> URI(this)
+        IntRange::class -> split("..").let { IntRange(it[0].toInt(), it[1].toInt()) }
+        LongRange::class -> split("..").let { LongRange(it[0].toLong(), it[1].toLong()) }
+        CharRange::class -> CharRange(this[0], this[3])
         else -> throw UnsupportedMappingException(key, clazz)
     }
 }

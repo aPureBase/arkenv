@@ -9,6 +9,8 @@ import org.junit.jupiter.api.TestInstance
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 import java.io.File
+import java.net.URI
+import java.net.URL
 import java.nio.file.Path
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -121,6 +123,71 @@ internal class MappingTests {
 
         expectThat(configuration) {
             get { file.toString() } isEqualTo expectedPath
+        }
+    }
+
+    @Test fun url() {
+        val expectedUrl = "https://arkenv.io/features/mapping/"
+        val configuration = object {
+            val url: URL by argument()
+        }
+
+        Arkenv.parse(configuration, arrayOf("--url", expectedUrl))
+
+        expectThat(configuration) {
+            get { url.toString() } isEqualTo expectedUrl
+        }
+    }
+
+    @Test fun uri() {
+        val expectedUri = "arkenv.io/features/mapping"
+        val configuration = object {
+            val uri: URI by argument()
+        }
+
+        Arkenv.parse(configuration, arrayOf("--uri", expectedUri))
+
+        expectThat(configuration) {
+            get { uri.toString() } isEqualTo expectedUri
+        }
+    }
+
+    @Test fun intRange() {
+        val expectedRange = -5..101
+        val configuration = object {
+            val range: IntRange by argument()
+        }
+
+        Arkenv.parse(configuration, arrayOf("--range", "-5..101"))
+
+        expectThat(configuration) {
+            get { range } isEqualTo expectedRange
+        }
+    }
+
+    @Test fun longRange() {
+        val expectedRange = -5L..101
+        val configuration = object {
+            val range: LongRange by argument()
+        }
+
+        Arkenv.parse(configuration, arrayOf("--range", "-5..101"))
+
+        expectThat(configuration) {
+            get { range } isEqualTo expectedRange
+        }
+    }
+
+    @Test fun charRange() {
+        val expectedRange = CharRange('z', 'a')
+        val configuration = object {
+            val range: CharRange by argument()
+        }
+
+        Arkenv.parse(configuration, arrayOf("--range", "z..a"))
+
+        expectThat(configuration) {
+            get { range } isEqualTo expectedRange
         }
     }
 
