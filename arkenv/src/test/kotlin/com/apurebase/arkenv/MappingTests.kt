@@ -108,9 +108,7 @@ internal class MappingTests {
 
         Arkenv.parse(configuration, arrayOf("--path", expectedPath))
 
-        expectThat(configuration) {
-            get { path.toString() } isEqualTo expectedPath
-        }
+        expectThat(configuration).get { path.toString() } isEqualTo expectedPath
     }
 
     @Test fun `File should map`() {
@@ -121,9 +119,7 @@ internal class MappingTests {
 
         Arkenv.parse(configuration, arrayOf("--file", expectedPath))
 
-        expectThat(configuration) {
-            get { file.toString() } isEqualTo expectedPath
-        }
+        expectThat(configuration).get { file.toString() } isEqualTo expectedPath
     }
 
     @Test fun url() {
@@ -134,9 +130,7 @@ internal class MappingTests {
 
         Arkenv.parse(configuration, arrayOf("--url", expectedUrl))
 
-        expectThat(configuration) {
-            get { url.toString() } isEqualTo expectedUrl
-        }
+        expectThat(configuration).get { url.toString() } isEqualTo expectedUrl
     }
 
     @Test fun uri() {
@@ -147,9 +141,7 @@ internal class MappingTests {
 
         Arkenv.parse(configuration, arrayOf("--uri", expectedUri))
 
-        expectThat(configuration) {
-            get { uri.toString() } isEqualTo expectedUri
-        }
+        expectThat(configuration).get { uri.toString() } isEqualTo expectedUri
     }
 
     @Test fun intRange() {
@@ -160,9 +152,7 @@ internal class MappingTests {
 
         Arkenv.parse(configuration, arrayOf("--range", "-5..101"))
 
-        expectThat(configuration) {
-            get { range } isEqualTo expectedRange
-        }
+        expectThat(configuration).get { range } isEqualTo expectedRange
     }
 
     @Test fun longRange() {
@@ -173,9 +163,7 @@ internal class MappingTests {
 
         Arkenv.parse(configuration, arrayOf("--range", "-5..101"))
 
-        expectThat(configuration) {
-            get { range } isEqualTo expectedRange
-        }
+        expectThat(configuration).get { range } isEqualTo expectedRange
     }
 
     @Test fun charRange() {
@@ -186,9 +174,7 @@ internal class MappingTests {
 
         Arkenv.parse(configuration, arrayOf("--range", "z..a"))
 
-        expectThat(configuration) {
-            get { range } isEqualTo expectedRange
-        }
+        expectThat(configuration).get { range } isEqualTo expectedRange
     }
 
     private val floatingPointInput = "1.1,29.92,-387.9999"
