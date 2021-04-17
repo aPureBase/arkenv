@@ -10,11 +10,13 @@ nav_order: 13
 The following mappings are supported by default:
 
 ```kotlin
-object Ark : Arkenv() {
+object Configuration {
     val int:                Int by argument()
     val long:               Long by argument()
     val string:             String by argument()
     val char:               Char by argument()
+    
+    // arrays
     val intArray:           IntArray by argument()
     val shortArray:         ShortArray by argument()
     val charArray:          CharArray by argument()
@@ -25,7 +27,18 @@ object Ark : Arkenv() {
     val byteArray:          ByteArray by argument()
     
     val stringList:         List<String> by argument()
-    val stringCollection:   Collection<String> by argument() 
+    val stringCollection:   Collection<String> by argument()
+    
+    // IO
+    val file:               File by argument()
+    val path:               Path by argument()
+    val url:                URL by argument()
+    val uri:                URI by argument()
+
+    // ranges
+    val intRange:           IntRange by argument() // -5..5
+    val longRange:          LongRange by argument() // -5..5
+    val charRange:          CharRange by argument() // a..z
 }
 ```
 
