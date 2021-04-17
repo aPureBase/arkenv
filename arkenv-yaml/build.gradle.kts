@@ -66,7 +66,7 @@ publishing {
             pom {
                 name.set("Arkenv")
                 description.set("Yaml feature for Arkenv")
-                url.set("https://apurebase.gitlab.io/arkenv/features/yaml/")
+                url.set("https://arkenv.io/features/yaml/")
                 organization {
                     name.set("aPureBase")
                     url.set("http://apurebase.com/")

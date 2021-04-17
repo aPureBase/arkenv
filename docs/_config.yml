@@ -1,6 +1,7 @@
 title: Arkenv
 description: >-
   Kotlin Cli & Env argument parser.
+baseurl: "/"
 url: "https://arkenv.io"
 
 

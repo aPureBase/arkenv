@@ -9,10 +9,10 @@
 Type-safe Kotlin configuration `by` delegates. 
 
 Supports the most common external configuration sources, including: 
-* [Command line](https://apurebase.gitlab.io/arkenv/features/command-line/)
-* [Environment Variables](https://apurebase.gitlab.io/arkenv/features/environment-variables/)
-* [Properties](https://apurebase.gitlab.io/arkenv/features/properties/), [Yaml](https://apurebase.gitlab.io/arkenv/features/yaml/), and Spring-like [profiles](https://apurebase.gitlab.io/arkenv/features/profiles/)
-* [`.env` files](https://apurebase.gitlab.io/arkenv/features/dot-env-files/)
+* [Command line](https://arkenv.io/features/command-line/)
+* [Environment Variables](https://arkenv.io/features/environment-variables/)
+* [Properties](https://arkenv.io/features/properties/), [Yaml](https://arkenv.io/features/yaml/), and Spring-like [profiles](https://arkenv.io/features/profiles/)
+* [`.env` files](https://arkenv.io/features/dot-env-files/)
 
 
 ### 📦 Installation
@@ -62,12 +62,12 @@ In the case of `port`, you can parse it like this:
 
  
 
-To get started, we recommend reading about [the basics](https://apurebase.gitlab.io/arkenv/guides/the-basics) 
+To get started, we recommend reading about [the basics](https://arkenv.io/guides/the-basics) 
 for a quick tour of what's included. 
 
 
 ### 📃 Documentation
-Please visit [https://apurebase.gitlab.io/arkenv/](https://apurebase.gitlab.io/arkenv/) for in-depth documentation.
+Please visit [https://arkenv.io/](https://arkenv.io/) for in-depth documentation.
 
 ### 🤝 Contributing [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) 
 
