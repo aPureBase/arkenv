@@ -5,6 +5,8 @@ parent: Features
 nav_order: 4
 ---
 
+# Profiles
+
 To enable Spring-like profile functionality, install the `ProfileFeature`. 
 
 ### Usage

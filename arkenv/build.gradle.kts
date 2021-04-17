@@ -76,7 +76,7 @@ publishing {
             pom {
                 name.set("Arkenv")
                 description.set("Type-safe Kotlin configuration parser by delegates")
-                url.set("https://apurebase.gitlab.io/arkenv/")
+                url.set("https://arkenv.io/")
                 organization {
                     name.set("aPureBase")
                     url.set("http://apurebase.com/")
