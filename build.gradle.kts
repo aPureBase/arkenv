@@ -9,6 +9,7 @@ val sonatypePassword: String? = project.findProperty("sonatypeUsername") as Stri
 plugins {
     id("io.codearte.nexus-staging") version "0.21.2"
     id("de.marcphilipp.nexus-publish") version "0.4.0"
+    id("com.github.ben-manes.versions") version "0.38.0"
     jacoco
 }
 
