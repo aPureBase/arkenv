@@ -3,9 +3,13 @@ package com.apurebase.arkenv
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
 import com.apurebase.arkenv.util.argument
+import com.apurebase.arkenv.util.parse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import java.io.File
+import java.nio.file.Path
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class MappingTests {
@@ -17,8 +21,8 @@ internal class MappingTests {
             val list: List<String> by argument()
             val collection: Collection<String> by argument()
         }.parse("LIST", input, "COLLECTION", input).expectThat {
-            get { list }.isEqualTo(output)
-            get { collection }.isEqualTo(output)
+            get { list } isEqualTo output
+            get { collection } isEqualTo output
         }
     }
 
@@ -91,6 +95,32 @@ internal class MappingTests {
             val array: ByteArray by argument()
         }.parse("--$argName", "-1,2,3").array.expectThat {
             isEqualTo(listOf(-1, 2, 3).map(Int::toByte).toByteArray())
+        }
+    }
+
+    @Test fun `Path should map`() {
+        val expectedPath = "C:\\"
+        val configuration = object {
+            val path: Path by argument()
+        }
+
+        Arkenv.parse(configuration, arrayOf("--path", expectedPath))
+
+        expectThat(configuration) {
+            get { path.toString() } isEqualTo expectedPath
+        }
+    }
+
+    @Test fun `File should map`() {
+        val expectedPath = "C:\\"
+        val configuration = object {
+            val file: File by argument()
+        }
+
+        Arkenv.parse(configuration, arrayOf("--file", expectedPath))
+
+        expectThat(configuration) {
+            get { file.toString() } isEqualTo expectedPath
         }
     }
 
