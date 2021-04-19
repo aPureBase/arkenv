@@ -1,5 +1,5 @@
 [![Maven Central](https://img.shields.io/maven-central/v/com.apurebase/arkenv.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.apurebase%22%20AND%20a:%22arkenv%22)
-[![Pipelines](https://gitlab.com/apurebase/arkenv/badges/master/pipeline.svg)](https://gitlab.com/apurebase/arkenv/pipelines)
+[![Tests](https://github.com/aPureBase/arkenv/actions/workflows/tests.yml/badge.svg)](https://github.com/aPureBase/arkenv/actions/workflows/tests.yml)
 [![Pipelines](https://gitlab.com/apurebase/arkenv/badges/master/coverage.svg)](https://gitlab.com/apurebase/arkenv/commits/master)
 [![Chat](https://img.shields.io/badge/chat-on%20slack-green.svg)](https://kotlinlang.slack.com/messages/CGF74HD19/)
 [![Awesome Kotlin Badge](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
