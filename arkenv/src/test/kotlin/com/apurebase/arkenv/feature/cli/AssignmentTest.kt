@@ -1,12 +1,17 @@
 package com.apurebase.arkenv.feature.cli
 
 import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.test.expectThat
 import com.apurebase.arkenv.test.parse
+import com.apurebase.arkenv.util.argument
 import org.junit.jupiter.api.Test
+import strikt.api.expectThat
 import strikt.assertions.isEqualTo
 
+/**
+ * Verify that command-line assignment style arguments (key=value) are parsed correctly.
+ * @see CliFeature
+ */
 class AssignmentTest {
 
     private class Ark : Arkenv() {
@@ -18,29 +23,36 @@ class AssignmentTest {
     }
 
     @Test fun `should parse assignment correctly`() {
-        Ark().parse("int=4").expectThat {
-            get { int }.isEqualTo(4)
-            get { bool }.isEqualTo(true)
+        Ark().parse("int=4") expectThat {
+            get { int } isEqualTo 4
+            get { bool } isEqualTo true
         }
     }
 
     @Test fun `should turn bool off`() {
-        Ark().parse("int=-1", "bool=false").expectThat {
-            get { int }.isEqualTo(-1)
-            get { bool }.isEqualTo(false)
+        Ark().parse("int=-1", "bool=false") expectThat {
+            get { int } isEqualTo -1
+            get { bool } isEqualTo false
         }
     }
 
     @Test fun `should be able to use complex arg in assignment`() {
-        Ark().parse("int=0", "complex-arg=false").expectThat {
-            get { bool }.isEqualTo(false)
+        Ark().parse("int=0", "complex-arg=false") expectThat {
+            get { bool } isEqualTo false
         }
     }
 
     @Test fun `should still allow = as part of other args`() {
-        Ark().parse("--str", "key=value", "int=1").expectThat {
-            get { string }.isEqualTo("key=value")
-            get { int }.isEqualTo(1)
+        Ark().parse("--str", "key=value", "int=1") expectThat {
+            get { string } isEqualTo "key=value"
+            get { int } isEqualTo 1
+        }
+    }
+
+    @Test fun `single quoted assignment`() {
+        val ark = Ark().parse("int=0", "'str=test", "expected'")
+        expectThat(ark) {
+            get { string } isEqualTo "test expected"
         }
     }
 }
