@@ -5,7 +5,7 @@ import strikt.api.Assertion
 import strikt.assertions.isEqualTo
 import java.io.File
 
-fun <T> T.expectThat(block: Assertion.Builder<T>.() -> Unit) = strikt.api.expectThat(this, block)
+infix fun <T> T.expectThat(block: Assertion.Builder<T>.() -> Unit) = strikt.api.expectThat(this, block)
 
 infix fun <T: Any?> T.expectIsEqual(expected: T) = expectThat { isEqualTo(expected) }
 

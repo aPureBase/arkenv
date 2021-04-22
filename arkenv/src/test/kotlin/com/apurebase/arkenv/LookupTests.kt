@@ -48,14 +48,14 @@ class LookupTests {
         val ark = Ark().parse("--other", "name")
         val key = "left-over"
         assertThrows<MissingArgumentException> { ark[key] }
-            .expectThat { get { message }.isNotNull().contains(key) }
+            .expectThat { get { message }.isNotNull() contains key }
     }
 
     @Test fun `input key should be snake-case formatted`() {
         val expected = "app"
         MockSystem("CLIENT_DIR" to expected)
         Ark().parse().expectThat {
-            get { get("clientDir") }.isEqualTo(expected)
+            get { get("clientDir") } isEqualTo expected
         }
     }
 

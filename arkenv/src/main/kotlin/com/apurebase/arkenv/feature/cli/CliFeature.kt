@@ -1,13 +1,11 @@
 package com.apurebase.arkenv.feature.cli
 
-import com.apurebase.arkenv.*
+import com.apurebase.arkenv.Arkenv
 import com.apurebase.arkenv.argument.Argument
 import com.apurebase.arkenv.argument.ArkenvArgument
 import com.apurebase.arkenv.feature.ArkenvFeature
-import com.apurebase.arkenv.util.*
-import com.apurebase.arkenv.util.endsWith
 import com.apurebase.arkenv.util.mapRelaxed
-import com.apurebase.arkenv.util.startsWith
+import com.apurebase.arkenv.util.putAll
 import com.apurebase.arkenv.util.toSnakeCase
 import kotlin.collections.set
 
@@ -22,10 +20,10 @@ class CliFeature : ArkenvFeature {
     override fun onLoad(arkenv: Arkenv) {
         args = arkenv.argList
         args.replaceAll(String::mapRelaxed)
-        loadCliAssignments().let(arkenv::putAll)
-        val parsed = parseArguments(args)
+        val parsed = CliArgumentParser().parseArguments(args)
         args.clear()
         args.addAll(parsed)
+        loadCliAssignments().let(arkenv::putAll)
     }
 
     override fun onParse(arkenv: Arkenv, delegate: ArkenvArgument<*>): String? =
@@ -66,25 +64,6 @@ class CliFeature : ArkenvFeature {
 
     private fun parseCli(index: Int): String? = args.getOrNull(index + 1)
 
-    private fun parseArguments(arguments: List<String>): List<String> {
-        val list = mutableListOf<String>()
-        var isReading = false
-        arguments.forEach { value ->
-            when {
-                isReading -> list[list.lastIndex] = "${list.last()} $value"
-                else -> list.add(value)
-            }
-            when {
-                isReading && value.endsWith(allowedSurroundings) -> {
-                    list[list.lastIndex] = list.last().removeSurrounding(allowedSurroundings)
-                    isReading = false
-                }
-                !isReading && value.startsWith(allowedSurroundings) -> isReading = true
-            }
-        }
-        return list
-    }
-
     private fun findIndex(argument: Argument<*>, arguments: List<String>): Int? = when {
         argument.isMainArg -> arguments.size - 2
         else -> argument
@@ -105,6 +84,4 @@ class CliFeature : ArkenvFeature {
     private fun removeValueArgument(index: Int, isBoolean: Boolean, value: Any?, default: Boolean) {
         if (!isBoolean && !default && value != null) args.removeAt(index + 1)
     }
-
-    private val allowedSurroundings = listOf("'", "\"")
 }
