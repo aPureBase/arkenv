@@ -2,7 +2,7 @@ plugins {
     base
     java
     kotlin("jvm") version "1.4.32"
-    id("org.jetbrains.dokka") version "0.10.1"
+    id("org.jetbrains.dokka") version "1.4.32"
     signing
 }
 
@@ -34,13 +34,14 @@ tasks {
             )
         }
     }
-    dokka {
-        outputFormat = "html"
-        outputDirectory = "$buildDir/javadoc"
-        impliedPlatforms = mutableListOf("JVM")
-        configuration {
-            jdkVersion = 8
-            reportUndocumented = true
+    dokkaHtml {
+        outputDirectory.set(buildDir.resolve("javadoc"))
+        dokkaSourceSets {
+            configureEach {
+                jdkVersion.set(8)
+                reportUndocumented.set(true)
+                platform.set(org.jetbrains.dokka.Platform.jvm)
+            }
         }
     }
 }
@@ -53,7 +54,7 @@ val sourcesJar by tasks.creating(Jar::class) {
 val dokkaJar by tasks.creating(Jar::class) {
     group = JavaBasePlugin.DOCUMENTATION_GROUP
     classifier = "javadoc"
-    from(tasks.dokka)
+    from(tasks.dokkaHtml)
 }
 
 publishing {
