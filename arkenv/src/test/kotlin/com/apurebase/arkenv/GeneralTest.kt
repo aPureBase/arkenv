@@ -1,5 +1,6 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.argument.ArkenvArgumentNamingStrategy
 import com.apurebase.arkenv.test.*
 import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.util.mainArgument
@@ -8,6 +9,7 @@ import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import strikt.api.expectThat
 import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 import strikt.assertions.isTrue
@@ -187,5 +189,33 @@ class GeneralTest {
             .expectThat {
                 get { port }.isEqualTo(expectedPort)
             }
+    }
+
+    @Test fun `should only use fully qualified env name`() {
+        MockSystem("USER" to "jeggy")
+        val ark = object: Arkenv() {
+            val user: String by argument("--db-user") {
+                defaultValue = { "postgres" }
+            }
+        }.parse()
+
+        expectThat(ark) {
+            get { user } isEqualTo "postgres"
+        }
+    }
+
+    @Test fun `ParameterNameAlwaysIncluded - should consider parameter name`() {
+        MockSystem("USER" to "jeggy")
+        val ark = object : Arkenv(configuration = configureArkenv {
+            namingStrategy = ArkenvArgumentNamingStrategy.ParameterNameAlwaysIncluded
+        }) {
+            val user: String by argument("--db-user") {
+                defaultValue = { "postgres" }
+            }
+        }.parse()
+
+        expectThat(ark) {
+            get { user } isEqualTo "jeggy"
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.apurebase.arkenv
 
+import com.apurebase.arkenv.argument.ArkenvArgumentNamingStrategy
 import com.apurebase.arkenv.feature.*
 import com.apurebase.arkenv.feature.cli.CliFeature
 import com.apurebase.arkenv.util.key
@@ -24,6 +25,11 @@ class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
      * Whether data should be cleared after parsing.
      */
     var clearInputAfterParse = false
+
+    /**
+     * Defines the argument naming strategy that will be used to determine the applicable names.
+     */
+    var namingStrategy: ArkenvArgumentNamingStrategy = ArkenvArgumentNamingStrategy.ParameterNameOnlyIfNotSpecified
 
     internal val features: MutableList<ArkenvFeature> = mutableListOf()
     internal val processorFeatures: MutableList<ProcessorFeature> = mutableListOf()

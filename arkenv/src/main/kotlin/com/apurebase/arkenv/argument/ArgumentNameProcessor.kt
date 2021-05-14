@@ -1,13 +1,14 @@
 package com.apurebase.arkenv.argument
 
-import com.apurebase.arkenv.Arkenv
+import com.apurebase.arkenv.argument.ArkenvArgumentNamingStrategy.*
 import com.apurebase.arkenv.util.isAdvancedName
 import com.apurebase.arkenv.util.mapRelaxed
 import com.apurebase.arkenv.util.toSnakeCase
 import kotlin.reflect.KProperty
 
 internal class ArgumentNameProcessor(
-    private val prefix: String?
+    private val prefix: String?,
+    private val namingStrategy: ArkenvArgumentNamingStrategy
 ) {
 
     /**
@@ -19,13 +20,22 @@ internal class ArgumentNameProcessor(
         argument.names = getNames(argument.names, property.name)
     }
 
-    private fun getNames(names: List<String>, propName: String) = names
-        .ifEmpty { listOf(propName.toSnakeCase()) }
-        .map {
-            it.ensureStartsWithDash()
-                .prefix(prefix ?: "")
-                .mapRelaxed()
+    private fun getNames(argumentNames: List<String>, propName: String): List<String> =
+        getNameList(argumentNames, propName).map(::processName)
+
+    private fun getNameList(argumentNames: List<String>, propName: String): List<String> {
+        return when (namingStrategy) {
+            ParameterNameOnlyIfNotSpecified -> {
+                argumentNames.ifEmpty { listOf(propName.toSnakeCase()) }
+            }
+            ParameterNameAlwaysIncluded -> argumentNames + propName.toSnakeCase()
         }
+    }
+
+    private fun processName(name: String) = name
+        .ensureStartsWithDash()
+        .prefix(prefix ?: "")
+        .mapRelaxed()
 
     private fun String.ensureStartsWithDash() =
         if (!startsWith("-")) "--$this" else this
