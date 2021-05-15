@@ -1,3 +1,10 @@
+# 3.3.1
+* Revert breaking change to argument name resolution. 
+  The naming strategy can be changed in `configureArkenv`.  
+
+# 3.3.0
+* Support common JVM type: `File`, `Path`, `URL`, `URI`
+
 # 3.2.0
 * #29 Common prefix support
 * #43 New feature syntax
