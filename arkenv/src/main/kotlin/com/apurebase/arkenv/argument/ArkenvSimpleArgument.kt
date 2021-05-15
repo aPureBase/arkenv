@@ -35,7 +35,8 @@ internal class ArkenvSimpleArgument<T : Any?>(
         this.property = property
         if (!isInitialized) {
             val prefix = moduleConfiguration?.prefix ?: arkenv.configuration.prefix
-            val argumentNameProcessor = ArgumentNameProcessor(prefix)
+            val namingStrategy = arkenv.configuration.namingStrategy
+            val argumentNameProcessor = ArgumentNameProcessor(prefix, namingStrategy)
             argumentNameProcessor.processArgumentNames(argument, property)
             isInitialized = true
         }

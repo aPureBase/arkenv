@@ -77,7 +77,7 @@ interface ArkenvArgument<T : Any?> : ReadOnlyProperty<Any, T> {
     }
 
     private fun getNames(): Collection<String> {
-        return argument.names + property.name.toSnakeCase()
+        return argument.names
     }
 
     private fun checkNullable(value: T) {

@@ -70,11 +70,11 @@ class ArkenvParser<T : Any>(
     private fun parseConstructorArgs(parameters: Collection<KParameter>): Map<KParameter, Any?> {
         return parameters
             .filterNot { it.name.isNullOrBlank() }
-            .mapNotNull(::parseParameter)
+            .mapNotNull(::parseConstructorParameter)
             .toMap()
     }
 
-    private fun parseParameter(parameter: KParameter): Pair<KParameter, Any?>? {
+    private fun parseConstructorParameter(parameter: KParameter): Pair<KParameter, Any?>? {
         val name = parameter.name!!.toSnakeCase()
         val value = arkenv.getOrNull(name)
         return if (parameter.isOptional && value == null) null
