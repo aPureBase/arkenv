@@ -1,3 +1,6 @@
+# 3.3.2
+* Fix boolean parsing in plain class (#65)
+
 # 3.3.1
 * Revert breaking change to argument name resolution. 
   The naming strategy can be changed in `configureArkenv`.  
