@@ -5,9 +5,13 @@ import com.apurebase.arkenv.test.Expected
 import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.util.parse
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import strikt.api.expectThat
 import strikt.assertions.isEqualTo
+import strikt.assertions.isFalse
 import strikt.assertions.isNull
+import strikt.assertions.isTrue
 
 /**
  * Tests for the [ArkenvParser.parseClass] functionality, parsing plain classes.
@@ -93,5 +97,31 @@ class ParseClassTests {
             get { mysqlPassword } isEqualTo Expected.mysqlPassword
             get { databasePort } isEqualTo Expected.databasePort
         }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["true", "1"])
+    fun `boolean true`(input: String) {
+        // Arrange
+        class Configuration(val headless: Boolean = false)
+
+        // Act
+        val config = Arkenv.parse<Configuration>(arrayOf("--headless", input))
+
+        // Assert
+        expectThat(config) { get { headless }.isTrue() }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["false", "0", ""])
+    fun `boolean false`(input: String) {
+        // Arrange
+        class Configuration(val headless: Boolean = false)
+
+        // Act
+        val config = Arkenv.parse<Configuration>(arrayOf("--headless", input))
+
+        // Assert
+        expectThat(config) { get { headless }.isFalse() }
     }
 }

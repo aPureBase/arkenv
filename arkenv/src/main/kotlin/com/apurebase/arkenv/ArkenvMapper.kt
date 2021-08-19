@@ -31,6 +31,7 @@ internal object ArkenvMapper {
         Long::class -> toLongOrNull()
         String::class -> this
         Char::class -> firstOrNull()
+        Boolean::class -> toBoolean() || this == "1"
         List::class, Collection::class -> split()
         IntArray::class -> split().map(String::toInt).toIntArray()
         ShortArray::class -> split().map(String::toShort).toShortArray()

@@ -24,6 +24,7 @@ dependencies {
     testFixturesApi("org.jmockit:jmockit:$jmockitVersion")
     testFixturesApi("org.amshove.kluent:kluent:$kluentVersion")
     testFixturesApi("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testFixturesApi("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testFixturesApi("io.strikt:strikt-core:$striktVersion")
 
     testImplementation(testFixtures(project(":arkenv")))
