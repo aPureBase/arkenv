@@ -17,8 +17,8 @@ Supports the most common external configuration sources, including:
 
 ### 📦 Installation
 The quick start section contains instructions for:
-* [Gradle]({{site.baseurl}}/quick-start/gradle)
-* [Maven]({{site.baseurl}}/quick-start/maven)
+* [Gradle]({{site.baseurl}}quick-start/gradle)
+* [Maven]({{site.baseurl}}quick-start/maven)
 
 ## 🔨 Usage
 * [The Basics]({{site.baseurl}}guides/the-basics)
