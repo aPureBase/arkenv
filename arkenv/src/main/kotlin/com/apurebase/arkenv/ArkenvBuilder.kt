@@ -9,12 +9,12 @@ import com.apurebase.arkenv.util.key
  * [Arkenv] configuration builder which controls features and other settings.
  * @param installAdvancedFeatures whether to install the profile and placeholder feature.
  */
-class ArkenvBuilder(installAdvancedFeatures: Boolean = true) {
+class ArkenvBuilder(installAdvancedFeatures: Boolean = true) : ArkenvConfiguration {
 
     /**
      * A common prefix that is applied to all argument names.
      */
-    var prefix: String? = null
+    override var prefix: String? = null
 
     /**
      * Whether data should be cleared before parsing.

@@ -16,7 +16,7 @@ interface ArkenvModule<T : Any> : ReadOnlyProperty<Any, T> {
 
     fun initialize(arkenvParser: ArkenvParser<*>) {
         if (module == null) {
-            module = arkenvParser.createInstance(kClass)
+            module = arkenvParser.createInstance(kClass, configuration)
         }
         arkenvParser.parse(module!!, configuration)
     }

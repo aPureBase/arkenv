@@ -8,8 +8,7 @@ class ArkenvDelegateLoader<T : Any>(
     private val argument: Argument<T>,
     private val arkenv: Arkenv
 ) {
-    private val argumentNameProcessor = ArgumentNameProcessor(
-        arkenv.configuration.prefix, arkenv.configuration.namingStrategy)
+    private val argumentNameProcessor = ArgumentNameProcessor.get(null, arkenv.configuration)
 
     operator fun provideDelegate(thisRef: Arkenv, prop: KProperty<*>): ReadOnlyProperty<Arkenv, T> {
         argumentNameProcessor.processArgumentNames(argument, prop)
