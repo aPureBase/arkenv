@@ -1,13 +1,13 @@
 package com.apurebase.arkenv.parse
 
-import com.apurebase.arkenv.Arkenv
-import com.apurebase.arkenv.ArkenvBuilder
+import com.apurebase.arkenv.*
+import com.apurebase.arkenv.ArkenvConfiguration
 import com.apurebase.arkenv.ArkenvMapper
 import com.apurebase.arkenv.ParsingException
+import com.apurebase.arkenv.argument.ArgumentNameProcessor
 import com.apurebase.arkenv.argument.ArkenvArgument
 import com.apurebase.arkenv.module.ArkenvModule
 import com.apurebase.arkenv.module.ArkenvModuleConfiguration
-import com.apurebase.arkenv.util.toSnakeCase
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -43,7 +43,7 @@ class ArkenvParser<T : Any>(
      * @throws ParsingException when parsing was unsuccessful.
      */
     fun parseClass(): T {
-        val instance = createInstance(kClass)
+        val instance = createInstance(kClass, null)
         parse(instance)
         return instance
     }
@@ -54,28 +54,29 @@ class ArkenvParser<T : Any>(
         arkenv.parsePostLoad()
     }
 
-    internal fun <R : Any> createInstance(kClass: KClass<R>): R {
+    internal fun <R : Any> createInstance(kClass: KClass<R>, configuration: ArkenvConfiguration?): R {
         val constructor = kClass.constructors.firstOrNull()
             ?: throw ParsingException(className, IllegalStateException("No valid constructor found"))
-        return parseConstructor(constructor)
+        return parseConstructor(constructor, configuration)
     }
 
-    private fun <R> parseConstructor(constructor: KFunction<R>): R = try {
-        val constructorArgs = parseConstructorArgs(constructor.parameters)
+    private fun <R> parseConstructor(constructor: KFunction<R>, configuration: ArkenvConfiguration?): R = try {
+        val constructorArgs = parseConstructorArgs(constructor.parameters, configuration)
         constructor.callBy(constructorArgs)
     } catch (ex: IllegalArgumentException) {
         throw ParsingException(className, ex)
     }
 
-    private fun parseConstructorArgs(parameters: Collection<KParameter>): Map<KParameter, Any?> {
+    private fun parseConstructorArgs(parameters: Collection<KParameter>, configuration: ArkenvConfiguration?): Map<KParameter, Any?> {
+        val nameProcessor = ArgumentNameProcessor.get(configuration, arkenv.configuration)
         return parameters
             .filterNot { it.name.isNullOrBlank() }
-            .mapNotNull(::parseConstructorParameter)
+            .mapNotNull { parseConstructorParameter(it, nameProcessor) }
             .toMap()
     }
 
-    private fun parseConstructorParameter(parameter: KParameter): Pair<KParameter, Any?>? {
-        val name = parameter.name!!.toSnakeCase()
+    private fun parseConstructorParameter(parameter: KParameter, nameProcessor: ArgumentNameProcessor): Pair<KParameter, Any?>? {
+        val name = nameProcessor.process(parameter.name!!)
         val value = arkenv.getOrNull(name)
         return if (parameter.isOptional && value == null) null
         else {

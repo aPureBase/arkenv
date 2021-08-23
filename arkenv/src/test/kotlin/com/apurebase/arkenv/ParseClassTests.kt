@@ -1,6 +1,7 @@
 package com.apurebase.arkenv
 
 import com.apurebase.arkenv.feature.ProfileFeature
+import com.apurebase.arkenv.module.module
 import com.apurebase.arkenv.test.Expected
 import com.apurebase.arkenv.util.argument
 import com.apurebase.arkenv.util.parse
@@ -123,5 +124,54 @@ class ParseClassTests {
 
         // Assert
         expectThat(config) { get { headless }.isFalse() }
+    }
+
+    @Test fun `module by class is parsed`() {
+        // Arrange
+        val expectedCountry = "DK"
+        class SubConfig(val country: String) {
+            val port: Int by argument()
+        }
+        class Config  {
+            val subModule by module<SubConfig>()
+        }
+
+        // Act
+        val config = Arkenv.parse<Config>(arrayOf("--country", expectedCountry))
+
+        // Assert
+        expectThat(config.subModule) {
+            get { port } isEqualTo Expected.port
+            get { country } isEqualTo expectedCountry
+        }
+    }
+
+    @Test fun `prefix applied to constructor`() {
+        // Arrange
+        val expectedPort = 199
+        class PrefixConstructor(val port: Int)
+
+        // Act
+        val config = Arkenv.parse<PrefixConstructor>(arrayOf("--database-port", expectedPort.toString())) { prefix = "database" }
+
+        // Assert
+        expectThat(config).get { port } isEqualTo expectedPort
+    }
+
+    @Test fun `common prefix per module`() {
+        // Arrange
+        val prefix = "database"
+        val expectedPort = 199
+        class Nested(val port: Int)
+
+        class Config {
+            val database: Nested by module { this.prefix = "database" }
+        }
+
+        // Act
+        val config = Arkenv.parse<Config>(arrayOf("--$prefix-port", expectedPort.toString()))
+
+        // Assert
+        expectThat(config.database).get { port } isEqualTo expectedPort
     }
 }

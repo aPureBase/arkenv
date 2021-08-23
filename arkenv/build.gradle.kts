@@ -1,6 +1,6 @@
 plugins {
     base
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.5.21"
     id("org.jetbrains.dokka") version "1.5.0"
     id("java-test-fixtures")
     signing
