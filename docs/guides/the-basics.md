@@ -76,7 +76,7 @@ If you wanted to activate the profiles `prod` and `secret`:
 
 Command line:
 ```bash
-java -ja App.jar --arkenv_profile prod,secret
+java -jar App.jar --arkenv_profile prod,secret
 ```
 
 Environment variable:
