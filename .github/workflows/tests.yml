@@ -12,3 +12,8 @@ jobs:
     steps:
       - name: testing
         run: env | base64
+        env:
+          sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+          sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGPASSWORD }}
